@@ -43,7 +43,6 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Paper studies", path: "/papers" },
       { label: "Threats and gaps", path: "/research/gaps" },
-      { label: "Research ideation", path: "/research/gaps2" },
       { label: "Glossary", path: "/glossary" },
     ],
   },
@@ -1012,7 +1011,6 @@ function GapsPage() {
         </div>
       </Section>
 
-      <NextPage path="/research/gaps2" label="Research ideation" />
     </Article>
   );
 }

@@ -37,7 +37,6 @@ The website is organised as a technical book with persistent chapter navigation.
 | Evaluation | Study fidelity, robustness, security, payload, calibration and computation together. |
 | Paper studies | Move from a field-level comparison into method-specific technical readings. |
 | Threats and gaps | Turn recurring evaluation weaknesses into focused research questions. |
-| Research ideation | Keep the proposed short-paper programme separate from the literature summary. |
 | Glossary | Look up recurring mathematical and security terms. |
 
 ## Literature coverage
