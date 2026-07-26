@@ -43,6 +43,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Paper studies", path: "/papers" },
       { label: "Threats and gaps", path: "/research/gaps" },
+      { label: "Research ideation", path: "/research/gaps2" },
       { label: "Glossary", path: "/glossary" },
     ],
   },
@@ -994,9 +995,9 @@ function PaperPage({ paper }: { paper: Paper }) {
 function GapsPage() {
   return (
     <Article
-      eyebrow="Research agenda"
-      title="The next paper should close a measurement gap."
-      lead="A useful short paper does not need another watermark pattern. It needs one narrow claim that current systems cannot establish under realistic conditions."
+      eyebrow="Research gaps"
+      title="Eight gaps that recur across the literature"
+      lead="These are recurring measurement and deployment weaknesses, separated from the private ideation work that follows from them."
     >
       <Section id="gaps" number="01" title="Eight gaps that recur across the literature">
         <div className="gap-list">
@@ -1010,6 +1011,19 @@ function GapsPage() {
           <div><b>08</b><h3>Full-system cost</h3><p>Training-free embedding can still require costly inversion, key search or per-image optimisation. End-to-end latency and energy are rarely compared under matched hardware.</p></div>
         </div>
       </Section>
+
+      <NextPage path="/research/gaps2" label="Research ideation" />
+    </Article>
+  );
+}
+
+function Gaps2Page() {
+  return (
+    <Article
+      eyebrow="Research ideation"
+      title="A measurement programme for a short paper"
+      lead="This working space turns the recurring gaps into one testable direction. It is kept separate from the literature summary so readers can distinguish evidence from proposal."
+    >
 
       <Section id="candidate" number="02" title="A focused, thesis-quality short-paper direction">
         <div className="research-proposal">
@@ -1120,6 +1134,7 @@ function App() {
     if (route === "/foundations/evaluation") return <EvaluationPage />;
     if (route === "/papers") return <PapersPage />;
     if (route === "/research/gaps") return <GapsPage />;
+    if (route === "/research/gaps2") return <Gaps2Page />;
     if (route === "/glossary") return <GlossaryPage />;
     if (route.startsWith("/papers/")) {
       const paper = paperBySlug.get(route.slice("/papers/".length));
