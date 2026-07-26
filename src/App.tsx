@@ -1,7 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-
-const clamp = (value: number, minimum = 0, maximum = 100) =>
-  Math.min(maximum, Math.max(minimum, value));
+import { useEffect, useRef, useState } from "react";
 
 function seededRandom(seed: number) {
   let state = seed >>> 0;
@@ -258,6 +255,36 @@ const methodFamilies = [
   },
 ];
 
+const attackLessons = {
+  Clean: {
+    effect: "No extra image transformation is introduced.",
+    inversion: "Any recovery error now comes from the inversion procedure, model mismatch, or numerical approximation.",
+    report: "Report clean detection first. It separates embedding and inversion errors from robustness failures.",
+  },
+  JPEG: {
+    effect: "Compression changes local pixel values and removes high-frequency detail.",
+    inversion: "The detector inverts a nearby image, not the exact image produced by the generator.",
+    report: "State the codec, quality setting, colour conversion, and whether compression was applied once or repeatedly.",
+  },
+  Crop: {
+    effect: "Cropping removes content and changes the spatial coordinate system.",
+    inversion: "The estimated latent may be misaligned with the coordinates or frequencies used by the key.",
+    report: "State crop area, crop location, resizing policy, and whether the detector knows the geometry.",
+  },
+  Regenerate: {
+    effect: "A second generative process creates new pixels that preserve some meaning but not the original generation path.",
+    inversion: "The recovered latent belongs to the new generation process, so the original latent signal can be greatly reduced.",
+    report: "Name the regeneration model, prompt source, strength, sampler, and number of steps.",
+  },
+  "Semantic edit": {
+    effect: "The image meaning or object layout changes while some visual content remains.",
+    inversion: "The detector must distinguish an allowed edit from a content change that invalidates provenance.",
+    report: "Define which edits should retain the mark and which should cause verification to fail.",
+  },
+} as const;
+
+type AttackName = keyof typeof attackLessons;
+
 const glossary = [
   ["Latent", "A compact numerical representation. Diffusion operates here instead of directly changing every pixel."],
   ["zT", "The initial noisy latent, normally sampled from a standard Gaussian distribution."],
@@ -274,30 +301,11 @@ const glossary = [
 export default function App() {
   const [denoiseStep, setDenoiseStep] = useState(18);
   const [channelStage, setChannelStage] = useState(0);
-  const [attack, setAttack] = useState("Clean");
+  const [attack, setAttack] = useState<AttackName>("Clean");
   const [bit, setBit] = useState<0 | 1>(1);
   const [angularError, setAngularError] = useState(8);
   const [correlated, setCorrelated] = useState(false);
-  const [redundancy, setRedundancy] = useState(36);
-  const [attackStrength, setAttackStrength] = useState(28);
-  const [payload, setPayload] = useState(42);
-
-  const attackHealth: Record<string, number> = {
-    Clean: 96,
-    JPEG: 78,
-    Crop: 61,
-    Regenerate: 43,
-    "Semantic edit": 35,
-  };
-
-  const conceptualScores = useMemo(
-    () => ({
-      robustness: Math.round(clamp(58 + redundancy * 0.48 - attackStrength * 0.55 - payload * 0.2)),
-      diversity: Math.round(clamp(96 - redundancy * 0.42 - payload * 0.12)),
-      capacity: Math.round(clamp(payload)),
-    }),
-    [redundancy, attackStrength, payload],
-  );
+  const detectedBit = Math.sin((bit === 1 ? Math.PI / 2 : -Math.PI / 2) + (angularError * Math.PI) / 180) >= 0 ? 1 : 0;
 
   return (
     <main>
@@ -308,10 +316,10 @@ export default function App() {
         </a>
         <nav aria-label="Primary navigation">
           <a href="#diffusion">Diffusion</a>
-          <a href="#watermarking">Watermarking</a>
+          <a href="#channel">Channel</a>
           <a href="#methods">Methods</a>
           <a href="#math">Math lab</a>
-          <a href="#glossary">Glossary</a>
+          <a href="#reading">Reading</a>
         </nav>
         <a className="header-link" href="https://github.com/holsoma/latent-watermarking-101" target="_blank" rel="noreferrer">
           View source
@@ -341,19 +349,22 @@ export default function App() {
               onChange={(event) => setDenoiseStep(Number(event.target.value))}
             />
           </div>
+          <div className="interaction-brief">
+            <b>Learning pointer</b>
+            <p>Move the step control. Notice that the latent starts as noise, while the image structure emerges through repeated denoising.</p>
+          </div>
         </div>
       </section>
 
       <section className="learning-strip" aria-label="Learning outcomes">
-        <p><b>01</b> Understand latent diffusion</p>
-        <p><b>02</b> Trace a watermark channel</p>
-        <p><b>03</b> Read method claims critically</p>
-        <p><b>04</b> Enter the research atlas prepared</p>
+        <p>Understand the latent diffusion pipeline</p>
+        <p>Trace embedding and detection end to end</p>
+        <p>Explain why inversion can fail</p>
+        <p>Read method claims and results critically</p>
       </section>
 
       <section className="lesson diffusion" id="diffusion">
         <div className="lesson-heading">
-          <p>Foundation</p>
           <h2>Stable Diffusion does most of its work in a smaller numerical space.</h2>
           <p className="section-intro">
             A classic latent diffusion pipeline converts text into conditioning, turns random latent noise into a structured latent, then decodes that latent into pixels.
@@ -381,6 +392,12 @@ export default function App() {
             “Stable Diffusion” names a family. Earlier systems commonly use a U-Net denoiser, while newer diffusion systems may use transformer backbones. The latent and VAE ideas remain useful, but implementation details vary.
           </p>
         </aside>
+        <details className="knowledge-check">
+          <summary>Check your understanding: where can an in-generation watermark enter this pipeline?</summary>
+          <p>
+            A method can modify the initial latent, influence an intermediate denoising state, alter conditioning, or change the decoder. These choices create different training, compatibility, and detection requirements.
+          </p>
+        </details>
       </section>
 
       <section className="lesson comparison" id="watermarking">
@@ -415,13 +432,16 @@ export default function App() {
         </div>
       </section>
 
-      <section className="lesson channel">
+      <section className="lesson channel" id="channel">
         <div className="lesson-heading">
-          <p>Core mental model</p>
           <h2>A watermark is a message sent through a noisy, adversarial channel.</h2>
           <p className="section-intro">
             Click each stage. The plain explanation and research term describe the same system at different levels.
           </p>
+        </div>
+        <div className="interaction-brief section-brief">
+          <b>Question to answer</b>
+          <p>At which stage does the method need a secret key, a trained component, model access, or an assumption about image history?</p>
         </div>
         <div className="channel-layout">
           <div className="channel-stages" role="tablist" aria-label="Watermark channel stages">
@@ -448,6 +468,12 @@ export default function App() {
             </div>
           </div>
         </div>
+        <details className="knowledge-check">
+          <summary>Check your understanding: why is a detector threshold part of the method?</summary>
+          <p>
+            A score alone does not declare provenance. The threshold sets the trade-off between missed marks and false accusations, so it must be calibrated on an explicit unmarked distribution.
+          </p>
+        </details>
       </section>
 
       <section className="lesson inversion">
@@ -459,32 +485,42 @@ export default function App() {
         </div>
         <div className="attack-lab">
           <div className="attack-controls">
-            {Object.keys(attackHealth).map((name) => (
+            {(Object.keys(attackLessons) as AttackName[]).map((name) => (
               <button className={attack === name ? "active" : ""} onClick={() => setAttack(name)} key={name}>
                 {name}
               </button>
             ))}
           </div>
           <div className="signal-readout">
-            <span>Observed image</span>
-            <div className={`image-sample attack-${attack.toLowerCase().replace(" ", "-")}`}>
-              <DenoiseCanvas progress={0.98} />
+            <div>
+              <span>Observed output</span>
+              <div className={`image-sample attack-${attack.toLowerCase().replace(" ", "-")}`}>
+                <DenoiseCanvas progress={0.98} />
+              </div>
             </div>
-            <span>Approximate inversion</span>
-            <div className="noise-sample" style={{ "--health": `${attackHealth[attack]}%` } as React.CSSProperties}>
-              <b>{attackHealth[attack]}%</b>
-              <small>conceptual signal health</small>
+            <div className="attack-explainer" aria-live="polite">
+              <span>What changed</span>
+              <h3>{attackLessons[attack].effect}</h3>
+              <dl>
+                <div>
+                  <dt>Why inversion becomes harder</dt>
+                  <dd>{attackLessons[attack].inversion}</dd>
+                </div>
+                <div>
+                  <dt>What an experiment must report</dt>
+                  <dd>{attackLessons[attack].report}</dd>
+                </div>
+              </dl>
             </div>
           </div>
           <p className="simulation-note">
-            This interaction is explanatory, not a benchmark. Real robustness depends on the model, scheduler, detector, payload, key, and attack parameters.
+            The image filters illustrate categories of change. They do not reproduce a named attack pipeline or predict detector performance.
           </p>
         </div>
       </section>
 
       <section className="lesson methods" id="methods">
         <div className="lesson-heading">
-          <p>Method landscape</p>
           <h2>Different methods spend their robustness budget in different places.</h2>
         </div>
         <div className="family-list">
@@ -516,11 +552,14 @@ export default function App() {
 
       <section className="lesson math-lab" id="math">
         <div className="lesson-heading">
-          <p>Preparing for angular methods</p>
           <h2>Two Gaussian coordinates can be read as a point with a magnitude and an angle.</h2>
           <p className="section-intro">
-            Angular schemes use relationships between coordinates. The detector can read a relative angle even when absolute values move.
+            This coordinate-pair example explains the intuition behind angular encoding. It is not a reproduction of one paper's full algorithm.
           </p>
+        </div>
+        <div className="interaction-brief section-brief">
+          <b>Try to break the bit</b>
+          <p>Choose a bit, then increase the inversion error until the recovered vector crosses the angular decision boundary.</p>
         </div>
         <div className="lab-grid">
           <div className="canvas-panel">
@@ -538,16 +577,27 @@ export default function App() {
             <input
               id="angular-error"
               type="range"
-              min="-35"
-              max="35"
+              min="-120"
+              max="120"
               value={angularError}
               onChange={(event) => setAngularError(Number(event.target.value))}
             />
+            <div className={`detector-result ${detectedBit === bit ? "correct" : "incorrect"}`} aria-live="polite">
+              <span>Detector reads</span>
+              <b>bit {detectedBit}</b>
+              <small>{detectedBit === bit ? "Decoded correctly" : "Decision boundary crossed"}</small>
+            </div>
             <p>
-              A larger recovered magnitude can make an angular decision less sensitive to small coordinate errors. Repetition and error-correcting codes can add protection, but they consume capacity or diversity.
+              Repetition and error-correcting codes can protect several uncertain coordinate decisions, but they consume capacity and require a declared noise model.
             </p>
           </div>
         </div>
+        <details className="knowledge-check">
+          <summary>Check your understanding: why can a larger payload be harder to protect?</summary>
+          <p>
+            More message bits require more coordinate decisions. Without additional redundancy, the chance that at least one decision is corrupted increases. Redundancy helps, but uses latent degrees of freedom that could otherwise support diversity or capacity.
+          </p>
+        </details>
       </section>
 
       <section className="lesson gaussian">
@@ -556,6 +606,10 @@ export default function App() {
           <p className="section-intro">
             Matching each coordinate's mean and variance is not enough to prove that the complete latent remains independent Gaussian noise.
           </p>
+        </div>
+        <div className="interaction-brief section-brief">
+          <b>Question to answer</b>
+          <p>Can every coordinate look Gaussian while pairs of coordinates still reveal a watermarking rule?</p>
         </div>
         <div className="distribution-lab">
           <DistributionCanvas correlated={correlated} />
@@ -575,41 +629,43 @@ export default function App() {
             </p>
           </div>
         </div>
+        <details className="knowledge-check">
+          <summary>Check your understanding: what evidence is missing from a marginal histogram?</summary>
+          <p>
+            A one-dimensional histogram cannot reveal covariance or higher-order dependence between coordinates. A distribution-preservation claim needs tests at the joint level and under repeated use of a fixed key.
+          </p>
+        </details>
       </section>
 
-      <section className="lesson tradeoff">
+      <section className="lesson claims">
         <div className="lesson-heading">
-          <p>Conceptual design lab</p>
-          <h2>Robustness, payload, diversity, and attack strength cannot all move freely.</h2>
+          <h2>A result is only useful when you can reconstruct the experimental claim.</h2>
+          <p className="section-intro">
+            Use these four questions when a paper reports detection accuracy, robustness, image quality, or distribution preservation.
+          </p>
         </div>
-        <div className="tradeoff-layout">
-          <div className="tradeoff-controls">
-            <label>
-              Redundancy <b>{redundancy}</b>
-              <input type="range" min="0" max="100" value={redundancy} onChange={(event) => setRedundancy(Number(event.target.value))} />
-            </label>
-            <label>
-              Attack strength <b>{attackStrength}</b>
-              <input type="range" min="0" max="100" value={attackStrength} onChange={(event) => setAttackStrength(Number(event.target.value))} />
-            </label>
-            <label>
-              Payload pressure <b>{payload}</b>
-              <input type="range" min="0" max="100" value={payload} onChange={(event) => setPayload(Number(event.target.value))} />
-            </label>
-          </div>
-          <div className="score-field">
-            {Object.entries(conceptualScores).map(([name, score]) => (
-              <div key={name}>
-                <span>{name}</span>
-                <b>{score}</b>
-                <i style={{ width: `${score}%` }} />
-              </div>
-            ))}
-          </div>
+        <div className="claim-checklist">
+          <article>
+            <span>Detection</span>
+            <h3>At which false-positive rate?</h3>
+            <p>A true-positive rate without its threshold and false-positive operating point cannot support a deployment claim.</p>
+          </article>
+          <article>
+            <span>Robustness</span>
+            <h3>Under which exact transformation?</h3>
+            <p>“JPEG”, “crop”, and “regeneration” name attack families. Parameters and implementation choices determine the actual test.</p>
+          </article>
+          <article>
+            <span>Quality</span>
+            <h3>Compared with which unmarked baseline?</h3>
+            <p>Use matched prompts, seeds, samplers, and model settings. A metric alone does not isolate the effect of watermarking.</p>
+          </article>
+          <article>
+            <span>Security</span>
+            <h3>What does the attacker know and control?</h3>
+            <p>Key access, detector queries, model access, and repeated marked samples can change the threat model completely.</p>
+          </article>
         </div>
-        <p className="simulation-note">
-          Conceptual relationship only. These scores are deliberately not presented as experimental results.
-        </p>
       </section>
 
       <section className="lesson glossary" id="glossary">
@@ -628,7 +684,6 @@ export default function App() {
 
       <section className="lesson reading" id="reading">
         <div className="lesson-heading">
-          <p>Primary reading path</p>
           <h2>Read the field in the order its assumptions become necessary.</h2>
         </div>
         <ol className="reading-list">
@@ -665,23 +720,13 @@ export default function App() {
         </ol>
       </section>
 
-      <section className="next-step">
-        <div>
-          <span>You now have the frame of reference.</span>
-          <h2>Continue into the gap analysis.</h2>
-          <p>
-            The companion atlas compares current methods, exposes training boundaries, and develops a focused research-paper programme.
-          </p>
-        </div>
-        <a className="button primary" href="https://holsoma.github.io/watermarking-gap-analysis/" target="_blank" rel="noreferrer">
-          Open the research atlas
-        </a>
-      </section>
-
       <footer>
         <div>
           <b>Latent Watermarking 101</b>
-          <p>Public educational reference. Visual simulations are conceptual unless stated otherwise.</p>
+          <p>
+            Public educational reference. Visual simulations are conceptual unless stated otherwise. Teaching format informed by{" "}
+            <a href="https://www.arjunvirk.com/writing/ml-guide" target="_blank" rel="noreferrer">Arjun Virk&apos;s ML Bible</a>.
+          </p>
         </div>
         <div>
           <a href="#top">Back to top</a>

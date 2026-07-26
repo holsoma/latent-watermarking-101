@@ -1,44 +1,67 @@
 # Latent Watermarking 101
 
-An interactive introduction to latent diffusion image watermarking. The site starts with Stable Diffusion fundamentals, compares traditional and in-generation watermarking, then explains inversion, detection, Gaussian latent structure, and major method families.
+A source-backed introduction to latent diffusion image watermarking for readers who are new to the field.
 
-[Open the interactive site](https://holsoma.github.io/latent-watermarking-101/)
+[Read the guide](https://holsoma.github.io/latent-watermarking-101/)
 
-## Why this exists
+## What this project does
 
-Research papers often assume that the reader already understands latent diffusion, initial Gaussian noise, inversion, payloads, keying, and operational false-positive rates. This project supplies that missing frame of reference.
+Watermarking papers often begin after several important ideas have already been assumed: latent diffusion, Gaussian initial noise, inversion, keyed detection, payloads, false-positive rates, and threat models.
 
-## Interactive lessons
+This guide builds that foundation in order. It starts with the Stable Diffusion generation path, treats a watermark as a message sent through a noisy channel, then introduces the mathematical and experimental questions needed to read current papers critically.
 
-- A denoising timeline from random latent noise to a decoded image
-- Traditional post-hoc watermarking compared with in-generation watermarking
-- A keyed communication-channel view of embedding and detection
-- An attack playground for compression, cropping, regeneration, and editing
-- A two-dimensional angular coding laboratory
-- Independent and correlated Gaussian point clouds
-- A conceptual robustness, diversity, and payload trade-off laboratory
-- Glossary and primary-source reading path
+After working through the guide, a reader should be able to:
 
-## Accuracy note
+- trace the path from a prompt and initial latent to a decoded image;
+- distinguish post-hoc image watermarking from in-generation watermarking;
+- identify where a method embeds, detects, trains, and uses a key;
+- explain why diffusion inversion is approximate;
+- distinguish marginal Gaussian statistics from joint independence;
+- interpret detection results at a stated false-positive rate;
+- ask whether a robustness or security claim matches its threat model.
 
-The interactive trade-off laboratory is conceptual. Its values are not experimental measurements. It is designed to make relationships visible before readers inspect reported results in the cited papers.
+## How the guide teaches
 
-## Local development
+The teaching structure is informed by [Arjun Virk's ML Bible](https://www.arjunvirk.com/writing/ml-guide): sustained explanation, small worked examples, and regular checks for understanding. This project applies that approach to diffusion watermarking rather than presenting a gallery of diagrams.
 
-```bash
-npm install
-npm run dev
-```
+Each interactive element must have a clear instructional role:
 
-Build the static site with:
+1. **Question:** the concept the reader should resolve.
+2. **Manipulation:** one variable the reader can change.
+3. **Observation:** the visible consequence of that change.
+4. **Takeaway:** the conclusion the visual supports, with its limits stated.
 
-```bash
-npm run build
-```
+Controls that cannot meet this standard do not belong in the guide. Conceptual diagrams are labelled as such, and the site does not invent benchmark results.
 
-The repository deploys `dist/` to GitHub Pages through GitHub Actions.
+## Learning route
 
-## Primary references
+| Topic | Why it comes next |
+| --- | --- |
+| Latent diffusion | Establishes where generation happens and what \(z_T\), denoising, and VAE decoding mean. |
+| Watermarking models | Separates post-hoc pixel changes from marks introduced during generation. |
+| Communication channel | Connects payload, key, generator, edits, inversion, and detector in one system. |
+| Inversion failure | Explains why image transformations disturb the latent estimate used for detection. |
+| Method families | Groups methods by geometric structure, distribution-aware mapping, semantic binding, and learned recovery. |
+| Angular coding | Gives a concrete coordinate-pair example of an embedding and decision boundary. |
+| Joint Gaussian structure | Shows why normal-looking coordinates do not prove an unchanged joint prior. |
+| Result interpretation | Turns accuracy, robustness, quality, and security claims into reproducible questions. |
+| Primary reading path | Moves from diffusion foundations to geometry, distribution preservation, security, and semantic binding. |
+
+## Related learning and research projects
+
+These projects solve adjacent parts of the learning or research problem:
+
+- [ML Bible](https://www.arjunvirk.com/writing/ml-guide) is the main reference for the guide's prose-led, chapter-based teaching format.
+- [Dive into Deep Learning](https://github.com/d2l-ai/d2l-en) is an open interactive deep learning book that combines explanation, mathematics, and runnable code.
+- [MarkDiffusion](https://github.com/THU-BPM/MarkDiffusion) provides a unified implementation and evaluation toolkit for generative watermarking methods.
+- [Secure Diffusion Watermarking Survey and Implementation](https://github.com/tongyu0924/Secure-Diffusion-Watermarking-Survey-and-Implementation) organises papers on watermarking, attribution, and provenance in diffusion models.
+- [Awesome GenAI Watermarking](https://github.com/and-mill/Awesome-GenAI-Watermarking) maintains a broader bibliography across generative model watermarking.
+- [Hugging Face Diffusers](https://github.com/huggingface/diffusers) provides production implementations and documentation for diffusion pipelines, schedulers, and inversion-related components.
+- [CompVis Latent Diffusion](https://github.com/CompVis/latent-diffusion) is the source implementation associated with the latent diffusion foundation used throughout this guide.
+
+For implementation-level study, start with the official repositories for [Tree-Ring Watermarks](https://github.com/YuxinWenRick/tree-ring-watermark), [Gaussian Shading](https://github.com/bsmhmmlf/Gaussian-Shading), [Stable Signature](https://github.com/facebookresearch/stable_signature), and [PRC Watermark](https://github.com/XuandongZhao/PRC-Watermark).
+
+## Primary papers
 
 - [High-Resolution Image Synthesis with Latent Diffusion Models](https://arxiv.org/abs/2112.10752)
 - [Denoising Diffusion Implicit Models](https://arxiv.org/abs/2010.02502)
@@ -48,8 +71,27 @@ The repository deploys `dist/` to GitHub Pages through GitHub Actions.
 - [An Undetectable Watermark for Generative Image Models](https://openreview.net/forum?id=jlhBFm7T2J)
 - [SEAL](https://openaccess.thecvf.com/content/ICCV2025/html/Arabi_SEAL_Semantic_Aware_Image_Watermarking_ICCV_2025_paper.html)
 
+## Run locally
+
+Requirements: Node.js 20.19 or newer, or Node.js 22.12 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+Build and type-check the static site:
+
+```bash
+npm test
+```
+
+The GitHub Actions workflow deploys the generated `dist/` directory to GitHub Pages after changes reach `main`.
+
+## Contributing
+
+Contributions should improve explanation, factual accuracy, accessibility, or source coverage. A proposed interaction should state its learning question and avoid unsupported numerical claims. Please link a primary paper or official implementation when changing technical content.
+
 ## Scope
 
-This project explains publicly available ideas. It does not reproduce private manuscripts or claim that the visual simulations are benchmarks.
-
-For the companion research synthesis, see the [Latent Watermark Atlas](https://holsoma.github.io/watermarking-gap-analysis/).
+This project explains publicly available ideas. It does not reproduce private manuscripts, provide a detector implementation, or present conceptual simulations as empirical evidence.
