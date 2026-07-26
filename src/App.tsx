@@ -1,19 +1,503 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { glossary, paperBySlug, papers, type Paper, type TrainingBoundary } from "./content";
 
-function seededRandom(seed: number) {
-  let state = seed >>> 0;
-  return () => {
-    state = (state * 1664525 + 1013904223) >>> 0;
-    return state / 4294967296;
-  };
+type NavItem = { label: string; path: string };
+type NavGroup = { label: string; items: NavItem[] };
+
+const navGroups: NavGroup[] = [
+  {
+    label: "Orientation",
+    items: [
+      { label: "Start here", path: "/" },
+      { label: "How to read a paper", path: "/reading" },
+    ],
+  },
+  {
+    label: "Foundations",
+    items: [
+      { label: "Image watermarking", path: "/foundations/watermarking" },
+      { label: "Neural networks", path: "/foundations/networks" },
+      { label: "Latent diffusion", path: "/foundations/diffusion" },
+      { label: "Image frequency", path: "/foundations/frequency" },
+      { label: "Evaluation", path: "/foundations/evaluation" },
+    ],
+  },
+  {
+    label: "Research",
+    items: [
+      { label: `Method atlas (${papers.length})`, path: "/papers" },
+      { label: "Threats and gaps", path: "/research/gaps" },
+      { label: "Glossary", path: "/glossary" },
+    ],
+  },
+];
+
+function getRoute() {
+  const route = window.location.hash.replace(/^#/, "") || "/";
+  return route.startsWith("/") ? route : `/${route}`;
 }
 
-function normalPair(random: () => number) {
-  const u = Math.max(1e-9, random());
-  const v = random();
-  const radius = Math.sqrt(-2 * Math.log(u));
-  const angle = 2 * Math.PI * v;
-  return [radius * Math.cos(angle), radius * Math.sin(angle)] as const;
+function useHashRoute() {
+  const [route, setRoute] = useState(getRoute);
+  useEffect(() => {
+    const update = () => setRoute(getRoute());
+    window.addEventListener("hashchange", update);
+    return () => window.removeEventListener("hashchange", update);
+  }, []);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [route]);
+  return route;
+}
+
+function Link({
+  to,
+  children,
+  className = "",
+  onClick,
+}: {
+  to: string;
+  children: ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) {
+  return (
+    <a href={`#${to}`} className={className} onClick={onClick}>
+      {children}
+    </a>
+  );
+}
+
+function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className="external-link">
+      {children} <span aria-hidden="true">↗</span>
+    </a>
+  );
+}
+
+function Section({
+  id,
+  number,
+  title,
+  children,
+}: {
+  id: string;
+  number?: string;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section id={id} className="article-section">
+      {number && <p className="section-number">{number}</p>}
+      <h2>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function Callout({
+  label,
+  children,
+  tone = "blue",
+}: {
+  label: string;
+  children: ReactNode;
+  tone?: "blue" | "plain" | "warning";
+}) {
+  return (
+    <aside className={`callout ${tone}`}>
+      <strong>{label}</strong>
+      <div>{children}</div>
+    </aside>
+  );
+}
+
+function Equation({ children }: { children: ReactNode }) {
+  return <div className="equation">{children}</div>;
+}
+
+function Article({
+  eyebrow,
+  title,
+  lead,
+  meta,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  meta?: string;
+  children: ReactNode;
+}) {
+  return (
+    <article className="article">
+      <header className="article-header">
+        <p className="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        <p className="lead">{lead}</p>
+        {meta && <p className="article-meta">{meta}</p>}
+      </header>
+      {children}
+    </article>
+  );
+}
+
+function ConceptGrid({
+  items,
+}: {
+  items: { title: string; text: string; tag?: string }[];
+}) {
+  return (
+    <div className="concept-grid">
+      {items.map((item) => (
+        <div className="concept-card" key={item.title}>
+          {item.tag && <span>{item.tag}</span>}
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Pipeline({
+  steps,
+}: {
+  steps: { label: string; title: string; text: string }[];
+}) {
+  return (
+    <ol className="pipeline">
+      {steps.map((step) => (
+        <li key={step.label}>
+          <span>{step.label}</span>
+          <div>
+            <strong>{step.title}</strong>
+            <p>{step.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function BoundaryBadge({ value }: { value: TrainingBoundary }) {
+  const tone =
+    value === "No method-specific training"
+      ? "green"
+      : value === "Per-image optimisation"
+        ? "orange"
+        : "purple";
+  return <span className={`boundary-badge ${tone}`}>{value}</span>;
+}
+
+function Table({
+  headings,
+  rows,
+}: {
+  headings: string[];
+  rows: (string | ReactNode)[][];
+}) {
+  return (
+    <div className="table-wrap" tabIndex={0}>
+      <table>
+        <thead>
+          <tr>{headings.map((heading) => <th key={heading}>{heading}</th>)}</tr>
+        </thead>
+        <tbody>
+          {rows.map((row, index) => (
+            <tr key={index}>
+              {row.map((cell, cellIndex) => <td key={cellIndex}>{cell}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function HomePage() {
+  return (
+    <Article
+      eyebrow="Open technical guide"
+      title="Latent watermarking, from pixels to provenance."
+      lead="A chapter-based introduction to image watermarking, latent diffusion, frequency-domain design, inversion, security and sixteen in-generation methods."
+      meta="Built for a careful first reading, then repeated use as a paper companion."
+    >
+      <div className="home-actions">
+        <Link to="/foundations/watermarking" className="button primary">Begin the guide</Link>
+        <Link to="/papers" className="button secondary">Open the method atlas</Link>
+      </div>
+
+      <Section id="route" number="01" title="A three-pass reading route">
+        <div className="route-list">
+          <div><b>Pass 1</b><h3>Build the mechanism</h3><p>Learn what an embedder, attack channel and detector do. Then follow a latent diffusion sample from Gaussian noise to pixels.</p></div>
+          <div><b>Pass 2</b><h3>Learn the trade-offs</h3><p>Connect spatial frequency, inversion error and payload coding to fidelity, robustness, security and cost.</p></div>
+          <div><b>Pass 3</b><h3>Interrogate the papers</h3><p>Read each method as a claim under a threat model, not as a method name and a headline number.</p></div>
+        </div>
+      </Section>
+
+      <Section id="map" number="02" title="The field in one map">
+        <div className="field-map" aria-label="Map of latent watermarking method families">
+          <div className="map-source">
+            <span>Starting latent</span>
+            <strong>z<sub>T</sub> ∼ N(0, I)</strong>
+          </div>
+          <div className="map-branches">
+            <div><b>Pattern design</b><p>Fourier rings, channel patterns or angular regions.</p><small>Tree-Rings · RingID · SFWMark</small></div>
+            <div><b>Gaussian mapping</b><p>Map payload bits into samples while preserving a target distribution.</p><small>Gaussian Shading · T2SMark · PRC</small></div>
+            <div><b>Learned systems</b><p>Train injectors, restorers or image-space detectors around a fixed generator.</p><small>LaWa · GaussMarker · SERUM</small></div>
+            <div><b>Task-aware marks</b><p>Bind evidence to objects, semantics or local content integrity.</p><small>SEAL · TAG-WM · Text Encoder</small></div>
+          </div>
+          <div className="map-output">
+            <span>Generated image</span>
+            <strong>x<sub>w</sub></strong>
+          </div>
+        </div>
+        <Callout label="The central distinction">
+          A method can keep the base diffusion model fixed and still train an auxiliary decoder, restorer or classifier. This guide reserves <em>training-free</em> for systems with no watermark-specific learned parameters.
+        </Callout>
+      </Section>
+
+      <Section id="questions" number="03" title="Questions this guide teaches you to ask">
+        <ConceptGrid items={[
+          { title: "Where is information written?", text: "Finished pixels, autoencoder latent, initial Gaussian noise, an intermediate denoising state or the prompt representation." },
+          { title: "What makes it recoverable?", text: "Redundancy, Fourier structure, coding, a learned decoder, inversion geometry or a semantic binding." },
+          { title: "What is the null hypothesis?", text: "The distribution of evidence expected from unwatermarked generated images and unrelated real images." },
+          { title: "What does the attacker know?", text: "The algorithm, model, detector, public key, query interface, some marked samples or the full secret key." },
+          { title: "What is the real unit of success?", text: "A bit, a full message, a correct user identity, a valid signature, or a correctly localised tamper region." },
+          { title: "What does deployment cost?", text: "Training, extra denoising steps, per-image optimisation, inversion, key search, storage and threshold calibration." },
+        ]} />
+      </Section>
+      <NextPage path="/reading" label="Next: how to read a watermarking paper" />
+    </Article>
+  );
+}
+
+function ReadingPage() {
+  return (
+    <Article
+      eyebrow="Orientation · 02"
+      title="Read the claim, not the acronym."
+      lead="Every paper can be reduced to an information path, an operating point and a threat model. This template keeps comparisons honest."
+    >
+      <Section id="system" number="01" title="Draw the full system before reading results">
+        <Pipeline steps={[
+          { label: "E", title: "Embed or select", text: "What receives the payload, and what parameters or keys does this operation require?" },
+          { label: "G", title: "Generate", text: "Which model, sampler, guidance scale and number of steps transport the latent evidence to pixels?" },
+          { label: "A", title: "Attack", text: "Which transformations are permitted, and are they tested alone or in composition?" },
+          { label: "I", title: "Invert or observe", text: "Does verification require the generator, an inverse trajectory, an encoder or only the image?" },
+          { label: "D", title: "Decide", text: "Is the output a bit string, a presence score, a user identity, a signature result or a tamper mask?" },
+        ]} />
+      </Section>
+      <Section id="claims" number="02" title="Translate broad claims into testable statements">
+        <Table
+          headings={["Paper phrase", "Question to write in the margin"]}
+          rows={[
+            ["Imperceptible", "Measured against what paired reference, with which perceptual metric and human protocol?"],
+            ["Robust", "Against which attack, at what strength, and at what false-positive rate?"],
+            ["Training-free", "Are any detector, restorer, token embedding or auxiliary network parameters learned?"],
+            ["Performance-lossless", "Is this a distribution theorem, an empirical average or a claim about each prompt and seed?"],
+            ["Secure", "Removal, forgery, key recovery, statistical detectability or public verification?"],
+            ["High capacity", "Raw bits or useful bits after error correction, and is the whole message recovered exactly?"],
+          ]}
+        />
+      </Section>
+      <Section id="numbers" number="03" title="Do not compare isolated headline numbers">
+        <p>Bit accuracy at one JPEG quality cannot be compared with message recovery under crop plus resize. FID from 5,000 samples cannot establish that paired images preserve prompt details. A result becomes comparable only when these conditions match:</p>
+        <ul className="check-list">
+          <li>model and model version;</li>
+          <li>sampler, number of steps and guidance;</li>
+          <li>prompt and image dataset;</li>
+          <li>payload and error-correction overhead;</li>
+          <li>attack implementation and intensity;</li>
+          <li>false-positive operating point;</li>
+          <li>single-key, closed-set identification or open-set identification.</li>
+        </ul>
+        <Callout label="Replication rule" tone="warning">
+          Record complete configurations, not only method names. Inversion-based results can change when the scheduler, VAE, precision or prompt conditioning changes.
+        </Callout>
+      </Section>
+      <Section id="evidence" number="04" title="Use source layers deliberately">
+        <p>The paper is the claim. The official code is an executable interpretation of that claim. An independent reproduction tests whether the interpretation transfers. A survey helps locate the work, but should not replace the primary source when recording mechanisms or results.</p>
+      </Section>
+      <NextPage path="/foundations/watermarking" label="Next: image watermarking" />
+    </Article>
+  );
+}
+
+function WatermarkingPage() {
+  return (
+    <Article
+      eyebrow="Foundations · 01"
+      title="Image watermarking is a communication system."
+      lead="A watermark carries evidence through a visual signal and an uncertain transformation channel. The image must still serve its original purpose."
+    >
+      <Section id="visible" number="01" title="Visible and invisible watermarks solve different problems">
+        <div className="comparison">
+          <div className="comparison-panel visible-mark">
+            <span className="sample-label">VISIBLE</span>
+            <div className="sample-image"><b>OWNER</b></div>
+            <h3>Deterrence through observation</h3>
+            <p>A logo or text overlay is intended to be noticed. It can communicate ownership immediately, but can also be cropped, covered or reconstructed.</p>
+          </div>
+          <div className="comparison-panel invisible-mark">
+            <span className="sample-label">INVISIBLE</span>
+            <div className="sample-image"><b>101101</b></div>
+            <h3>Evidence through detection</h3>
+            <p>The marked image should look unchanged. Ownership or provenance is established by a detector with a key or learned model.</p>
+          </div>
+        </div>
+        <p>Visibility is not binary in a physical sense. Invisible means that changes are below a stated perceptual threshold in a stated viewing condition. A difference can be difficult for a person to see yet easy for a statistical classifier to detect.</p>
+      </Section>
+
+      <Section id="pipeline" number="02" title="Embed, transmit, extract">
+        <Equation>
+          <span>x<sub>w</sub> = E(x, w; k)</span>
+          <small>embed payload w in cover image x using key k</small>
+        </Equation>
+        <Equation>
+          <span>x<sub>w</sub> ≈ x</span>
+          <small>fidelity objective</small>
+        </Equation>
+        <Equation>
+          <span>x′<sub>w</sub> = A(x<sub>w</sub>)</span>
+          <small>the received image after an attack or ordinary processing</small>
+        </Equation>
+        <Equation>
+          <span>ŵ = D(x′<sub>w</sub>; k) ≈ w</span>
+          <small>robust extraction objective</small>
+        </Equation>
+        <p>The prime in x′<sub>w</sub> does not imply an adversary. Uploading to a platform can resize and recompress an image without malicious intent. A useful evaluation separates benign processing, deliberate removal and forgery.</p>
+        <ConceptGrid items={[
+          { title: "Blind", text: "The detector receives the questioned image and a key or model, but not the original cover image." },
+          { title: "Non-blind", text: "The detector can compare with the original image. This usually improves sensitivity but is harder to deploy at scale." },
+          { title: "Zero-bit", text: "The system answers whether one key is present. The payload is effectively a presence claim." },
+          { title: "Multi-bit", text: "The system recovers a message, such as a creator ID, user ID, timestamp or signed statement." },
+        ]} />
+      </Section>
+
+      <Section id="attacks" number="03" title="The attack channel">
+        <Table
+          headings={["Attack family", "What changes", "Why evidence is lost"]}
+          rows={[
+            ["JPEG compression", "Quantises block-frequency coefficients", "Weak high-frequency values can be rounded away and blocking changes local statistics."],
+            ["Noise addition", "Adds random pixel variation", "The detector must distinguish watermark energy from new noise."],
+            ["Contrast or colour", "Changes intensity mapping or channels", "Amplitude and channel relationships shift."],
+            ["RST", "Rotates, scales or translates coordinates", "The detector no longer observes the expected spatial alignment."],
+            ["Crop and resize", "Removes content then resamples it", "Part of the payload disappears and the remaining grid is warped."],
+            ["Inpainting", "Replaces a selected region with generated content", "Local evidence is removed while most image semantics may remain."],
+            ["Reconstruction", "Encodes and regenerates the image", "Low-level signals are discarded while semantic content is rebuilt."],
+            ["Combined attack", "Applies several operations in sequence", "Small errors compound and defeat assumptions calibrated for one transform."],
+          ]}
+        />
+        <Callout label="RST means a group of geometric transforms">
+          Rotation, scaling and translation alter coordinates. A robust system can synchronise before decoding, use an invariant representation, spread information widely, or learn transformed examples. Each option has a cost.
+        </Callout>
+      </Section>
+
+      <Section id="residual" number="04" title="Residual subtraction and reverse engineering">
+        <p>If an analyst has a paired cover and watermarked image, the direct residual is:</p>
+        <Equation>
+          <span>r = x<sub>w</sub> - x</span>
+          <small>visible or amplified evidence of what embedding changed</small>
+        </Equation>
+        <div className="residual-demo">
+          <div><span>cover x</span><div className="residual-base" /></div>
+          <b>−</b>
+          <div><span>marked x<sub>w</sub></span><div className="residual-marked" /></div>
+          <b>=</b>
+          <div><span>amplified residual</span><div className="residual-signal" /></div>
+        </div>
+        <p>This is useful for auditing additive pixel methods. It can reveal repeated texture, edge adaptation or a fixed key. It is not automatically available to an attacker. In generative watermarking there may be no natural cover x: the image is synthesised from a marked noise sample, and an unmarked run with another sample is a different image.</p>
+        <Callout label="A precise correction" tone="plain">
+          Using the same prompt and seed can create a paired experimental baseline if the method permits it, but the generator can transport a latent change into semantic and geometric differences. The result is not necessarily a fixed additive signal in pixel space.
+        </Callout>
+      </Section>
+
+      <Section id="generation" number="05" title="What changes when there is no cover image">
+        <p>Traditional notation starts with an existing image x. In-generation watermarking starts earlier. A system selects or modifies the random latent z<sub>T</sub>, then the generator maps it to an image:</p>
+        <Equation>
+          <span>z′<sub>T</sub> = E<sub>z</sub>(z<sub>T</sub>, w; k), &nbsp; x<sub>w</sub> = G(z′<sub>T</sub>, c)</span>
+          <small>c is conditioning such as a text prompt</small>
+        </Equation>
+        <p>The fidelity question is therefore counterfactual. Does the marked sampling process preserve the expected image distribution, prompt alignment and diversity? Pixel distance from an unmarked generation is often inappropriate because different valid random samples should produce different images.</p>
+      </Section>
+      <NextPage path="/foundations/networks" label="Next: neural networks" />
+    </Article>
+  );
+}
+
+function NetworksPage() {
+  return (
+    <Article
+      eyebrow="Foundations · 02"
+      title="The model families behind the watermark."
+      lead="Classification, regression and generation answer different questions. Watermark papers often combine them in one system."
+    >
+      <Section id="taxonomy" number="01" title="Discriminative and generative models">
+        <div className="taxonomy">
+          <div className="taxonomy-root"><b>Neural network</b><span>learned function</span></div>
+          <div className="taxonomy-branch">
+            <div>
+              <b>Discriminative</b>
+              <p>Models a target from observed input.</p>
+              <ul><li><strong>Classification:</strong> watermark present, absent, or key identity</li><li><strong>Regression:</strong> bit confidence, distortion level, or tamper score</li></ul>
+            </div>
+            <div>
+              <b>Generative</b>
+              <p>Models how data can be produced.</p>
+              <ul><li>GAN</li><li>Autoencoder and VAE</li><li>Diffusion and latent diffusion</li></ul>
+            </div>
+          </div>
+        </div>
+        <p>A watermark detector can be discriminative even when the image generator is generative. A paper that leaves Stable Diffusion fixed but trains a binary detector still has a trained component and an associated generalisation problem.</p>
+      </Section>
+
+      <Section id="architectures" number="02" title="Four architectures and their roles">
+        <Table
+          headings={["Architecture", "Core mechanism", "Watermarking relevance"]}
+          rows={[
+            ["GAN", "A generator synthesises samples while a discriminator distinguishes generated from real data.", "Watermark objectives can be added to the generator, and an adversarial discriminator can penalise visible artefacts."],
+            ["Autoencoder", "An encoder compresses x to z and a decoder reconstructs x̂ from z.", "A message can be inserted into z or feature maps, then recovered from the decoded image."],
+            ["Variational autoencoder", "The encoder predicts a distribution over z and regularises it towards a prior.", "Latent structure supports sampling and compression, but reconstruction is lossy."],
+            ["Latent diffusion", "A diffusion process learns to denoise in the autoencoder latent space.", "The initial noise, denoising trajectory, conditioning and VAE latent are all possible embedding locations."],
+          ]}
+        />
+      </Section>
+
+      <Section id="gan" number="03" title="GAN: generator plus discriminator">
+        <div className="mini-flow">
+          <div><small>random input</small><b>z</b></div><span>→</span><div><small>generator</small><b>G(z)</b></div><span>→</span><div><small>candidate image</small><b>x̂</b></div><span>→</span><div><small>discriminator</small><b>real?</b></div>
+        </div>
+        <p>The discriminator supplies a training signal that asks generated outputs to resemble the training distribution. In watermarking, a separate watermark decoder can ask the output to retain w. These objectives can conflict: an easy-to-decode signal may also be easy for a discriminator or attacker to notice.</p>
+      </Section>
+
+      <Section id="autoencoder" number="04" title="AE and VAE: compression is not diffusion">
+        <div className="mini-flow">
+          <div><small>pixels</small><b>x</b></div><span>→</span><div><small>encoder</small><b>q(z|x)</b></div><span>→</span><div><small>compact code</small><b>z</b></div><span>→</span><div><small>decoder</small><b>x̂</b></div>
+        </div>
+        <p>An ordinary autoencoder can learn any convenient latent code. A VAE constrains the code distribution, usually with a Kullback-Leibler term, so it can be sampled. Stable Diffusion uses an autoencoder to move between pixels and lower-dimensional latents, but the diffusion model itself is the denoising model operating in that latent space.</p>
+        <Callout label="Common confusion">
+          The VAE decoder produces pixels. The U-Net or diffusion transformer predicts denoising information in latent space. Calling the U-Net an image decoder collapses two distinct components.
+        </Callout>
+      </Section>
+
+      <Section id="modality" number="05" title="Modality describes inputs and outputs, not one architecture">
+        <Table
+          headings={["Modality", "Input", "Output", "Typical watermark question"]}
+          rows={[
+            ["T2I", "Text", "Image", "Can every generated image carry a source or user payload?"],
+            ["I2I", "Image", "Image", "Does editing preserve, remove or update the original provenance mark?"],
+            ["TI2I", "Text and image", "Image", "Can an instruction edit retain provenance while marking changed content?"],
+            ["T2T", "Text", "Text", "Requires text-watermarking mechanisms, not image-frequency or latent-image assumptions."],
+          ]}
+        />
+        <p>Latent diffusion is used for T2I, I2I and text-guided image editing. It is not synonymous with TI2I. The modality determines which inputs an attacker can modify and what continuity of provenance should mean.</p>
+      </Section>
+      <NextPage path="/foundations/diffusion" label="Next: latent diffusion" />
+    </Article>
+  );
 }
 
 function useCanvasSize(
@@ -24,18 +508,16 @@ function useCanvasSize(
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const render = () => {
-      const rectangle = canvas.getBoundingClientRect();
+      const box = canvas.getBoundingClientRect();
       const ratio = window.devicePixelRatio || 1;
-      canvas.width = Math.round(rectangle.width * ratio);
-      canvas.height = Math.round(rectangle.height * ratio);
+      canvas.width = Math.round(box.width * ratio);
+      canvas.height = Math.round(box.height * ratio);
       const context = canvas.getContext("2d");
       if (!context) return;
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      draw(context, rectangle.width, rectangle.height);
+      draw(context, box.width, box.height);
     };
-
     const observer = new ResizeObserver(render);
     observer.observe(canvas);
     render();
@@ -43,696 +525,601 @@ function useCanvasSize(
   }, dependencies);
 }
 
-function DenoiseCanvas({ progress }: { progress: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+function seededRandom(seed: number) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
 
+function DenoiseLab() {
+  const [progress, setProgress] = useState(58);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   useCanvasSize(
     canvasRef,
     (context, width, height) => {
-      context.clearRect(0, 0, width, height);
-      context.fillStyle = "#edf1f5";
+      const p = progress / 100;
+      context.fillStyle = "#eef2f6";
       context.fillRect(0, 0, width, height);
-
-      const reveal = progress ** 1.5;
-      context.globalAlpha = reveal;
+      context.globalAlpha = p;
       context.fillStyle = "#2457ff";
       context.beginPath();
-      context.arc(width * 0.72, height * 0.28, 34, 0, Math.PI * 2);
+      context.arc(width * 0.72, height * 0.27, Math.min(width, height) * 0.11, 0, Math.PI * 2);
       context.fill();
-
-      context.fillStyle = "#c7d2de";
+      context.fillStyle = "#aab8c8";
       context.beginPath();
-      context.moveTo(0, height * 0.72);
-      context.lineTo(width * 0.28, height * 0.43);
-      context.lineTo(width * 0.5, height * 0.7);
-      context.lineTo(width * 0.7, height * 0.5);
-      context.lineTo(width, height * 0.76);
+      context.moveTo(0, height * 0.77);
+      context.lineTo(width * 0.27, height * 0.43);
+      context.lineTo(width * 0.48, height * 0.69);
+      context.lineTo(width * 0.7, height * 0.49);
+      context.lineTo(width, height * 0.75);
       context.lineTo(width, height);
       context.lineTo(0, height);
-      context.closePath();
       context.fill();
-
-      context.strokeStyle = "#111827";
-      context.lineWidth = 2;
-      for (let index = 0; index < 7; index += 1) {
-        const y = height * (0.76 + index * 0.035);
-        context.beginPath();
-        context.moveTo(0, y);
-        context.lineTo(width, y);
-        context.stroke();
-      }
-
-      const random = seededRandom(4821);
-      context.globalAlpha = Math.max(0.08, 1 - reveal);
-      for (let index = 0; index < 1100; index += 1) {
-        const x = random() * width;
-        const y = random() * height;
-        const size = 1 + random() * 2.4;
-        context.fillStyle = random() > 0.82 ? "#2457ff" : "#111827";
-        context.fillRect(x, y, size, size);
+      const random = seededRandom(731);
+      context.globalAlpha = Math.max(0.04, 1 - p);
+      for (let i = 0; i < 1300; i += 1) {
+        context.fillStyle = random() > 0.86 ? "#2457ff" : "#111827";
+        const size = 0.8 + random() * 2.4;
+        context.fillRect(random() * width, random() * height, size, size);
       }
       context.globalAlpha = 1;
     },
     [progress],
   );
-
-  return <canvas ref={canvasRef} className="denoise-canvas" aria-label="Conceptual denoising visualisation" />;
-}
-
-function AngleCanvas({ bit, error }: { bit: 0 | 1; error: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useCanvasSize(
-    canvasRef,
-    (context, width, height) => {
-      context.clearRect(0, 0, width, height);
-      const centreX = width / 2;
-      const centreY = height / 2;
-      const scale = Math.min(width, height) * 0.31;
-
-      context.strokeStyle = "#b9c3cf";
-      context.lineWidth = 1;
-      context.beginPath();
-      context.moveTo(24, centreY);
-      context.lineTo(width - 24, centreY);
-      context.moveTo(centreX, 24);
-      context.lineTo(centreX, height - 24);
-      context.stroke();
-
-      context.beginPath();
-      context.arc(centreX, centreY, scale, 0, Math.PI * 2);
-      context.stroke();
-
-      const referenceAngle = -0.45;
-      const signedQuarterTurn = bit === 1 ? Math.PI / 2 : -Math.PI / 2;
-      const encodedAngle = referenceAngle + signedQuarterTurn + (error * Math.PI) / 180;
-
-      const drawVector = (angle: number, colour: string, label: string) => {
-        const endX = centreX + Math.cos(angle) * scale;
-        const endY = centreY + Math.sin(angle) * scale;
-        context.strokeStyle = colour;
-        context.fillStyle = colour;
-        context.lineWidth = 4;
-        context.beginPath();
-        context.moveTo(centreX, centreY);
-        context.lineTo(endX, endY);
-        context.stroke();
-        context.beginPath();
-        context.arc(endX, endY, 6, 0, Math.PI * 2);
-        context.fill();
-        context.font = "600 12px ui-monospace, monospace";
-        context.fillText(label, endX + 9, endY - 9);
-      };
-
-      drawVector(referenceAngle, "#111827", "reference");
-      drawVector(encodedAngle, "#2457ff", `bit ${bit}`);
-
-      context.fillStyle = "#5d6875";
-      context.font = "12px ui-monospace, monospace";
-      context.fillText("relative angle", 18, 22);
-    },
-    [bit, error],
+  const stage = progress < 25 ? "mostly noise" : progress < 75 ? "structure emerging" : "late denoising";
+  return (
+    <div className="lab">
+      <div className="lab-head"><span>Interactive model</span><b>{stage}</b></div>
+      <canvas ref={canvasRef} aria-label={`Conceptual latent at ${progress} per cent denoising progress`} />
+      <label>
+        <span>Denoising progress</span><output>{progress}%</output>
+        <input type="range" min="0" max="100" value={progress} onChange={(event) => setProgress(Number(event.target.value))} />
+      </label>
+      <p><strong>Learning pointer:</strong> the slider is conceptual, not a pixel simulation. A diffusion model makes repeated conditional predictions. It does not reveal a clean image hidden under a layer of noise.</p>
+    </div>
   );
-
-  return <canvas ref={canvasRef} className="angle-canvas" aria-label="Angular watermark coordinate visualisation" />;
 }
 
-function DistributionCanvas({ correlated }: { correlated: boolean }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+function DiffusionPage() {
+  return (
+    <Article
+      eyebrow="Foundations · 03"
+      title="Latent diffusion learns a reverse path."
+      lead="Training corrupts encoded images with known noise. Generation starts from independent Gaussian noise and repeatedly predicts how to move towards a plausible latent."
+    >
+      <Section id="components" number="01" title="Keep the components separate">
+        <div className="component-strip">
+          <div><span>1</span><b>VAE encoder</b><p>pixels x → latent z<sub>0</sub></p></div>
+          <div><span>2</span><b>Noise predictor</b><p>z<sub>t</sub>, t, conditioning → noise estimate</p></div>
+          <div><span>3</span><b>Text encoder</b><p>prompt → conditioning tokens c</p></div>
+          <div><span>4</span><b>Sampler</b><p>turns predictions into z<sub>t-1</sub></p></div>
+          <div><span>5</span><b>VAE decoder</b><p>latent z<sub>0</sub> → pixels x̂</p></div>
+        </div>
+        <p>Earlier Stable Diffusion systems use a U-Net as the noise predictor. Newer systems can use a diffusion transformer. The architecture can change while the forward-noise and reverse-generation concepts remain.</p>
+      </Section>
 
-  useCanvasSize(
-    canvasRef,
-    (context, width, height) => {
-      context.clearRect(0, 0, width, height);
-      context.fillStyle = "#f8fafc";
-      context.fillRect(0, 0, width, height);
-      context.strokeStyle = "#c3ccd6";
-      context.beginPath();
-      context.moveTo(width / 2, 18);
-      context.lineTo(width / 2, height - 18);
-      context.moveTo(18, height / 2);
-      context.lineTo(width - 18, height / 2);
-      context.stroke();
+      <Section id="training" number="02" title="Training: image to latent to noisy latent">
+        <Pipeline steps={[
+          { label: "1", title: "Encode a training image", text: "The VAE encoder maps pixels x to a lower-dimensional latent z₀." },
+          { label: "2", title: "Choose a time step", text: "Sample t and construct zₜ by mixing z₀ with known iid Gaussian noise ε." },
+          { label: "3", title: "Encode the text", text: "A transformer-based text encoder maps the caption or prompt to conditioning c." },
+          { label: "4", title: "Predict the added noise", text: "The U-Net or diffusion transformer receives zₜ, t and c, then predicts ε or an equivalent parameterisation." },
+          { label: "5", title: "Optimise the error", text: "The loss compares the prediction with the known target used to create zₜ." },
+        ]} />
+        <Equation>
+          <span>z<sub>t</sub> = √ᾱ<sub>t</sub> z<sub>0</sub> + √(1 - ᾱ<sub>t</sub>) ε, &nbsp; ε ∼ N(0, I)</span>
+          <small>closed-form forward noising for a selected time step</small>
+        </Equation>
+        <p>iid means each noise entry is independently sampled from the same distribution. At sufficiently large t, the latent approaches a standard Gaussian under the modelling assumptions.</p>
+      </Section>
 
-      const random = seededRandom(correlated ? 178 : 94);
-      context.fillStyle = "#2457ff";
-      for (let index = 0; index < 620; index += 1) {
-        const [first, second] = normalPair(random);
-        const xValue = first;
-        const yValue = correlated ? 0.82 * first + Math.sqrt(1 - 0.82 ** 2) * second : second;
-        const x = width / 2 + xValue * width * 0.12;
-        const y = height / 2 + yValue * height * 0.12;
-        context.globalAlpha = 0.38;
-        context.beginPath();
-        context.arc(x, y, 2, 0, Math.PI * 2);
-        context.fill();
-      }
-      context.globalAlpha = 1;
-    },
-    [correlated],
+      <Section id="generation" number="03" title="Generation: Gaussian latent to image">
+        <DenoiseLab />
+        <Pipeline steps={[
+          { label: "T", title: "Sample the starting latent", text: "Draw zT from an iid standard Gaussian. Latent watermark methods modify or select this draw." },
+          { label: "T−1", title: "Predict and step", text: "Use the noise predictor, time embedding and text conditioning to estimate a cleaner latent." },
+          { label: "…", title: "Repeat", text: "The sampler applies a sequence of reverse updates. Guidance can strengthen prompt conditioning." },
+          { label: "0", title: "Decode once", text: "After the final latent is obtained, the VAE decoder maps it back to image pixels." },
+        ]} />
+        <Callout label="No reference image">
+          Ordinary text-to-image generation does not begin with a cover image. It begins with noise. Therefore in-generation fidelity is about preserving the intended output distribution, prompt alignment and sample diversity, not minimising pixel distance to one canonical unwatermarked image.
+        </Callout>
+      </Section>
+
+      <Section id="locations" number="04" title="Five embedding locations">
+        <Table
+          headings={["Location", "Advantage", "Main liability"]}
+          rows={[
+            ["Model weights", "Every generated image can be marked automatically.", "Fine-tuning cost and possible model-performance change."],
+            ["Text conditioning", "Can control which object or prompt element receives a mark.", "Prompt manipulation and learned-token dependence."],
+            ["Initial noise zT", "Training-free insertion and direct key control are possible.", "Detection often needs approximate inversion."],
+            ["Intermediate state zt", "Can place strong evidence where the trajectory still has flexibility.", "Requires trajectory access and may add optimisation."],
+            ["VAE latent or features", "Compact, multi-scale representations can carry larger payloads.", "Often needs trained modules tied to the autoencoder."],
+          ]}
+        />
+      </Section>
+
+      <Section id="inversion" number="05" title="Inversion is an estimator, not a rewind button">
+        <p>Many latent methods verify an image by estimating the latent that could have generated it. DDIM inversion runs a deterministic-style reverse mapping under a chosen model, scheduler, prompt and numerical configuration. Reconstruction error arises because the real generation path may be unknown and the image may have been edited.</p>
+        <Equation>
+          <span>x′<sub>w</sub> → VAE encoder → ẑ<sub>0</sub> → inverse trajectory → ẑ<sub>T</sub></span>
+          <small>the hat marks an estimate, not the exact original latent</small>
+        </Equation>
+        <p>A robust detector therefore needs a watermark representation whose decision survives structured inversion error. It should also report what model access and prompt knowledge verification assumes.</p>
+        <div className="sources">
+          <strong>Foundational reading</strong>
+          <ExternalLink href="https://arxiv.org/abs/2112.10752">Latent Diffusion Models</ExternalLink>
+          <ExternalLink href="https://arxiv.org/abs/2006.11239">Denoising Diffusion Probabilistic Models</ExternalLink>
+          <ExternalLink href="https://arxiv.org/abs/2010.02502">Denoising Diffusion Implicit Models</ExternalLink>
+        </div>
+      </Section>
+      <NextPage path="/foundations/frequency" label="Next: image frequency" />
+    </Article>
   );
-
-  return <canvas ref={canvasRef} className="distribution-canvas" aria-label="Gaussian point cloud visualisation" />;
 }
 
-const channelStages = [
-  {
-    name: "Payload",
-    plain: "The information you want the image to carry.",
-    technical: "A binary mark, user identifier, cryptographic seed, or structured message.",
-  },
-  {
-    name: "Keyed encoder",
-    plain: "A secret rule turns the payload into a latent pattern.",
-    technical: "The key determines sampling regions, codewords, frequency structure, or coordinate pairings.",
-  },
-  {
-    name: "Generator",
-    plain: "The diffusion model turns the marked latent into an image.",
-    technical: "The denoising trajectory transports the signal while text conditioning determines image content.",
-  },
-  {
-    name: "Real-world channel",
-    plain: "The image is compressed, resized, edited, or regenerated.",
-    technical: "These operations disturb the latent estimate and alter the detector's signal-to-noise ratio.",
-  },
-  {
-    name: "Inversion",
-    plain: "The detector estimates the starting latent from the image.",
-    technical: "DDIM-style inversion is approximate and depends on the model, sampler, prompt assumptions, and image history.",
-  },
-  {
-    name: "Decision",
-    plain: "A decoder returns a message and confidence.",
-    technical: "Verification needs a calibrated null distribution, a threshold, and an explicit false-positive operating point.",
-  },
-];
+function FrequencyLab() {
+  const [frequency, setFrequency] = useState(8);
+  const period = Math.max(3, 42 - frequency * 1.8);
+  return (
+    <div className="lab frequency-lab">
+      <div className="lab-head"><span>Spatial frequency</span><b>{frequency < 8 ? "low" : frequency < 16 ? "mid" : "high"}</b></div>
+      <div className="frequency-sample" style={{ backgroundSize: `${period}px ${period}px` }} aria-label={`Stripe pattern with frequency setting ${frequency}`} />
+      <label>
+        <span>Cycles across space</span><output>{frequency}</output>
+        <input type="range" min="1" max="22" value={frequency} onChange={(event) => setFrequency(Number(event.target.value))} />
+      </label>
+      <p><strong>Learning pointer:</strong> raising frequency makes intensity change more often across distance. Compression and resizing tend to suppress fine changes first, while strong low-frequency changes are more likely to alter visible structure.</p>
+    </div>
+  );
+}
 
-const methodFamilies = [
-  {
-    title: "Geometric structure",
-    methods: "Tree-Ring, RingID, SFW",
-    idea: "Place recognisable geometry in Fourier or latent coordinates.",
-    cost: "A strong structure may shift the prior or reveal key relationships.",
-  },
-  {
-    title: "Distribution-aware mapping",
-    methods: "Gaussian Shading, PRC, T2SMark",
-    idea: "Choose marked noise through keyed sampling or pseudorandom coding.",
-    cost: "Robust decoding, cryptographic assumptions, and key reuse become central.",
-  },
-  {
-    title: "Semantic binding",
-    methods: "SEAL, TAG-WM",
-    idea: "Tie verification to image meaning or local tamper evidence.",
-    cost: "The semantic encoder or localisation system becomes part of the trusted pipeline.",
-  },
-  {
-    title: "Learned recovery",
-    methods: "GaussMarker, SERUM, LaWa",
-    idea: "Train a detector, restorer, or decoder to survive a family of attacks.",
-    cost: "Training data and attack coverage can limit transfer to new models and edits.",
-  },
-];
+function FrequencyPage() {
+  return (
+    <Article
+      eyebrow="Foundations · 04"
+      title="Frequency describes change across space."
+      lead="The frequency domain reorganises an image into patterns of spatial variation. It helps explain invisibility, compression, geometric attacks and Fourier watermark design."
+    >
+      <Section id="spatial" number="01" title="High and low spatial frequency">
+        <FrequencyLab />
+        <ConceptGrid items={[
+          { title: "Low frequency", text: "Slow variation across the image, such as broad illumination, colour regions and large shapes." },
+          { title: "High frequency", text: "Rapid variation across nearby pixels, such as edges, fine texture, sensor noise and compression artefacts." },
+        ]} />
+        <p>Time signals are measured in cycles per second, or hertz, because their independent variable is time. Digital image frequency is normally expressed in cycles per pixel, cycles per image, or normalised frequency. It is only expressed in hertz if a physical sampling process with a time rate has been defined.</p>
+      </Section>
 
-const attackLessons = {
-  Clean: {
-    effect: "No extra image transformation is introduced.",
-    inversion: "Any recovery error now comes from the inversion procedure, model mismatch, or numerical approximation.",
-    report: "Report clean detection first. It separates embedding and inversion errors from robustness failures.",
-  },
-  JPEG: {
-    effect: "Compression changes local pixel values and removes high-frequency detail.",
-    inversion: "The detector inverts a nearby image, not the exact image produced by the generator.",
-    report: "State the codec, quality setting, colour conversion, and whether compression was applied once or repeatedly.",
-  },
-  Crop: {
-    effect: "Cropping removes content and changes the spatial coordinate system.",
-    inversion: "The estimated latent may be misaligned with the coordinates or frequencies used by the key.",
-    report: "State crop area, crop location, resizing policy, and whether the detector knows the geometry.",
-  },
-  Regenerate: {
-    effect: "A second generative process creates new pixels that preserve some meaning but not the original generation path.",
-    inversion: "The recovered latent belongs to the new generation process, so the original latent signal can be greatly reduced.",
-    report: "Name the regeneration model, prompt source, strength, sampler, and number of steps.",
-  },
-  "Semantic edit": {
-    effect: "The image meaning or object layout changes while some visual content remains.",
-    inversion: "The detector must distinguish an allowed edit from a content change that invalidates provenance.",
-    report: "Define which edits should retain the mark and which should cause verification to fail.",
-  },
-} as const;
+      <Section id="transform" number="02" title="Spatial domain to frequency domain">
+        <div className="domain-pair">
+          <div><span>Spatial domain</span><div className="pixel-grid" /><p>Each coordinate stores intensity or colour.</p></div>
+          <b>DFT →</b>
+          <div><span>Frequency domain</span><div className="spectrum" /><p>Each coordinate stores a sinusoidal component with amplitude and phase.</p></div>
+        </div>
+        <p>The two-dimensional discrete Fourier transform represents an image as horizontal and vertical spatial frequencies. The centre often displays low frequencies after a visualisation shift, while distance from the centre corresponds to higher frequency magnitude.</p>
+        <Equation>
+          <span>F(u, v) = Σ<sub>x</sub> Σ<sub>y</sub> f(x, y)e<sup>-i2π(ux/M + vy/N)</sup></span>
+          <small>each coefficient measures a spatial sinusoid, not an object category</small>
+        </Equation>
+      </Section>
 
-type AttackName = keyof typeof attackLessons;
+      <Section id="tradeoff" number="03" title="Why frequency creates a trade-off">
+        <Table
+          headings={["Band", "Potential advantage", "Typical failure"]}
+          rows={[
+            ["Very low", "Survives compression and modest resizing.", "Can create visible colour, brightness or shape change."],
+            ["Mid", "Can balance visibility and persistence.", "Still vulnerable to geometric misalignment and reconstruction."],
+            ["Very high", "Small changes can be hard to see in textured areas.", "JPEG, blur, resize and denoising remove or alter the signal."],
+          ]}
+        />
+        <p>No frequency band is universally robust. Rotation changes Fourier orientation, scaling changes radial position, translation changes phase, and cropping convolves the spectrum with the crop window. Ring patterns are useful because rotation preserves radius in an idealised setting, not because rings are immune to all geometric processing.</p>
+      </Section>
 
-const glossary = [
-  ["Latent", "A compact numerical representation. Diffusion operates here instead of directly changing every pixel."],
-  ["zT", "The initial noisy latent, normally sampled from a standard Gaussian distribution."],
-  ["z0", "The denoised latent that the VAE decoder turns into pixels."],
-  ["Payload", "The information encoded by the watermark, such as a bit string or user identity."],
-  ["Key", "Secret or public material that controls embedding, verification, attribution, or signatures."],
-  ["Inversion", "An approximate reverse process that estimates an earlier latent from a final image."],
-  ["FPR", "False-positive rate. The fraction of genuinely unmarked images incorrectly declared marked."],
-  ["TPR", "True-positive rate. The fraction of marked images correctly detected at a stated threshold."],
-  ["Robustness", "The probability that the mark remains usable after a declared transformation or attack."],
-  ["Undetectability", "A security property stating that an efficient adversary cannot distinguish marked from unmarked outputs."],
-];
+      <Section id="integrity" number="04" title="Hermitian symmetry and real images">
+        <p>The Fourier transform of a real-valued spatial signal has conjugate symmetry. If a watermark edits only one side of the spectrum without its conjugate partner, the inverse transform can become complex or require discarding an imaginary component. SFWMark makes this integrity condition explicit.</p>
+        <Equation>
+          <span>F(-u, -v) = F(u, v)<sup>*</sup></span>
+          <small>conjugate symmetry for a real-valued spatial signal</small>
+        </Equation>
+      </Section>
 
-export default function App() {
-  const [denoiseStep, setDenoiseStep] = useState(18);
-  const [channelStage, setChannelStage] = useState(0);
-  const [attack, setAttack] = useState<AttackName>("Clean");
-  const [bit, setBit] = useState<0 | 1>(1);
-  const [angularError, setAngularError] = useState(8);
-  const [correlated, setCorrelated] = useState(false);
-  const detectedBit = Math.sin((bit === 1 ? Math.PI / 2 : -Math.PI / 2) + (angularError * Math.PI) / 180) >= 0 ? 1 : 0;
+      <Section id="semantic" number="05" title="Frequency is not semantics">
+        <p>A low-frequency component can influence broad structure, but it does not encode the concept “dog” by itself. Semantic watermarking binds evidence to meaning using a semantic representation, a prompt controller, an object region or a model feature. The semantic representation can still be transported through frequency-domain or latent signals, but the terms describe different design axes.</p>
+        <Callout label="Useful separation" tone="plain">
+          Ask two independent questions: what does the key represent, and in which numerical representation is it embedded? A semantic key can be embedded through a Fourier pattern. A Fourier pattern can also carry a content-agnostic owner ID.
+        </Callout>
+      </Section>
+      <NextPage path="/foundations/evaluation" label="Next: evaluation" />
+    </Article>
+  );
+}
+
+function ThresholdLab() {
+  const [threshold, setThreshold] = useState(68);
+  const falseAccept = Math.max(0.01, 12 * Math.exp(-threshold / 16));
+  const detection = Math.max(0, Math.min(100, 99 - Math.max(0, threshold - 48) * 0.78));
+  return (
+    <div className="lab threshold-lab">
+      <div className="lab-head"><span>Decision threshold</span><b>operating point</b></div>
+      <div className="score-track">
+        <div className="null-scores"><span>unmarked scores</span></div>
+        <div className="marked-scores"><span>marked scores</span></div>
+        <i style={{ left: `${threshold}%` }}><span>τ</span></i>
+      </div>
+      <label>
+        <span>Acceptance threshold τ</span><output>{threshold}</output>
+        <input type="range" min="20" max="92" value={threshold} onChange={(event) => setThreshold(Number(event.target.value))} />
+      </label>
+      <div className="lab-stats">
+        <div><small>illustrative false accept</small><b>{falseAccept.toFixed(2)}%</b></div>
+        <div><small>illustrative detection</small><b>{detection.toFixed(1)}%</b></div>
+      </div>
+      <p><strong>Learning pointer:</strong> these values are illustrative, not paper results. Raising a threshold generally reduces false positives and also rejects more damaged watermarks. A method has no single accuracy independent of its threshold.</p>
+    </div>
+  );
+}
+
+function EvaluationPage() {
+  return (
+    <Article
+      eyebrow="Foundations · 05"
+      title="Five criteria, one operating point."
+      lead="Fidelity, robustness, security, payload and computation interact. Reporting one without the others hides the actual design choice."
+    >
+      <Section id="criteria" number="01" title="The five criteria">
+        <ConceptGrid items={[
+          { tag: "01", title: "Fidelity", text: "Preserve the intended image, distribution, prompt alignment and diversity." },
+          { tag: "02", title: "Robustness", text: "Recover evidence after specified benign or hostile transformations." },
+          { tag: "03", title: "Security", text: "Resist detection, removal, forgery, key recovery and false attribution under a stated adversary." },
+          { tag: "04", title: "Payload", text: "Recover useful message bits at a stated whole-message error rate." },
+          { tag: "05", title: "Complexity", text: "Account for training, generation overhead, inversion, memory, key search and calibration." },
+        ]} />
+      </Section>
+
+      <Section id="fidelity" number="02" title="Fidelity needs more than one metric">
+        <Table
+          headings={["Measure", "What it asks", "What it misses"]}
+          rows={[
+            ["PSNR", "How large is paired pixel error?", "Perceptual importance and unpaired generative quality."],
+            ["SSIM", "Are local luminance, contrast and structure similar?", "Semantic correctness and subtle patterned artefacts."],
+            ["LPIPS", "Are deep perceptual features similar for a pair?", "Population diversity and security."],
+            ["FID", "Are generated feature distributions close to a reference set?", "Paired prompt details and reliable results at small sample sizes."],
+            ["CLIP score", "Does the image align with text in a joint embedding?", "Fine visual fidelity and watermark visibility."],
+            ["Human study", "Can people see or prefer a difference under a protocol?", "Statistical detectability and conditions outside the protocol."],
+          ]}
+        />
+        <p>For a latent sampler, compare distributions and prompt-conditional diversity. For a learned image embedder with a natural paired cover, include paired metrics. Do not use a distribution metric as a substitute for a paired one or vice versa.</p>
+      </Section>
+
+      <Section id="robustness" number="03" title="Robustness is an attack curve">
+        <p>Report performance across attack intensity, not only a chosen point. Include clean performance, individual attacks, realistic compositions and at least one attack not used for training or parameter selection.</p>
+        <Equation>
+          <span>R(A, s, τ) = P[D(A<sub>s</sub>(x<sub>w</sub>)) accepts | marked]</span>
+          <small>robustness depends on attack A, strength s and threshold τ</small>
+        </Equation>
+        <p>For multi-bit methods, publish bit-error rate and whole-message success. A 99 per cent bit accuracy over a 256-bit message does not imply that 99 per cent of messages are exactly correct.</p>
+      </Section>
+
+      <Section id="threshold" number="04" title="Security starts with the null distribution">
+        <ThresholdLab />
+        <p>A detector threshold must be chosen from scores on unmarked data. At internet scale, even a small false-positive rate can produce many incorrect ownership claims. Confidence intervals matter when the requested rate is lower than the reciprocal of the number of negative samples tested.</p>
+        <ConceptGrid items={[
+          { title: "Removal", text: "Make a marked image fail verification while preserving useful content." },
+          { title: "Forgery", text: "Make an unmarked or altered image pass verification." },
+          { title: "Detection", text: "Decide whether a sample comes from the marked distribution without knowing the key." },
+          { title: "Key recovery", text: "Infer secret structure from code, queries or many marked outputs." },
+        ]} />
+      </Section>
+
+      <Section id="payload" number="05" title="Payload and capacity">
+        <p>Raw payload is the number of message bits before redundancy. Effective payload subtracts error-correction, repetition, signatures, nonces and protocol metadata. Capacity is meaningful only with a target error probability, attack channel and false-positive rule.</p>
+        <Equation>
+          <span>useful rate = application bits / total embedded symbols</span>
+          <small>coding improves reliability by spending symbols</small>
+        </Equation>
+      </Section>
+
+      <Section id="cost" number="06" title="Computational complexity">
+        <Table
+          headings={["Stage", "Costs to report"]}
+          rows={[
+            ["Preparation", "Training hours, data, trainable parameters and model-specific calibration."],
+            ["Embedding", "Extra sampler steps, latent transforms, optimisation iterations and cryptographic operations."],
+            ["Detection", "Image encoder passes, full diffusion inversions, decoder calls and key comparisons."],
+            ["Operation", "Key storage, revocation, detector updates, audit logs and threshold recalibration."],
+          ]}
+        />
+        <Callout label="A fair latency comparison">
+          Measure on the same hardware, image size, model, precision and batch size. Count inversion steps separately from a single neural detector pass.
+        </Callout>
+      </Section>
+      <NextPage path="/papers" label="Next: method atlas" />
+    </Article>
+  );
+}
+
+const familyOrder: Paper["family"][] = ["Latent pattern", "Gaussian mapping", "Learned latent", "Semantic or task-aware"];
+
+function PapersPage() {
+  const [boundary, setBoundary] = useState<"All" | TrainingBoundary>("All");
+  const filtered = papers.filter((paper) => boundary === "All" || paper.boundary === boundary);
+  return (
+    <Article
+      eyebrow="Research atlas"
+      title="Sixteen methods, one comparison grammar."
+      lead="Each dossier explains the problem, information path, training boundary, detector, contributions, limitations and questions for replication."
+      meta="Venue and year follow the public paper record available in July 2026."
+    >
+      <div className="filter-bar" aria-label="Filter papers by training boundary">
+        {(["All", "No method-specific training", "Auxiliary training", "Conditioning fine-tuning", "Per-image optimisation"] as const).map((value) => (
+          <button key={value} className={boundary === value ? "active" : ""} onClick={() => setBoundary(value)}>{value}</button>
+        ))}
+      </div>
+      {familyOrder.map((family) => {
+        const group = filtered.filter((paper) => paper.family === family);
+        if (!group.length) return null;
+        return (
+          <Section id={family.toLowerCase().replaceAll(" ", "-")} title={family} key={family}>
+            <div className="paper-grid">
+              {group.map((paper) => (
+                <Link to={`/papers/${paper.slug}`} className="paper-card" key={paper.slug}>
+                  <div><span>{paper.venue} · {paper.year}</span><BoundaryBadge value={paper.boundary} /></div>
+                  <h3>{paper.shortTitle}</h3>
+                  <p>{paper.oneLine}</p>
+                  <b>Read dossier →</b>
+                </Link>
+              ))}
+            </div>
+          </Section>
+        );
+      })}
+      <Callout label="Scope note" tone="plain">
+        The atlas focuses on latent and in-generation methods in the supplied reading list. Weight-embedded methods such as Stable Signature, AquaLoRA and SleeperMark are adjacent work, but require a separate fine-tuning chapter for a fair treatment.
+      </Callout>
+      <NextPage path="/research/gaps" label="Next: threats and gaps" />
+    </Article>
+  );
+}
+
+function PaperPage({ paper }: { paper: Paper }) {
+  const currentIndex = papers.findIndex((item) => item.slug === paper.slug);
+  const next = papers[(currentIndex + 1) % papers.length];
+  return (
+    <Article
+      eyebrow={`${paper.family} · ${paper.venue} ${paper.year}`}
+      title={paper.shortTitle}
+      lead={paper.oneLine}
+      meta={paper.title}
+    >
+      <div className="paper-facts">
+        <div><span>Authors</span><b>{paper.authors}</b></div>
+        <div><span>Training boundary</span><BoundaryBadge value={paper.boundary} /></div>
+        <div><span>Primary source</span><ExternalLink href={paper.paperUrl}>Read paper</ExternalLink></div>
+        <div><span>Implementation</span>{paper.codeUrl ? <ExternalLink href={paper.codeUrl}>Official code</ExternalLink> : <b>None linked</b>}</div>
+      </div>
+
+      <Section id="boundary" number="01" title="First, place the training boundary">
+        <Callout label={paper.boundary}>{paper.boundaryDetail}</Callout>
+      </Section>
+
+      <Section id="problem" number="02" title="Problem the paper isolates">
+        <p>{paper.problem}</p>
+      </Section>
+
+      <Section id="mechanism" number="03" title="Mechanism, step by step">
+        <Pipeline steps={paper.mechanism.map((text, index) => ({
+          label: String(index + 1).padStart(2, "0"),
+          title: index === 0 ? "Prepare evidence" : index === paper.mechanism.length - 1 ? "Complete the path" : "Transform",
+          text,
+        }))} />
+      </Section>
+
+      <Section id="detection" number="04" title="What the verifier actually does">
+        <p>{paper.detection}</p>
+        <Callout label="Audit pointer" tone="plain">
+          Identify every input used at verification: model weights, prompt, scheduler, secret key, public key, candidate key set and original image. A detector is not black-box merely because it receives pixels first.
+        </Callout>
+      </Section>
+
+      <div className="split-sections">
+        <Section id="contributions" number="05" title="What this paper adds">
+          <ul className="check-list">{paper.contributions.map((item) => <li key={item}>{item}</li>)}</ul>
+        </Section>
+        <Section id="limits" number="06" title="Where the claim stops">
+          <ul className="limit-list">{paper.limitations.map((item) => <li key={item}>{item}</li>)}</ul>
+        </Section>
+      </div>
+
+      <Section id="questions" number="07" title="Questions for a close reading">
+        <ol className="study-questions">{paper.studyQuestions.map((item) => <li key={item}>{item}</li>)}</ol>
+      </Section>
+
+      <div className="paper-source-note">
+        <strong>Evidence policy</strong>
+        <p>This dossier paraphrases the public paper and official project information. Performance values are omitted unless the metric, attack and operating point can be stated together. Read the paper for experimental tables and implementation details.</p>
+      </div>
+      <NextPage path={`/papers/${next.slug}`} label={`Next dossier: ${next.shortTitle}`} />
+    </Article>
+  );
+}
+
+function GapsPage() {
+  return (
+    <Article
+      eyebrow="Research agenda"
+      title="The next paper should close a measurement gap."
+      lead="A useful short paper does not need another watermark pattern. It needs one narrow claim that current systems cannot establish under realistic conditions."
+    >
+      <Section id="gaps" number="01" title="Eight gaps that recur across the atlas">
+        <div className="gap-list">
+          <div><b>01</b><h3>Composed attack channels</h3><p>Most evaluations sweep one attack at a time. Real images are cropped, resized, compressed and then regenerated. The order matters and errors are not independent.</p></div>
+          <div><b>02</b><h3>Open-set multi-key calibration</h3><p>Top-one key accuracy assumes the true key is registered. Deployment must also reject real images, outputs from other models and unregistered keys while the database grows.</p></div>
+          <div><b>03</b><h3>Correlated inversion error</h3><p>Several coding methods treat recovered latent errors as independent or Gaussian. Denoising trajectories can create channel, spatial and frequency correlations that invalidate those decoders.</p></div>
+          <div><b>04</b><h3>Security against forgery</h3><p>Removal robustness does not stop an attacker from transplanting, synthesising or eliciting watermark evidence. Public verification needs explicit anti-forgery reasoning.</p></div>
+          <div><b>05</b><h3>Cross-architecture transfer</h3><p>Results across Stable Diffusion 1.x and 2.x do not establish transfer to diffusion transformers, different VAEs, distilled samplers or proprietary reconstruction systems.</p></div>
+          <div><b>06</b><h3>Useful capacity</h3><p>Raw bit counts hide repetition, error correction, signatures and message failures. Protocol-level payload should be reported with exact-message recovery.</p></div>
+          <div><b>07</b><h3>Semantic continuity</h3><p>Ownership can survive an edit while content integrity fails. Methods need rules for whether crop, inpainting, object replacement and style transfer should retain, update or invalidate evidence.</p></div>
+          <div><b>08</b><h3>Full-system cost</h3><p>Training-free embedding can still require costly inversion, key search or per-image optimisation. End-to-end latency and energy are rarely compared under matched hardware.</p></div>
+        </div>
+      </Section>
+
+      <Section id="candidate" number="02" title="A focused, thesis-quality short-paper direction">
+        <div className="research-proposal">
+          <p className="eyebrow">Candidate programme</p>
+          <h3>Correlation-aware decoding under composed edits</h3>
+          <p><strong>Research question:</strong> Can a training-free latent watermark decoder improve exact-message recovery and calibrated false-positive control by modelling the structured covariance of inversion errors after realistic attack sequences?</p>
+          <div className="proposal-grid">
+            <div><span>Hypothesis</span><p>Recovered latent errors are correlated across channels and frequencies. A decoder that estimates this covariance should outperform coordinate-wise hard decisions at equal false-positive rate.</p></div>
+            <div><span>Minimal contribution</span><p>An empirical error model, a correlation-aware decoder and a reproducible benchmark of ordered attack compositions.</p></div>
+            <div><span>Baselines</span><p>Tree-Rings or RingID for pattern detection; Gaussian Shading for hard bit mapping; Gaussian Shannon or PRC for coded recovery where compatible.</p></div>
+            <div><span>Falsification</span><p>The idea fails if covariance estimates do not transfer across prompts, models and attacks, or if a simple soft scalar decoder matches performance.</p></div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="experiment" number="03" title="A compact experimental design">
+        <Pipeline steps={[
+          { label: "1", title: "Measure the channel", text: "Generate paired marked samples and record recovered initial latents under clean, single and ordered composed attacks." },
+          { label: "2", title: "Test the assumption", text: "Quantify channel, spatial and frequency covariance. Compare Gaussian, heavy-tailed and mixture residual models." },
+          { label: "3", title: "Build the smallest decoder", text: "Start with whitening plus soft likelihoods. Add complexity only when held-out evidence justifies it." },
+          { label: "4", title: "Calibrate on negatives", text: "Set thresholds using generated unmarked images, real photographs and outputs from unrelated generators." },
+          { label: "5", title: "Evaluate transfer", text: "Hold out prompts, attack compositions, sampler settings and at least one model architecture." },
+        ]} />
+        <Table
+          headings={["Claim", "Required evidence"]}
+          rows={[
+            ["Better robustness", "Attack curves and exact-message recovery at matched false-positive rates."],
+            ["Better modelling", "Held-out likelihood or calibration, plus covariance visualisation and goodness-of-fit tests."],
+            ["Generalisation", "Unseen prompt, attack order, scheduler and model results."],
+            ["Practicality", "Detection latency, memory and any calibration-set cost."],
+            ["No fidelity loss", "State only if embedding is unchanged; otherwise provide distribution and prompt-alignment evaluation."],
+          ]}
+        />
+      </Section>
+
+      <Section id="threat" number="04" title="Threat model to state before experiments">
+        <ul className="check-list">
+          <li>The attacker knows the algorithm and model family but not the secret key.</li>
+          <li>The attacker may collect marked and unmarked outputs and make a bounded number of detector queries.</li>
+          <li>The attacker wants to remove evidence or cause false attribution while retaining semantic utility.</li>
+          <li>The verifier may know the generator and key, but should not assume access to the original image.</li>
+          <li>Public-key and secret-key verification are evaluated as different deployment settings.</li>
+        </ul>
+        <div className="sources">
+          <strong>Adjacent security reading</strong>
+          <ExternalLink href="https://openaccess.thecvf.com/content/CVPR2025/papers/Muller_Black-Box_Forgery_Attacks_on_Semantic_Watermarks_for_Diffusion_Models_CVPR_2025_paper.pdf">Black-Box Forgery Attacks on Semantic Watermarks</ExternalLink>
+          <ExternalLink href="https://openaccess.thecvf.com/content/CVPR2025/papers/An_Decoder_Gradient_Shield_Provable_and_High-Fidelity_Prevention_of_Gradient-Based_Box-Free_CVPR_2025_paper.pdf">Decoder Gradient Shield</ExternalLink>
+        </div>
+      </Section>
+
+      <Section id="avoid" number="05" title="Claims to avoid">
+        <div className="avoid-list">
+          <p><del>Robust against all attacks.</del><br />Robust under the specified attack families and intensity range.</p>
+          <p><del>Provably secure.</del><br />Secure under the theorem's stated adversary, oracle and randomness assumptions.</p>
+          <p><del>No quality loss.</del><br />No detected loss under the named distribution, paired and prompt-alignment tests.</p>
+          <p><del>Works across models.</del><br />Evaluated on the named architectures, with all model-specific calibration disclosed.</p>
+        </div>
+      </Section>
+      <NextPage path="/glossary" label="Next: glossary" />
+    </Article>
+  );
+}
+
+function GlossaryPage() {
+  const [query, setQuery] = useState("");
+  const terms = glossary.filter(([term, definition]) => `${term} ${definition}`.toLowerCase().includes(query.toLowerCase()));
+  return (
+    <Article
+      eyebrow="Reference"
+      title="Glossary"
+      lead="Short definitions for terms used throughout the guide. Search by mechanism, metric or security concept."
+    >
+      <label className="search-box">
+        <span>Search terms</span>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Try inversion, capacity, open-set…" />
+      </label>
+      <dl className="glossary">
+        {terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}
+      </dl>
+      {!terms.length && <p className="empty">No matching term. Try a broader word.</p>}
+      <NextPage path="/" label="Return to start" />
+    </Article>
+  );
+}
+
+function NotFoundPage() {
+  return (
+    <Article eyebrow="404" title="Chapter not found." lead="The route does not match a current chapter or paper dossier.">
+      <Link to="/" className="button primary">Return to start</Link>
+    </Article>
+  );
+}
+
+function NextPage({ path, label }: { path: string; label: string }) {
+  return <Link to={path} className="next-page"><span>Continue reading</span><b>{label} →</b></Link>;
+}
+
+function App() {
+  const route = useHashRoute();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const page = useMemo(() => {
+    if (route === "/") return <HomePage />;
+    if (route === "/reading") return <ReadingPage />;
+    if (route === "/foundations/watermarking") return <WatermarkingPage />;
+    if (route === "/foundations/networks") return <NetworksPage />;
+    if (route === "/foundations/diffusion") return <DiffusionPage />;
+    if (route === "/foundations/frequency") return <FrequencyPage />;
+    if (route === "/foundations/evaluation") return <EvaluationPage />;
+    if (route === "/papers") return <PapersPage />;
+    if (route === "/research/gaps") return <GapsPage />;
+    if (route === "/glossary") return <GlossaryPage />;
+    if (route.startsWith("/papers/")) {
+      const paper = paperBySlug.get(route.slice("/papers/".length));
+      return paper ? <PaperPage paper={paper} /> : <NotFoundPage />;
+    }
+    return <NotFoundPage />;
+  }, [route]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+    document.title = route === "/" ? "Latent Watermarking 101" : `${route.split("/").filter(Boolean).at(-1)?.replaceAll("-", " ")} | Latent Watermarking 101`;
+  }, [route]);
 
   return (
-    <main>
+    <div className="app-shell">
       <header className="site-header">
-        <a className="brand" href="#top">
-          <span>LW</span>
-          <b>Latent Watermarking 101</b>
-        </a>
-        <nav aria-label="Primary navigation">
-          <a href="#diffusion">Diffusion</a>
-          <a href="#channel">Channel</a>
-          <a href="#methods">Methods</a>
-          <a href="#math">Math lab</a>
-          <a href="#reading">Reading</a>
-        </nav>
-        <a className="header-link" href="https://github.com/holsoma/latent-watermarking-101" target="_blank" rel="noreferrer">
-          View source
-        </a>
+        <Link to="/" className="brand"><span>LW</span><b>Latent Watermarking 101</b></Link>
+        <p>Technical field guide</p>
+        <button className="menu-button" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>Contents</button>
+        <a href="https://github.com/holsoma/latent-watermarking-101" target="_blank" rel="noreferrer" className="github-link">GitHub ↗</a>
       </header>
-
-      <section className="hero" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow">From Gaussian noise to verifiable evidence</p>
-          <h1>Follow the signal.</h1>
-          <p>Learn how diffusion images carry hidden information without starting from a research paper.</p>
-          <div className="hero-actions">
-            <a className="button primary" href="#diffusion">Start with the generator</a>
-            <a className="button secondary" href="#reading">See primary sources</a>
-          </div>
-        </div>
-        <div className="hero-visual">
-          <DenoiseCanvas progress={denoiseStep / 50} />
-          <div className="hero-control">
-            <label htmlFor="hero-denoise">Denoising step <b>{denoiseStep}/50</b></label>
-            <input
-              id="hero-denoise"
-              type="range"
-              min="0"
-              max="50"
-              value={denoiseStep}
-              onChange={(event) => setDenoiseStep(Number(event.target.value))}
-            />
-          </div>
-          <div className="interaction-brief">
-            <b>Learning pointer</b>
-            <p>Move the step control. Notice that the latent starts as noise, while the image structure emerges through repeated denoising.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="learning-strip" aria-label="Learning outcomes">
-        <p>Understand the latent diffusion pipeline</p>
-        <p>Trace embedding and detection end to end</p>
-        <p>Explain why inversion can fail</p>
-        <p>Read method claims and results critically</p>
-      </section>
-
-      <section className="lesson diffusion" id="diffusion">
-        <div className="lesson-heading">
-          <h2>Stable Diffusion does most of its work in a smaller numerical space.</h2>
-          <p className="section-intro">
-            A classic latent diffusion pipeline converts text into conditioning, turns random latent noise into a structured latent, then decodes that latent into pixels.
-          </p>
-        </div>
-        <div className="process-rail">
-          {[
-            ["Prompt", "A caption describes the requested content."],
-            ["Text conditioning", "A text encoder produces vectors that guide generation."],
-            ["Initial latent zT", "Generation begins with Gaussian random noise."],
-            ["Denoising", "A U-Net or transformer predicts how to remove noise step by step."],
-            ["Image latent z0", "The result is compact and structured, but is not yet a pixel image."],
-            ["VAE decode", "A decoder maps the final latent into RGB pixels."],
-          ].map(([title, description], index) => (
-            <article key={title}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </article>
-          ))}
-        </div>
-        <aside className="precision-note">
-          <b>Precision note</b>
-          <p>
-            “Stable Diffusion” names a family. Earlier systems commonly use a U-Net denoiser, while newer diffusion systems may use transformer backbones. The latent and VAE ideas remain useful, but implementation details vary.
-          </p>
-        </aside>
-        <details className="knowledge-check">
-          <summary>Check your understanding: where can an in-generation watermark enter this pipeline?</summary>
-          <p>
-            A method can modify the initial latent, influence an intermediate denoising state, alter conditioning, or change the decoder. These choices create different training, compatibility, and detection requirements.
-          </p>
-        </details>
-      </section>
-
-      <section className="lesson comparison" id="watermarking">
-        <div className="lesson-heading compact">
-          <h2>Traditional watermarking changes an image. Generative watermarking changes how the image is made.</h2>
-        </div>
-        <div className="comparison-grid">
-          <article>
-            <div className="comparison-diagram posthoc">
-              <span>Generated image</span><i>+</i><span>Pixel watermark</span><i>=</i><strong>Published image</strong>
-            </div>
-            <h3>Post-hoc watermarking</h3>
-            <p>An encoder modifies pixels after generation. A decoder later searches those pixels for the hidden message.</p>
-            <ul>
-              <li>Works with images from many sources</li>
-              <li>Can use mature image-watermark encoders</li>
-              <li>Introduces a direct image perturbation</li>
-            </ul>
-          </article>
-          <article>
-            <div className="comparison-diagram ingeneration">
-              <span>Marked zT</span><i>→</i><span>Diffusion process</span><i>→</i><strong>Published image</strong>
-            </div>
-            <h3>In-generation watermarking</h3>
-            <p>The initial noise or an intermediate latent carries the mark before pixels exist.</p>
-            <ul>
-              <li>Can leave the standard generation model unchanged</li>
-              <li>Can link provenance to generation keys</li>
-              <li>Usually needs inversion for detection</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section className="lesson channel" id="channel">
-        <div className="lesson-heading">
-          <h2>A watermark is a message sent through a noisy, adversarial channel.</h2>
-          <p className="section-intro">
-            Click each stage. The plain explanation and research term describe the same system at different levels.
-          </p>
-        </div>
-        <div className="interaction-brief section-brief">
-          <b>Question to answer</b>
-          <p>At which stage does the method need a secret key, a trained component, model access, or an assumption about image history?</p>
-        </div>
-        <div className="channel-layout">
-          <div className="channel-stages" role="tablist" aria-label="Watermark channel stages">
-            {channelStages.map((stage, index) => (
-              <button
-                key={stage.name}
-                className={channelStage === index ? "active" : ""}
-                onClick={() => setChannelStage(index)}
-                role="tab"
-                aria-selected={channelStage === index}
-              >
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {stage.name}
-              </button>
+      <aside className={`sidebar ${menuOpen ? "open" : ""}`} aria-label="Guide chapters">
+        <div className="reading-status"><span>Guide status</span><b>{papers.length} paper dossiers</b><small>Public sources only</small></div>
+        {navGroups.map((group) => (
+          <nav key={group.label}>
+            <p>{group.label}</p>
+            {group.items.map((item) => (
+              <Link key={item.path} to={item.path} className={route === item.path ? "active" : ""} onClick={() => setMenuOpen(false)}>{item.label}</Link>
             ))}
-          </div>
-          <div className="channel-explainer" role="tabpanel">
-            <span>Stage {channelStage + 1} of {channelStages.length}</span>
-            <h3>{channelStages[channelStage].name}</h3>
-            <p className="plain">{channelStages[channelStage].plain}</p>
-            <div>
-              <b>Research language</b>
-              <p>{channelStages[channelStage].technical}</p>
-            </div>
-          </div>
-        </div>
-        <details className="knowledge-check">
-          <summary>Check your understanding: why is a detector threshold part of the method?</summary>
-          <p>
-            A score alone does not declare provenance. The threshold sets the trade-off between missed marks and false accusations, so it must be calibrated on an explicit unmarked distribution.
-          </p>
-        </details>
-      </section>
-
-      <section className="lesson inversion">
-        <div className="lesson-heading compact">
-          <h2>Detection starts with an approximation, not a time machine.</h2>
-          <p className="section-intro">
-            Diffusion inversion estimates an earlier latent. Every edit changes the quality of that estimate.
-          </p>
-        </div>
-        <div className="attack-lab">
-          <div className="attack-controls">
-            {(Object.keys(attackLessons) as AttackName[]).map((name) => (
-              <button className={attack === name ? "active" : ""} onClick={() => setAttack(name)} key={name}>
-                {name}
-              </button>
-            ))}
-          </div>
-          <div className="signal-readout">
-            <div>
-              <span>Observed output</span>
-              <div className={`image-sample attack-${attack.toLowerCase().replace(" ", "-")}`}>
-                <DenoiseCanvas progress={0.98} />
-              </div>
-            </div>
-            <div className="attack-explainer" aria-live="polite">
-              <span>What changed</span>
-              <h3>{attackLessons[attack].effect}</h3>
-              <dl>
-                <div>
-                  <dt>Why inversion becomes harder</dt>
-                  <dd>{attackLessons[attack].inversion}</dd>
-                </div>
-                <div>
-                  <dt>What an experiment must report</dt>
-                  <dd>{attackLessons[attack].report}</dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-          <p className="simulation-note">
-            The image filters illustrate categories of change. They do not reproduce a named attack pipeline or predict detector performance.
-          </p>
-        </div>
-      </section>
-
-      <section className="lesson methods" id="methods">
-        <div className="lesson-heading">
-          <h2>Different methods spend their robustness budget in different places.</h2>
-        </div>
-        <div className="family-list">
-          {methodFamilies.map((family, index) => (
-            <article key={family.title}>
-              <div className="family-code">{String.fromCharCode(65 + index)}</div>
-              <div>
-                <h3>{family.title}</h3>
-                <p className="method-names">{family.methods}</p>
-              </div>
-              <p>{family.idea}</p>
-              <p className="family-cost"><b>Trade-off</b>{family.cost}</p>
-            </article>
+          </nav>
+        ))}
+        <nav>
+          <p>Paper dossiers</p>
+          {papers.map((paper) => (
+            <Link key={paper.slug} to={`/papers/${paper.slug}`} className={route === `/papers/${paper.slug}` ? "active" : ""} onClick={() => setMenuOpen(false)}>{paper.shortTitle}</Link>
           ))}
-        </div>
-        <div className="training-boundary">
-          <h3>Ask what “training-free” actually excludes.</h3>
-          <div>
-            <span>Strict training-free</span>
-            <span>Test-time optimisation</span>
-            <span>Auxiliary detector training</span>
-            <span>Model or decoder fine-tuning</span>
-          </div>
-          <p>
-            Keeping the base diffusion weights fixed does not make an entire system training-free. A learned detector, restorer, decoder, or token embedding still creates training requirements.
-          </p>
-        </div>
-      </section>
-
-      <section className="lesson math-lab" id="math">
-        <div className="lesson-heading">
-          <h2>Two Gaussian coordinates can be read as a point with a magnitude and an angle.</h2>
-          <p className="section-intro">
-            This coordinate-pair example explains the intuition behind angular encoding. It is not a reproduction of one paper's full algorithm.
-          </p>
-        </div>
-        <div className="interaction-brief section-brief">
-          <b>Try to break the bit</b>
-          <p>Choose a bit, then increase the inversion error until the recovered vector crosses the angular decision boundary.</p>
-        </div>
-        <div className="lab-grid">
-          <div className="canvas-panel">
-            <AngleCanvas bit={bit} error={angularError} />
-          </div>
-          <div className="lab-controls">
-            <div className="segmented">
-              <button className={bit === 0 ? "active" : ""} onClick={() => setBit(0)}>Encode bit 0</button>
-              <button className={bit === 1 ? "active" : ""} onClick={() => setBit(1)}>Encode bit 1</button>
-            </div>
-            <label htmlFor="angular-error">
-              Inversion angle error
-              <b>{angularError}°</b>
-            </label>
-            <input
-              id="angular-error"
-              type="range"
-              min="-120"
-              max="120"
-              value={angularError}
-              onChange={(event) => setAngularError(Number(event.target.value))}
-            />
-            <div className={`detector-result ${detectedBit === bit ? "correct" : "incorrect"}`} aria-live="polite">
-              <span>Detector reads</span>
-              <b>bit {detectedBit}</b>
-              <small>{detectedBit === bit ? "Decoded correctly" : "Decision boundary crossed"}</small>
-            </div>
-            <p>
-              Repetition and error-correcting codes can protect several uncertain coordinate decisions, but they consume capacity and require a declared noise model.
-            </p>
-          </div>
-        </div>
-        <details className="knowledge-check">
-          <summary>Check your understanding: why can a larger payload be harder to protect?</summary>
-          <p>
-            More message bits require more coordinate decisions. Without additional redundancy, the chance that at least one decision is corrupted increases. Redundancy helps, but uses latent degrees of freedom that could otherwise support diversity or capacity.
-          </p>
-        </details>
-      </section>
-
-      <section className="lesson gaussian">
-        <div className="lesson-heading compact">
-          <h2>Gaussian-looking coordinates can still depend on one another.</h2>
-          <p className="section-intro">
-            Matching each coordinate's mean and variance is not enough to prove that the complete latent remains independent Gaussian noise.
-          </p>
-        </div>
-        <div className="interaction-brief section-brief">
-          <b>Question to answer</b>
-          <p>Can every coordinate look Gaussian while pairs of coordinates still reveal a watermarking rule?</p>
-        </div>
-        <div className="distribution-lab">
-          <DistributionCanvas correlated={correlated} />
-          <div className="distribution-copy">
-            <div className="segmented">
-              <button className={!correlated ? "active" : ""} onClick={() => setCorrelated(false)}>Independent</button>
-              <button className={correlated ? "active" : ""} onClick={() => setCorrelated(true)}>Correlated</button>
-            </div>
-            <h3>{correlated ? "The marginals look normal, but the pair tilts." : "The cloud is circular and has no preferred direction."}</h3>
-            <dl>
-              <div><dt>Mean of x, y</dt><dd>Approximately 0</dd></div>
-              <div><dt>Variance of x, y</dt><dd>Approximately 1</dd></div>
-              <div><dt>Pair covariance</dt><dd>{correlated ? "High and positive" : "Approximately 0"}</dd></div>
-            </dl>
-            <p>
-              This distinction matters when a paper claims to preserve the latent prior. Check marginal statistics, covariance, higher-order dependence, and fixed-key detectability.
-            </p>
-          </div>
-        </div>
-        <details className="knowledge-check">
-          <summary>Check your understanding: what evidence is missing from a marginal histogram?</summary>
-          <p>
-            A one-dimensional histogram cannot reveal covariance or higher-order dependence between coordinates. A distribution-preservation claim needs tests at the joint level and under repeated use of a fixed key.
-          </p>
-        </details>
-      </section>
-
-      <section className="lesson claims">
-        <div className="lesson-heading">
-          <h2>A result is only useful when you can reconstruct the experimental claim.</h2>
-          <p className="section-intro">
-            Use these four questions when a paper reports detection accuracy, robustness, image quality, or distribution preservation.
-          </p>
-        </div>
-        <div className="claim-checklist">
-          <article>
-            <span>Detection</span>
-            <h3>At which false-positive rate?</h3>
-            <p>A true-positive rate without its threshold and false-positive operating point cannot support a deployment claim.</p>
-          </article>
-          <article>
-            <span>Robustness</span>
-            <h3>Under which exact transformation?</h3>
-            <p>“JPEG”, “crop”, and “regeneration” name attack families. Parameters and implementation choices determine the actual test.</p>
-          </article>
-          <article>
-            <span>Quality</span>
-            <h3>Compared with which unmarked baseline?</h3>
-            <p>Use matched prompts, seeds, samplers, and model settings. A metric alone does not isolate the effect of watermarking.</p>
-          </article>
-          <article>
-            <span>Security</span>
-            <h3>What does the attacker know and control?</h3>
-            <p>Key access, detector queries, model access, and repeated marked samples can change the threat model completely.</p>
-          </article>
-        </div>
-      </section>
-
-      <section className="lesson glossary" id="glossary">
-        <div className="lesson-heading compact">
-          <h2>The vocabulary research papers often leave implicit.</h2>
-        </div>
-        <div className="glossary-grid">
-          {glossary.map(([term, definition], index) => (
-            <details key={term} open={index < 2}>
-              <summary>{term}<span>+</span></summary>
-              <p>{definition}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      <section className="lesson reading" id="reading">
-        <div className="lesson-heading">
-          <h2>Read the field in the order its assumptions become necessary.</h2>
-        </div>
-        <ol className="reading-list">
-          <li>
-            <span>Foundation</span>
-            <div><h3>Latent Diffusion Models</h3><p>Learn why generation moves into latent space and how the VAE and denoiser divide the work.</p></div>
-            <a href="https://arxiv.org/abs/2112.10752" target="_blank" rel="noreferrer">Paper ↗</a>
-          </li>
-          <li>
-            <span>Inversion</span>
-            <div><h3>DDIM</h3><p>Understand deterministic sampling paths and why approximate reversal is possible.</p></div>
-            <a href="https://arxiv.org/abs/2010.02502" target="_blank" rel="noreferrer">Paper ↗</a>
-          </li>
-          <li>
-            <span>Geometry</span>
-            <div><h3>Tree-Ring Watermarks</h3><p>See how an initial-noise Fourier pattern created the modern training-free line.</p></div>
-            <a href="https://arxiv.org/abs/2305.20030" target="_blank" rel="noreferrer">Paper ↗</a>
-          </li>
-          <li>
-            <span>Distribution</span>
-            <div><h3>Gaussian Shading</h3><p>Move from visible structure towards distribution-preserving keyed sampling.</p></div>
-            <a href="https://openaccess.thecvf.com/content/CVPR2024/html/Yang_Gaussian_Shading_Provable_Performance-Lossless_Image_Watermarking_for_Diffusion_Models_CVPR_2024_paper.html" target="_blank" rel="noreferrer">Paper ↗</a>
-          </li>
-          <li>
-            <span>Security</span>
-            <div><h3>PRC Watermark</h3><p>Study computational undetectability and pseudorandom error-correcting codes.</p></div>
-            <a href="https://openreview.net/forum?id=jlhBFm7T2J" target="_blank" rel="noreferrer">Paper ↗</a>
-          </li>
-          <li>
-            <span>Forgery</span>
-            <div><h3>SEAL</h3><p>See why content binding matters when attackers can copy marks into unrelated images.</p></div>
-            <a href="https://openaccess.thecvf.com/content/ICCV2025/html/Arabi_SEAL_Semantic_Aware_Image_Watermarking_ICCV_2025_paper.html" target="_blank" rel="noreferrer">Paper ↗</a>
-          </li>
-        </ol>
-      </section>
-
+        </nav>
+      </aside>
+      {menuOpen && <button className="menu-scrim" aria-label="Close contents" onClick={() => setMenuOpen(false)} />}
+      <main>{page}</main>
       <footer>
-        <div>
-          <b>Latent Watermarking 101</b>
-          <p>
-            Public educational reference. Visual simulations are conceptual unless stated otherwise. Teaching format informed by{" "}
-            <a href="https://www.arjunvirk.com/writing/ml-guide" target="_blank" rel="noreferrer">Arjun Virk&apos;s ML Bible</a>.
-          </p>
-        </div>
-        <div>
-          <a href="#top">Back to top</a>
-          <a href="https://github.com/holsoma/latent-watermarking-101" target="_blank" rel="noreferrer">GitHub source</a>
-        </div>
+        <p>Latent Watermarking 101 · A public, source-backed learning project</p>
+        <p>Last reviewed July 2026 · <a href="https://github.com/holsoma/latent-watermarking-101">Contribute on GitHub</a></p>
       </footer>
-    </main>
+    </div>
   );
 }
+
+export default App;
