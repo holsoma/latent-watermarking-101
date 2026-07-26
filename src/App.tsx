@@ -1011,6 +1011,7 @@ function GapsPage() {
         </div>
       </Section>
 
+      <NextPage path="/glossary" label="Next: glossary" />
     </Article>
   );
 }
