@@ -1,6 +1,7 @@
 export type TrainingBoundary =
   | "No method-specific training"
   | "Auxiliary training"
+  | "Base model fine-tuning"
   | "Conditioning fine-tuning"
   | "Per-image optimisation";
 

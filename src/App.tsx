@@ -1,5 +1,21 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { glossary, paperBySlug, papers, type Paper, type TrainingBoundary } from "./content";
+import { glossary, papers as originalPapers, type Paper, type TrainingBoundary } from "./content";
+import { additionalPapers, additionalReading, studyContent, type PaperStudy } from "./studies";
+
+const studyCategories: PaperStudy["category"][] = [
+  "Foundations and bridges",
+  "Initial-noise and inversion",
+  "Learned and model-integrated",
+  "Semantics, integrity and security",
+];
+const papers = [...originalPapers, ...additionalPapers].sort((left, right) => {
+  const categoryDifference =
+    studyCategories.indexOf(studyContent[left.slug].category) -
+    studyCategories.indexOf(studyContent[right.slug].category);
+  if (categoryDifference !== 0) return categoryDifference;
+  return Number(left.year) - Number(right.year);
+});
+const paperBySlug = new Map(papers.map((paper) => [paper.slug, paper]));
 
 type NavItem = { label: string; path: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -25,7 +41,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Research",
     items: [
-      { label: `Method atlas (${papers.length})`, path: "/papers" },
+      { label: "Paper studies", path: "/papers" },
       { label: "Threats and gaps", path: "/research/gaps" },
       { label: "Glossary", path: "/glossary" },
     ],
@@ -221,12 +237,12 @@ function HomePage() {
     <Article
       eyebrow="Open technical guide"
       title="Latent watermarking, from pixels to provenance."
-      lead="A chapter-based introduction to image watermarking, latent diffusion, frequency-domain design, inversion, security and sixteen in-generation methods."
+      lead="A chapter-based introduction to image watermarking, latent diffusion, frequency-domain design, inversion, security and the research literature."
       meta="Built for a careful first reading, then repeated use as a paper companion."
     >
       <div className="home-actions">
         <Link to="/foundations/watermarking" className="button primary">Begin the guide</Link>
-        <Link to="/papers" className="button secondary">Open the method atlas</Link>
+        <Link to="/papers" className="button secondary">Open the paper studies</Link>
       </div>
 
       <Section id="route" number="01" title="A three-pass reading route">
@@ -835,49 +851,61 @@ function EvaluationPage() {
           Measure on the same hardware, image size, model, precision and batch size. Count inversion steps separately from a single neural detector pass.
         </Callout>
       </Section>
-      <NextPage path="/papers" label="Next: method atlas" />
+      <NextPage path="/papers" label="Next: paper studies" />
     </Article>
   );
 }
-
-const familyOrder: Paper["family"][] = ["Latent pattern", "Gaussian mapping", "Learned latent", "Semantic or task-aware"];
 
 function PapersPage() {
   const [boundary, setBoundary] = useState<"All" | TrainingBoundary>("All");
   const filtered = papers.filter((paper) => boundary === "All" || paper.boundary === boundary);
   return (
     <Article
-      eyebrow="Research atlas"
-      title="Sixteen methods, one comparison grammar."
-      lead="Each dossier explains the problem, information path, training boundary, detector, contributions, limitations and questions for replication."
-      meta="Venue and year follow the public paper record available in July 2026."
+      eyebrow="Literature guide"
+      title="Read the methods as arguments, not entries in a catalogue."
+      lead="Start with the field-level differences, then open a paper study for the mechanism, mathematics, detector assumptions, evidence and unresolved failure modes."
+      meta="The reading path includes neural watermarking foundations, generator-integrated methods, initial-noise methods, model ownership, semantic binding and adversarial counter-evidence."
     >
       <div className="filter-bar" aria-label="Filter papers by training boundary">
-        {(["All", "No method-specific training", "Auxiliary training", "Conditioning fine-tuning", "Per-image optimisation"] as const).map((value) => (
+        {(["All", "No method-specific training", "Auxiliary training", "Base model fine-tuning", "Conditioning fine-tuning", "Per-image optimisation"] as const).map((value) => (
           <button key={value} className={boundary === value ? "active" : ""} onClick={() => setBoundary(value)}>{value}</button>
         ))}
       </div>
-      {familyOrder.map((family) => {
-        const group = filtered.filter((paper) => paper.family === family);
+      {studyCategories.map((category) => {
+        const group = filtered.filter((paper) => studyContent[paper.slug]?.category === category);
         if (!group.length) return null;
         return (
-          <Section id={family.toLowerCase().replaceAll(" ", "-")} title={family} key={family}>
-            <div className="paper-grid">
+          <Section id={category.toLowerCase().replaceAll(" ", "-")} title={category} key={category}>
+            <div className="study-index">
               {group.map((paper) => (
-                <Link to={`/papers/${paper.slug}`} className="paper-card" key={paper.slug}>
-                  <div><span>{paper.venue} · {paper.year}</span><BoundaryBadge value={paper.boundary} /></div>
-                  <h3>{paper.shortTitle}</h3>
-                  <p>{paper.oneLine}</p>
-                  <b>Read dossier →</b>
+                <Link to={`/papers/${paper.slug}`} className="study-row" key={paper.slug}>
+                  <div className="study-row-meta">
+                    <span>{paper.venue} · {paper.year}</span>
+                    <BoundaryBadge value={paper.boundary} />
+                  </div>
+                  <div>
+                    <h3>{paper.shortTitle}</h3>
+                    <p>{paper.oneLine}</p>
+                  </div>
+                  <b>Study the paper →</b>
                 </Link>
               ))}
             </div>
           </Section>
         );
       })}
-      <Callout label="Scope note" tone="plain">
-        The atlas focuses on latent and in-generation methods in the supplied reading list. Weight-embedded methods such as Stable Signature, AquaLoRA and SleeperMark are adjacent work, but require a separate fine-tuning chapter for a fair treatment.
-      </Callout>
+      <Section id="further-reading" title="Further reading that completes specific concepts">
+        <p>These works are not given full studies yet, but each answers a precise question missing from the main reading path.</p>
+        <div className="further-reading">
+          {additionalReading.map((item) => (
+            <a href={item.url} target="_blank" rel="noreferrer" key={item.title}>
+              <h3>{item.title}</h3>
+              <p>{item.note}</p>
+              <b>Open primary source ↗</b>
+            </a>
+          ))}
+        </div>
+      </Section>
       <NextPage path="/research/gaps" label="Next: threats and gaps" />
     </Article>
   );
@@ -886,61 +914,79 @@ function PapersPage() {
 function PaperPage({ paper }: { paper: Paper }) {
   const currentIndex = papers.findIndex((item) => item.slug === paper.slug);
   const next = papers[(currentIndex + 1) % papers.length];
+  const study = studyContent[paper.slug];
+  if (!study) return <NotFoundPage />;
   return (
     <Article
-      eyebrow={`${paper.family} · ${paper.venue} ${paper.year}`}
+      eyebrow={`${study.category} · ${paper.venue} ${paper.year}`}
       title={paper.shortTitle}
       lead={paper.oneLine}
       meta={paper.title}
     >
-      <div className="paper-facts">
-        <div><span>Authors</span><b>{paper.authors}</b></div>
-        <div><span>Training boundary</span><BoundaryBadge value={paper.boundary} /></div>
-        <div><span>Primary source</span><ExternalLink href={paper.paperUrl}>Read paper</ExternalLink></div>
-        <div><span>Implementation</span>{paper.codeUrl ? <ExternalLink href={paper.codeUrl}>Official code</ExternalLink> : <b>None linked</b>}</div>
+      <div className="study-meta">
+        <p><span>Authors</span>{paper.authors}</p>
+        <p><span>Training boundary</span><BoundaryBadge value={paper.boundary} /></p>
+        <p><span>Sources</span><ExternalLink href={paper.paperUrl}>Paper</ExternalLink>{paper.codeUrl && <> · <ExternalLink href={paper.codeUrl}>Code</ExternalLink></>}</p>
       </div>
 
-      <Section id="boundary" number="01" title="First, place the training boundary">
-        <Callout label={paper.boundary}>{paper.boundaryDetail}</Callout>
-      </Section>
-
-      <Section id="problem" number="02" title="Problem the paper isolates">
+      <Section id="argument" number="01" title="Begin with the paper's argument">
         <p>{paper.problem}</p>
+        <p className="thesis">{study.thesis}</p>
+        <div className="orientation-lines">
+          <div><span>What changes</span><p>{study.intervention}</p></div>
+          <div><span>What stays fixed</span><p>{study.fixedPoint}</p></div>
+          <div><span>Verification depends on</span><p>{study.verificationAssumption}</p></div>
+        </div>
+        <p className="boundary-note"><strong>{paper.boundary}:</strong> {paper.boundaryDetail}</p>
       </Section>
 
-      <Section id="mechanism" number="03" title="Mechanism, step by step">
-        <Pipeline steps={paper.mechanism.map((text, index) => ({
-          label: String(index + 1).padStart(2, "0"),
-          title: index === 0 ? "Prepare evidence" : index === paper.mechanism.length - 1 ? "Complete the path" : "Transform",
-          text,
-        }))} />
+      <Section id="information-path" number="02" title="Trace the information path before reading the results">
+        <ol className="reading-trace">
+          {paper.mechanism.map((text, index) => (
+            <li key={text}><span>{String(index + 1).padStart(2, "0")}</span><p>{text}</p></li>
+          ))}
+        </ol>
+        <p><strong>Verification:</strong> {paper.detection}</p>
       </Section>
 
-      <Section id="detection" number="04" title="What the verifier actually does">
-        <p>{paper.detection}</p>
-        <Callout label="Audit pointer" tone="plain">
-          Identify every input used at verification: model weights, prompt, scheduler, secret key, public key, candidate key set and original image. A detector is not black-box merely because it receives pixels first.
-        </Callout>
-      </Section>
-
-      <div className="split-sections">
-        <Section id="contributions" number="05" title="What this paper adds">
-          <ul className="check-list">{paper.contributions.map((item) => <li key={item}>{item}</li>)}</ul>
+      {study.sections.map((item, index) => (
+        <Section
+          id={`deep-reading-${index + 1}`}
+          number={String(index + 3).padStart(2, "0")}
+          title={item.title}
+          key={item.title}
+        >
+          {item.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          {item.equation && <Equation><span>{item.equation.expression}</span><small>{item.equation.note}</small></Equation>}
+          {item.bullets && <ul className="check-list">{item.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
+          {item.takeaway && <p className="takeaway"><strong>Reading conclusion:</strong> {item.takeaway}</p>}
         </Section>
-        <Section id="limits" number="06" title="Where the claim stops">
-          <ul className="limit-list">{paper.limitations.map((item) => <li key={item}>{item}</li>)}</ul>
-        </Section>
-      </div>
+      ))}
 
-      <Section id="questions" number="07" title="Questions for a close reading">
+      <Section id="evidence" title="How to judge the evidence">
+        <p>{study.judgement}</p>
+        <div className="evidence-reading">
+          <div>
+            <h3>Claims to locate in the paper</h3>
+            <ul>{paper.contributions.map((item) => <li key={item}>{item}</li>)}</ul>
+          </div>
+          <div>
+            <h3>Boundaries to test</h3>
+            <ul>{paper.limitations.map((item) => <li key={item}>{item}</li>)}</ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="connections" title="Place it beside neighbouring work">
+        <ul className="connection-list">{study.connections.map((item) => <li key={item}>{item}</li>)}</ul>
+      </Section>
+
+      <Section id="questions" title="Questions to carry into a close reading">
         <ol className="study-questions">{paper.studyQuestions.map((item) => <li key={item}>{item}</li>)}</ol>
       </Section>
 
-      <div className="paper-source-note">
-        <strong>Evidence policy</strong>
-        <p>This dossier paraphrases the public paper and official project information. Performance values are omitted unless the metric, attack and operating point can be stated together. Read the paper for experimental tables and implementation details.</p>
-      </div>
-      <NextPage path={`/papers/${next.slug}`} label={`Next dossier: ${next.shortTitle}`} />
+      <p className="source-line">This study interprets the public primary paper and official implementation. Use the linked paper for experimental tables, theorem assumptions and exact configurations.</p>
+      <NextPage path={`/papers/${next.slug}`} label={`Next paper: ${next.shortTitle}`} />
     </Article>
   );
 }
@@ -952,7 +998,7 @@ function GapsPage() {
       title="The next paper should close a measurement gap."
       lead="A useful short paper does not need another watermark pattern. It needs one narrow claim that current systems cannot establish under realistic conditions."
     >
-      <Section id="gaps" number="01" title="Eight gaps that recur across the atlas">
+      <Section id="gaps" number="01" title="Eight gaps that recur across the literature">
         <div className="gap-list">
           <div><b>01</b><h3>Composed attack channels</h3><p>Most evaluations sweep one attack at a time. Real images are cropped, resized, compressed and then regenerated. The order matters and errors are not independent.</p></div>
           <div><b>02</b><h3>Open-set multi-key calibration</h3><p>Top-one key accuracy assumes the true key is registered. Deployment must also reject real images, outputs from other models and unregistered keys while the database grows.</p></div>
@@ -1051,7 +1097,7 @@ function GlossaryPage() {
 
 function NotFoundPage() {
   return (
-    <Article eyebrow="404" title="Chapter not found." lead="The route does not match a current chapter or paper dossier.">
+    <Article eyebrow="404" title="Chapter not found." lead="The route does not match a current chapter or paper study.">
       <Link to="/" className="button primary">Return to start</Link>
     </Article>
   );
@@ -1096,7 +1142,6 @@ function App() {
         <a href="https://github.com/holsoma/latent-watermarking-101" target="_blank" rel="noreferrer" className="github-link">GitHub ↗</a>
       </header>
       <aside className={`sidebar ${menuOpen ? "open" : ""}`} aria-label="Guide chapters">
-        <div className="reading-status"><span>Guide status</span><b>{papers.length} paper dossiers</b><small>Public sources only</small></div>
         {navGroups.map((group) => (
           <nav key={group.label}>
             <p>{group.label}</p>
@@ -1106,7 +1151,7 @@ function App() {
           </nav>
         ))}
         <nav>
-          <p>Paper dossiers</p>
+          <p>Paper studies</p>
           {papers.map((paper) => (
             <Link key={paper.slug} to={`/papers/${paper.slug}`} className={route === `/papers/${paper.slug}` ? "active" : ""} onClick={() => setMenuOpen(false)}>{paper.shortTitle}</Link>
           ))}

@@ -1,84 +1,106 @@
 # Latent Watermarking 101
 
-A source-backed field guide to image watermarking and latent diffusion watermarking.
+A source-backed technical guide to image watermarking, latent diffusion watermarking and the security claims surrounding generative provenance.
 
 [Read the guide](https://holsoma.github.io/latent-watermarking-101/) · [Report an issue](https://github.com/holsoma/latent-watermarking-101/issues)
 
-## Why this exists
+## Purpose
 
-Research papers on generative image watermarking often assume that the reader already understands image watermarking, spatial frequency, latent diffusion, inversion, statistical detection and threat models. That makes it easy to remember method names without understanding what information travels through the system or what a result establishes.
+Research on generative image watermarking sits across signal processing, neural data hiding, diffusion modelling, coding theory, statistical detection and security. Papers often assume that readers already understand these areas, which makes it easy to remember method names without understanding what the method changes, what the detector observes or what its results prove.
 
-This project builds the missing foundation, then applies one comparison grammar to sixteen public methods. It is intended for students, engineers and researchers who want to read the primary literature critically.
+This project builds those foundations in order and then studies the primary literature in depth.
 
-After studying the guide, a reader should be able to:
+The guide is designed to help a reader:
 
-- write the traditional embed, attack and extract pipeline;
+- formalise embedding, attack and extraction as a communication path;
 - distinguish visible, invisible, blind, non-blind, zero-bit and multi-bit watermarking;
-- explain the roles of the VAE, text encoder, noise predictor and sampler in latent diffusion;
-- distinguish pixel, VAE-latent, initial-noise, intermediate-state and conditioning-based embedding;
-- reason about low and high spatial frequencies without treating frequency as semantics;
-- evaluate fidelity, robustness, security, payload and computation together;
-- distinguish a training-free system from a fixed base generator with trained auxiliary components;
-- read a detector result at a stated false-positive operating point;
-- identify where a paper's evidence stops.
+- explain the VAE, text encoder, noise predictor and sampler in latent diffusion;
+- identify whether a method changes pixels, VAE latents, initial noise, an intermediate state, conditioning or model weights;
+- distinguish a fixed generator from a wholly training-free watermark system;
+- reason about spatial frequency, Fourier structure and geometric synchronisation;
+- interpret robustness at a stated attack strength and false-positive operating point;
+- separate detection, attribution, model ownership, integrity and unforgeability;
+- identify which assumptions a detector, theorem or experiment leaves untested.
 
-## Guide structure
+## Reading structure
 
-The website is organised as a small technical textbook rather than a landing page.
+The website is organised as a technical book with persistent chapter navigation.
 
-| Chapter | Main question |
+| Section | Purpose |
 | --- | --- |
-| Start here | How do the method families fit together? |
-| How to read a paper | Which claim, operating point and threat model should be recorded? |
-| Image watermarking | How does a payload survive an attack channel while preserving the image? |
-| Neural networks | Which components discriminate, reconstruct and generate? |
-| Latent diffusion | How does training differ from generation, and where can evidence be embedded? |
-| Image frequency | What do spatial frequencies represent, and why do transforms disturb them? |
-| Evaluation | How should fidelity, robustness, security, payload and cost be measured? |
-| Method atlas | How do sixteen public methods differ under the same comparison grammar? |
-| Threats and gaps | Which open measurements can support a focused research contribution? |
-| Glossary | What do the recurring technical terms mean? |
+| Start here | Build a map of the field and its embedding locations. |
+| How to read a paper | Reduce a paper to an information path, operating point and threat model. |
+| Image watermarking | Learn the embed, attack and extract pipeline, including residual analysis. |
+| Neural networks | Separate discriminative, generative, autoencoder, GAN and diffusion roles. |
+| Latent diffusion | Follow training, generation and inversion without collapsing the model components. |
+| Image frequency | Understand spatial frequency, Fourier transforms, alignment and semantic representation. |
+| Evaluation | Study fidelity, robustness, security, payload, calibration and computation together. |
+| Paper studies | Move from a field-level comparison into method-specific technical readings. |
+| Threats and gaps | Turn recurring evaluation weaknesses into focused research questions. |
+| Glossary | Look up recurring mathematical and security terms. |
 
-Interactions are used only when changing one variable supports a clear learning point. Current examples show denoising progress, spatial frequency and detector-threshold trade-offs. Values in conceptual simulations are labelled as illustrative and are not presented as benchmark results.
+## Literature coverage
 
-## Paper dossiers
+The paper studies are organised by the problem each lineage introduced.
 
-Every dossier records:
+### Neural watermarking and latent bridges
 
-1. the problem isolated by the paper;
-2. the training boundary;
-3. the embedding and generation path;
-4. the verification procedure;
-5. the main contributions;
-6. the limits of the claim;
-7. questions for close reading and replication;
-8. links to the primary paper and official implementation.
+- **HiDDeN** introduces the learned encoder, distortion layer and message decoder.
+- **RoSteALS** separates image modelling from message embedding through a frozen autoencoder latent.
+- **Stable Signature** fine-tunes a latent decoder to satisfy a fixed image watermark extractor.
+- **ZoDiac** uses a pre-trained diffusion latent to watermark an existing cover image through per-image optimisation.
 
-The current atlas covers:
+### Initial-noise and inversion methods
 
-- Tree-Rings, RingID, ROBIN and SFWMark;
-- Gaussian Shading, Gaussian Shading++, T2SMark, Gaussian Shannon and PRC Watermark;
-- Latent Watermark, LaWa, GaussMarker and SERUM;
-- SEAL, TAG-WM and Your Text Encoder Can Be An Object-Level Watermarking Controller.
+- **Tree-Rings** establishes Fourier-pattern watermarking in the starting Gaussian latent.
+- **RingID** audits Tree-Rings and extends it towards multi-key identification.
+- **Gaussian Shading** maps payload bits into a target Gaussian distribution.
+- **T2SMark** divides Gaussian sampling between robust tails and diversity-preserving central regions.
+- **Gaussian Shannon** treats generation and inversion as a coded communication channel.
+- **PRC Watermark** adds pseudorandom coding and a computational-undetectability objective.
+- **ROBIN** writes a strong mark at an intermediate diffusion state and optimises conditioning to hide its visible effect.
 
-The guide makes one boundary explicit: leaving the base diffusion model unchanged does not necessarily make the whole system training-free. A learned decoder, noise restorer, token embedding or classifier is still a trained component.
+### Learned and model-integrated methods
+
+- **Latent Watermark**, **LaWa**, **GaussMarker** and **SERUM** place learned components at different points in the latent or verification path.
+- **WOUAF** treats user attribution as fingerprint-conditioned weight modulation.
+- **AquaLoRA** places watermark behaviour inside low-rank U-Net updates.
+- **SleeperMark** studies model ownership evidence that must survive downstream fine-tuning.
+- **Your Text Encoder Can Be An Object-Level Watermarking Controller** uses learned conditioning tokens for local control.
+
+### Semantics, integrity and security
+
+- **SEAL** binds expected evidence to semantic content.
+- **SFWMark** makes Hermitian symmetry and centre-aware Fourier placement explicit.
+- **TAG-WM** separates ownership payload recovery from tamper localisation.
+- **Gaussian Shading++** adds seed transport, soft decoding and public-key verification.
+- **Black-Box Forgery Attacks on Semantic Watermarks** shows why robust detection is not equivalent to unforgeable attribution.
+
+Each study begins with a high-level argument, then follows the information path and develops the method-specific details. Shared summary fields remain available for orientation, but they are not used as a substitute for technical explanation.
 
 ## Evidence policy
 
-Technical explanations are based on public primary papers, proceedings pages and official repositories. The guide paraphrases mechanisms and avoids copying abstract prose.
+Technical content is based on public primary papers, official proceedings pages and author-provided implementations.
 
-Performance values are omitted unless the metric, attack, payload and operating point can be stated together. Venue labels follow the public record. Preprints are identified as preprints. No private manuscript content is reproduced.
+The guide follows these rules:
+
+- distinguish the paper's claim from this project's interpretation;
+- state when only the base generator is fixed but an auxiliary component is trained;
+- identify preprints as preprints;
+- avoid isolated performance values without their attack, payload and operating point;
+- separate bit accuracy from exact-message recovery;
+- treat a theorem as conditional on its adversary, oracle and randomness assumptions;
+- include attack papers when they change how a watermark claim should be interpreted;
+- do not reproduce private manuscripts.
 
 ## Related projects
 
-These repositories are useful complements rather than substitutes for the primary papers:
-
-- [MarkDiffusion](https://github.com/THU-BPM/MarkDiffusion) provides a unified implementation and evaluation toolkit for generative watermarking.
+- [MarkDiffusion](https://github.com/THU-BPM/MarkDiffusion) provides shared implementations, visualisation and evaluation for generative watermarking.
 - [Awesome GenAI Watermarking](https://github.com/and-mill/Awesome-GenAI-Watermarking) maintains a broad bibliography across generative modalities.
 - [Secure Diffusion Watermarking Survey and Implementation](https://github.com/tongyu0924/Secure-Diffusion-Watermarking-Survey-and-Implementation) collects diffusion watermarking papers and implementations.
-- [Hugging Face Diffusers](https://github.com/huggingface/diffusers) provides maintained diffusion pipelines, schedulers and examples.
+- [Hugging Face Diffusers](https://github.com/huggingface/diffusers) provides maintained diffusion pipelines and schedulers.
 - [CompVis Latent Diffusion](https://github.com/CompVis/latent-diffusion) is the reference implementation associated with the latent diffusion paper.
-- [Dive into Deep Learning](https://github.com/d2l-ai/d2l-en) is a useful model for combining technical explanation, mathematics and executable material.
+- [Dive into Deep Learning](https://github.com/d2l-ai/d2l-en) demonstrates how prose, mathematics and executable material can form one learning resource.
 
 The chapter-based teaching format was also informed by [Arjun Virk's ML guide](https://www.arjunvirk.com/writing/ml-guide).
 
@@ -97,21 +119,22 @@ Build and type-check:
 npm test
 ```
 
-The site uses React, TypeScript and Vite. Hash-based chapter routes keep every page directly addressable on GitHub Pages without server-side routing.
+The site uses React, TypeScript and Vite. Hash routes allow every chapter and paper study to open directly on GitHub Pages.
 
 ## Contributing
 
 Contributions should improve factual accuracy, explanation, accessibility or public source coverage.
 
-When proposing a technical change:
+When changing technical content:
 
 - link the primary paper or official implementation;
-- separate the paper's claim from your interpretation;
-- state the model, attack, payload and operating point for any reported result;
-- identify trained auxiliary components;
-- label conceptual examples as conceptual;
+- explain where information is embedded and what verification observes;
+- state all trained and optimised components;
+- provide the model, attack, payload and operating point for reported results;
+- identify whether an experiment is closed-set or open-set;
+- label conceptual simulations as conceptual;
 - avoid claims that exceed the stated threat model.
 
-## Licence and citation
+## Scope
 
-The repository is a learning resource, not an implementation of the covered watermarking methods. Refer to each paper and repository for its own licence and citation instructions.
+This repository is a learning resource, not an implementation of the covered watermarking methods. Refer to each linked paper and repository for its licence and citation requirements.
