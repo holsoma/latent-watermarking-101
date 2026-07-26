@@ -929,7 +929,7 @@ function PaperPage({ paper }: { paper: Paper }) {
         <p><span>Sources</span><ExternalLink href={paper.paperUrl}>Paper</ExternalLink>{paper.codeUrl && <> · <ExternalLink href={paper.codeUrl}>Code</ExternalLink></>}</p>
       </div>
 
-      <Section id="argument" number="01" title="Begin with the paper's argument">
+      <Section id="argument" number="01" title="The argument">
         <p>{paper.problem}</p>
         <p className="thesis">{study.thesis}</p>
         <div className="orientation-lines">
@@ -940,7 +940,7 @@ function PaperPage({ paper }: { paper: Paper }) {
         <p className="boundary-note"><strong>{paper.boundary}:</strong> {paper.boundaryDetail}</p>
       </Section>
 
-      <Section id="information-path" number="02" title="Trace the information path before reading the results">
+      <Section id="information-path" number="02" title="The information path">
         <ol className="reading-trace">
           {paper.mechanism.map((text, index) => (
             <li key={text}><span>{String(index + 1).padStart(2, "0")}</span><p>{text}</p></li>
