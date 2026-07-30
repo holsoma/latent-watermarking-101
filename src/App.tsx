@@ -245,6 +245,37 @@ function HomePage() {
         <Link to="/papers" className="button secondary">Open the paper studies</Link>
       </div>
 
+      <div className="home-chapters" aria-label="Core chapters">
+        <Link to="/foundations/watermarking" className="home-chapter">
+          <div className="home-chapter-head"><span>01 · signal</span><b>→</b></div>
+          <h2>Image watermarking</h2>
+          <p>Start with the communication system: embed, attack, extract and decide.</p>
+          <ul><li>visible vs invisible</li><li>payload and fidelity</li><li>attack channels</li></ul>
+          <strong>Open foundation →</strong>
+        </Link>
+        <Link to="/foundations/diffusion" className="home-chapter">
+          <div className="home-chapter-head"><span>02 · generator</span><b>→</b></div>
+          <h2>Latent diffusion</h2>
+          <p>Follow a sample from iid Gaussian noise to a decoded image.</p>
+          <ul><li>VAE and latent space</li><li>denoising trajectory</li><li>inversion limits</li></ul>
+          <strong>Open foundation →</strong>
+        </Link>
+        <Link to="/foundations/frequency" className="home-chapter">
+          <div className="home-chapter-head"><span>03 · representation</span><b>→</b></div>
+          <h2>Image frequency</h2>
+          <p>See why spatial change, Fourier structure and alignment affect robustness.</p>
+          <ul><li>low and high frequency</li><li>DFT coordinates</li><li>ring patterns</li></ul>
+          <strong>Open foundation →</strong>
+        </Link>
+        <Link to="/foundations/evaluation" className="home-chapter">
+          <div className="home-chapter-head"><span>04 · evidence</span><b>→</b></div>
+          <h2>Evaluation</h2>
+          <p>Translate a detector score into a claim about a real deployment.</p>
+          <ul><li>fidelity and payload</li><li>calibration</li><li>threat models</li></ul>
+          <strong>Open foundation →</strong>
+        </Link>
+      </div>
+
       <Section id="route" number="01" title="A three-pass reading route">
         <div className="route-list">
           <div><b>Pass 1</b><h3>Build the mechanism</h3><p>Learn what an embedder, attack channel and detector do. Then follow a latent diffusion sample from Gaussian noise to pixels.</p></div>
