@@ -133,6 +133,27 @@ function Equation({ children }: { children: ReactNode }) {
   return <div className="equation">{children}</div>;
 }
 
+const mathTokens: Record<string, [string, string]> = {
+  Ew: ["E", "w"], Ewz: ["E", "w,z"],
+  Lmsg: ["L", "msg"], Limg: ["L", "img"], Lbits: ["L", "bits"], Lperceptual: ["L", "perceptual"], Lwm: ["L", "wm"],
+  Decθ: ["Dec", "θ"], Dec0: ["Dec", "0"], θDec: ["θ", "Dec"], θu: ["θ", "u"], θ0: ["θ", "0"],
+  fu: ["f", "u"], xu: ["x", "u"], xw: ["x", "w"], zT: ["z", "T"], zHat: ["z", "hat"], zj: ["z", "j"], bj: ["b", "j"],
+  si: ["s", "i"], λimg: ["λ", "img"], λp: ["λ", "p"], λ2: ["λ", "2"],
+};
+
+function MathExpression({ value }: { value: string }) {
+  const tokenPattern = /(Ewz|Ew|Lmsg|Limg|Lbits|Lperceptual|Lwm|Decθ|Dec0|θDec|θu|θ0|fu|xu|xw|zT|zHat|zj|bj|si|λimg|λp|λ2)/g;
+  return (
+    <span className="math-expression">
+      {value.split(tokenPattern).map((part, index) => {
+        const token = mathTokens[part];
+        if (!token) return <span key={`${part}-${index}`}>{part}</span>;
+        return <span className="math-token" key={`${part}-${index}`}><span>{token[0]}</span><sub>{token[1]}</sub></span>;
+      })}
+    </span>
+  );
+}
+
 function Article({
   eyebrow,
   title,
@@ -1028,7 +1049,7 @@ function PaperPage({ paper }: { paper: Paper }) {
           key={item.title}
         >
           {item.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-          {item.equation && <Equation><span>{item.equation.expression}</span><small>{item.equation.note}</small></Equation>}
+          {item.equation && <Equation><MathExpression value={item.equation.expression} /><small>{item.equation.note}</small></Equation>}
           {item.bullets && <ul className="check-list">{item.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
           {item.takeaway && <p className="takeaway"><strong>Reading conclusion:</strong> {item.takeaway}</p>}
         </Section>

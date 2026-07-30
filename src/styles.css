@@ -136,9 +136,13 @@ h1 { margin: 0; font-size: clamp(48px, 6vw, 82px); line-height: .95; letter-spac
 .callout.warning { border-color: #d27317; background: #fff1e2; }
 .callout.warning > strong { color: #a14900; }
 
-.equation { max-width: 760px; display: grid; grid-template-columns: minmax(0, 1.4fr) 1fr; align-items: center; gap: 24px; margin: 16px 0; padding: 22px 24px; border-left: 4px solid var(--accent); background: var(--surface); }
-.equation > span { overflow-wrap: anywhere; font: 700 18px Georgia, "Times New Roman", serif; }
-.equation small { color: var(--muted); line-height: 1.4; }
+.equation { max-width: 820px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin: 30px 0; padding: 24px 28px; border-left: 4px solid var(--accent); background: var(--surface); }
+.equation > span { display: block; width: 100%; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; font: 700 clamp(21px, 2.15vw, 29px)/1.35 Georgia, "Times New Roman", serif; letter-spacing: .005em; }
+.equation > span sub, .equation > span sup { font-size: .62em; line-height: 0; }
+.equation small { display: block; max-width: 680px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.math-expression { color: var(--ink); }
+.math-token { display: inline-flex; align-items: baseline; white-space: nowrap; }
+.math-token sub { margin-left: 1px; }
 
 .pipeline { max-width: 760px; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
 .pipeline li { position: relative; display: grid; grid-template-columns: 72px 1fr; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
