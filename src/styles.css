@@ -510,6 +510,7 @@ footer a { color: var(--accent); }
 .boundary-badge.green { color: #075a3b !important; }
 .boundary-badge.purple { color: #6035a0 !important; }
 .boundary-badge.orange { color: #8a3d00 !important; }
+.map-source span, .map-output span { color: #1d48dc; }
 
 @media (max-width: 1040px) {
   .home-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -522,3 +523,98 @@ footer a { color: var(--accent); }
   .home-chapter, .home-chapter:nth-child(2) { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
   .home-chapter:last-child { border-bottom: 0; }
 }
+
+/* Light editorial palette for long-form reading. */
+:root {
+  color: #111827;
+  background: #f3f5f7;
+  --ink: #111827;
+  --muted: #5d6875;
+  --paper: #f3f5f7;
+  --surface: #ffffff;
+  --soft: #e6ebf0;
+  --line: #b9c4cf;
+  --accent: #2457ff;
+  --accent-soft: #dfe7ff;
+}
+body { background-color: var(--paper); background-image: none; color: var(--ink); }
+::selection { color: white; background: var(--accent); }
+.site-header { border-bottom-color: var(--ink); background: rgb(243 245 247 / 96%); }
+.brand { border-right-color: var(--ink); }
+.brand span { color: white; background: var(--accent); }
+.site-header > p, .github-link { color: var(--muted); }
+.sidebar { border-right-color: var(--ink); background: var(--paper); }
+.sidebar nav a { color: #3e4a57; }
+.sidebar nav a:hover { color: var(--ink); background: var(--surface); }
+.sidebar nav a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+.article-header { border-bottom-color: var(--ink); }
+.eyebrow, .section-number { color: var(--accent); }
+.lead { color: var(--muted); }
+.article-meta { border-left-color: var(--accent); color: #3d4854; }
+.article-section > p, .article-section > ul, .article-section > ol { color: #34404d; }
+.article-section h2 { color: var(--ink); }
+.article-section h3 { color: var(--ink); }
+.button { border-color: var(--ink); color: var(--ink); }
+.button.primary { color: white; border-color: var(--accent); background: var(--accent); }
+.button.secondary { background: var(--surface); }
+.route-list, .study-index, .gap-list, .avoid-list, .glossary, .reading-trace, .connection-list, .further-reading { border-top-color: var(--ink); }
+.route-list > div, .study-row, .gap-list > div, .avoid-list p, .glossary > div, .reading-trace li, .connection-list li, .further-reading a { border-bottom-color: var(--line); }
+.route-list p, .study-row p, .gap-list p, .further-reading p, .glossary dd, .reading-trace p, .orientation-lines p { color: var(--muted); }
+.study-row:hover { color: var(--accent); background: rgb(255 255 255 / 58%); }
+.field-map, .concept-grid, .comparison-panel, .table-wrap, .lab, .domain-pair > div, .sources, .search-box input, .study-meta { border-color: var(--line); background: var(--surface); }
+.map-source, .map-output { background: var(--accent-soft); }
+.map-source span, .map-output span { color: #1d48dc; }
+.map-branches > div, .concept-card, .comparison-panel, .proposal-grid > div { border-color: var(--line); }
+.map-branches p, .concept-card p, .comparison-panel p, .pipeline p, .component-strip p, .mini-flow small, .lab > p, .domain-pair p, .taxonomy-branch p, .taxonomy-branch li, .residual-demo span { color: var(--muted); }
+.map-source span, .map-output span, .route-list b, .pipeline li > span, .component-strip span, .mini-flow > span, .sample-label, .lab-head, .lab output, .orientation-lines span { color: var(--accent); }
+.callout { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+.callout > strong { color: #1d48dc; }
+.callout.plain { border-color: var(--line); background: var(--surface); }
+.callout.plain > strong { color: var(--ink); }
+.equation { border-left-color: var(--accent); background: var(--surface); }
+.equation small { color: var(--muted); }
+.pipeline { border-top-color: var(--ink); }
+.pipeline li { border-bottom-color: var(--line); }
+.pipeline li > span, .component-strip span { color: white; background: var(--accent); }
+th { color: white; background: var(--ink); }
+td { border-color: var(--line); color: var(--ink); }
+.comparison-panel { background: var(--surface); }
+.residual-demo { border-color: var(--line); background: var(--surface); }
+.taxonomy-root { color: white; background: var(--ink); }
+.taxonomy-root span { color: #b9c4cf; }
+.taxonomy-branch > div { border-top-color: var(--accent); background: var(--surface); }
+.mini-flow > div { border-color: var(--line); background: var(--surface); }
+.component-strip { border-color: var(--ink); background: var(--surface); }
+.component-strip > div { border-color: var(--line); }
+.lab-head b, .lab label, .lab-stats b { color: var(--ink); }
+.filter-bar button { border-color: var(--line); color: var(--ink); background: var(--surface); }
+.filter-bar button.active { color: white; border-color: var(--accent); background: var(--accent); }
+.study-meta p { color: #34404d; }
+.study-meta p > span, .source-line, .boundary-note { color: var(--muted) !important; }
+.thesis, .takeaway { color: var(--ink) !important; background: var(--accent-soft); }
+.orientation-lines { border-top-color: var(--ink); }
+.orientation-lines > div { border-bottom-color: var(--line); }
+.source-line { border-top-color: var(--line); }
+.research-proposal { color: white; background: var(--ink); border: 0; }
+.research-proposal > p:not(.eyebrow), .proposal-grid p { color: #c5ced8; }
+.proposal-grid { border-color: #576473; }
+.proposal-grid > div { border-color: #576473; }
+.proposal-grid span { color: #82a0ff; }
+.sources { color: var(--ink); }
+.search-box input { color: var(--ink); }
+.next-page { color: white; background: var(--accent); }
+footer { border-top-color: var(--ink); color: var(--muted); }
+footer a { color: var(--ink); }
+.menu-scrim { background: rgb(17 24 39 / 42%); }
+.home-chapters { border-color: var(--ink); background: var(--surface); }
+.home-chapter { border-right-color: var(--line); color: var(--ink); }
+.home-chapter:hover { background: var(--accent-soft); }
+.home-chapter-head { border-bottom-color: var(--line); color: var(--accent); }
+.home-chapter h2 { color: var(--ink); }
+.home-chapter p { color: var(--muted); }
+.home-chapter ul { color: var(--ink); }
+.home-chapter strong { border-top-color: var(--line); color: var(--accent); }
+.boundary-badge.green { color: #075a3b !important; }
+.boundary-badge.purple { color: #6035a0 !important; }
+.boundary-badge.orange { color: #8a3d00 !important; }
+.map-source span, .map-output span { color: #1d48dc; }
