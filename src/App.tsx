@@ -580,51 +580,91 @@ function seededRandom(seed: number) {
   };
 }
 
+function makeGaussianField(size: number, seed: number) {
+  const random = seededRandom(seed);
+  const field = new Float32Array(size);
+  for (let index = 0; index < size; index += 2) {
+    const radius = Math.sqrt(-2 * Math.log(Math.max(random(), 1e-8)));
+    const angle = Math.PI * 2 * random();
+    field[index] = radius * Math.cos(angle);
+    if (index + 1 < size) field[index + 1] = radius * Math.sin(angle);
+  }
+  return field;
+}
+
+function createReferenceImage(width: number, height: number) {
+  const pixels = new Float32Array(width * height * 3);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const nx = x / width;
+      const ny = y / height;
+      const horizon = 0.63;
+      let red = 0.17 + 0.22 * (1 - ny);
+      let green = 0.42 + 0.26 * (1 - ny);
+      let blue = 0.72 + 0.2 * (1 - ny);
+      const sunDistance = Math.hypot(nx - 0.72, ny - 0.27);
+      const sun = Math.max(0, 1 - sunDistance / 0.12);
+      red += sun * 0.8; green += sun * 0.62; blue += sun * 0.15;
+      const mountain = ny > 0.42 + 0.16 * Math.abs(Math.sin(nx * 8.8)) ? 1 : 0;
+      const foreground = ny > horizon + 0.04 * Math.sin(nx * 18) ? 1 : 0;
+      if (mountain) { red = 0.20; green = 0.28; blue = 0.39; }
+      if (foreground) { red = 0.07; green = 0.16; blue = 0.15; }
+      const tree = Math.abs(nx - 0.16) < 0.035 && ny > 0.53 || Math.abs(nx - 0.88) < 0.026 && ny > 0.51;
+      if (tree) { red = 0.035; green = 0.11; blue = 0.10; }
+      const pixel = (y * width + x) * 3;
+      pixels[pixel] = red * 2 - 1;
+      pixels[pixel + 1] = green * 2 - 1;
+      pixels[pixel + 2] = blue * 2 - 1;
+    }
+  }
+  return pixels;
+}
+
 function DenoiseLab() {
   const [progress, setProgress] = useState(58);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const simulation = useMemo(() => {
+    const width = 240;
+    const height = 150;
+    return { width, height, reference: createReferenceImage(width, height), noise: makeGaussianField(width * height * 3, 731) };
+  }, []);
   useCanvasSize(
     canvasRef,
     (context, width, height) => {
-      const p = progress / 100;
+      const alphaBar = Math.max(0.001, progress / 100);
+      const sigmaBar = Math.sqrt(1 - alphaBar);
+      const image = context.createImageData(simulation.width, simulation.height);
+      for (let index = 0; index < simulation.reference.length; index += 1) {
+        const noised = Math.sqrt(alphaBar) * simulation.reference[index] + sigmaBar * simulation.noise[index];
+        image.data[Math.floor(index / 3) * 4 + (index % 3)] = Math.max(0, Math.min(255, Math.round((noised + 1) * 127.5)));
+      }
+      for (let index = 3; index < image.data.length; index += 4) image.data[index] = 255;
+      const bitmapCanvas = document.createElement("canvas");
+      bitmapCanvas.width = simulation.width;
+      bitmapCanvas.height = simulation.height;
+      bitmapCanvas.getContext("2d")?.putImageData(image, 0, 0);
+      context.imageSmoothingEnabled = false;
       context.fillStyle = "#eef2f6";
       context.fillRect(0, 0, width, height);
-      context.globalAlpha = p;
-      context.fillStyle = "#2457ff";
-      context.beginPath();
-      context.arc(width * 0.72, height * 0.27, Math.min(width, height) * 0.11, 0, Math.PI * 2);
-      context.fill();
-      context.fillStyle = "#aab8c8";
-      context.beginPath();
-      context.moveTo(0, height * 0.77);
-      context.lineTo(width * 0.27, height * 0.43);
-      context.lineTo(width * 0.48, height * 0.69);
-      context.lineTo(width * 0.7, height * 0.49);
-      context.lineTo(width, height * 0.75);
-      context.lineTo(width, height);
-      context.lineTo(0, height);
-      context.fill();
-      const random = seededRandom(731);
-      context.globalAlpha = Math.max(0.04, 1 - p);
-      for (let i = 0; i < 1300; i += 1) {
-        context.fillStyle = random() > 0.86 ? "#2457ff" : "#111827";
-        const size = 0.8 + random() * 2.4;
-        context.fillRect(random() * width, random() * height, size, size);
-      }
-      context.globalAlpha = 1;
+      context.drawImage(bitmapCanvas, 0, 0, width, height);
     },
-    [progress],
+    [progress, simulation],
   );
-  const stage = progress < 25 ? "mostly noise" : progress < 75 ? "structure emerging" : "late denoising";
+  const stage = progress < 15 ? "t = 100 · iid Gaussian noise" : progress < 45 ? "t = 70 · weak structure" : progress < 80 ? "t = 35 · denoising" : "t = 0 · reconstructed image";
+  const sigma = Math.sqrt(1 - Math.max(0.001, progress / 100));
   return (
-    <div className="lab">
-      <div className="lab-head"><span>Interactive model</span><b>{stage}</b></div>
-      <canvas ref={canvasRef} aria-label={`Conceptual latent at ${progress} per cent denoising progress`} />
+    <div className="lab denoise-lab">
+      <div className="lab-head"><span>Real diffusion equation</span><b>{stage}</b></div>
+      <canvas ref={canvasRef} aria-label={`Pixel-level diffusion simulation at ${progress} per cent reconstruction`} />
+      <div className="lab-stats">
+        <div><small>signal weight √ᾱ</small><b>{Math.sqrt(progress / 100).toFixed(2)}</b></div>
+        <div><small>noise weight σ</small><b>{sigma.toFixed(2)}</b></div>
+      </div>
       <label>
-        <span>Denoising progress</span><output>{progress}%</output>
+        <span>Reverse denoising step</span><output>{progress}%</output>
         <input type="range" min="0" max="100" value={progress} onChange={(event) => setProgress(Number(event.target.value))} />
       </label>
-      <p><strong>Learning pointer:</strong> the slider is conceptual, not a pixel simulation. A diffusion model makes repeated conditional predictions. It does not reveal a clean image hidden under a layer of noise.</p>
+      <p><strong>Learning pointer:</strong> this uses a fixed iid Gaussian field and the real forward equation <em>x<sub>t</sub> = √ᾱ x<sub>0</sub> + σ ε</em>. The clean scene is the known target, so the slider acts as an oracle denoiser. Stable Diffusion learns this denoising direction with a U-Net or diffusion transformer in VAE latent space.</p>
     </div>
   );
 }
