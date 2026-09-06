@@ -4,6 +4,7 @@ import { additionalPapers, additionalReading, studyContent, type PaperStudy } fr
 import { getLab } from "./labs";
 import { HiddenLabPage } from "./HiddenLabPage";
 import { PlannedLabPage } from "./PlannedLabPage";
+import { RunnableLabPage } from "./RunnableLabPage";
 
 const studyCategories: PaperStudy["category"][] = [
   "Foundations and bridges",
@@ -959,7 +960,7 @@ function PapersPage() {
       eyebrow="Implementation labs"
       title="Inspect the method, then run the path yourself."
       lead="Each paper gets a reproducible implementation surface: upstream code, local modules, commands, experiments, and the limits of what the result can show."
-      meta="HiDDeN is the first runnable lab. The remaining papers are queued with an implementation plan rather than another prose-only summary."
+      meta="HiDDeN, RoSteALS, Stable Signature and ZoDiac now have runnable local labs. Each page separates the compact adapter from the official upstream reproduction path."
     >
       <div className="filter-bar" aria-label="Filter papers by training boundary">
         {(["All", "No method-specific training", "Auxiliary training", "Base model fine-tuning", "Conditioning fine-tuning", "Per-image optimisation"] as const).map((value) => (
@@ -1013,6 +1014,7 @@ function PaperPage({ paper }: { paper: Paper }) {
   if (!study) return <NotFoundPage />;
   const lab = getLab(paper.slug);
   if (paper.slug === "hidden" && lab) return <HiddenLabPage paper={paper} lab={lab} />;
+  if (lab?.status === "Runnable locally") return <RunnableLabPage paper={paper} lab={lab} next={next} />;
   return <PlannedLabPage paper={paper} next={next} lab={lab} />;
 }
 

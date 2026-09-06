@@ -227,6 +227,100 @@ export const paperLabs: Record<string, PaperLab> = {
   },
 };
 
+Object.assign(paperLabs, {
+  rosteals: {
+    slug: "rosteals", status: "Runnable locally", runtime: "Python 3.11 or 3.12 · PyTorch · CPU or CUDA",
+    training: "Compact latent-offset demo runs on CPU; the official model uses a frozen VQ-f4 autoencoder and a trained secret path.",
+    upstream: [{ label: "Authors · RoSteALS", url: "https://github.com/TuBui/RoSteALS", note: "Official repository with inference, training configuration, a 100-bit payload and released checkpoints." }],
+    commands: [
+      { label: "Install and train", command: "cd /c/amos/research/latent-watermarking-101/implementations/rosteals\npython -m venv .venv\nsource .venv/Scripts/activate\npython -m pip install -e .\nexport PYTHONPATH=src\npython -m rosteals_lab.train --config configs/demo.toml", output: '{\n  "device": "cpu",\n  "steps": 600,\n  "test_message": "0111111000001011",\n  "test_recovered": "0111111000001011",\n  "bit_error_rate": 0.0\n}', purpose: "Train the small message-to-latent offset and image-space decoder.", interpretation: "The clean held-out message is recovered exactly. This validates the local information path, not the paper's 100-bit VQ-f4 checkpoint." },
+      { label: "Embed a new payload", command: "python -m rosteals_lab.embed --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/cover.png --message 0101010101010101 --output outputs/demo/encoded-custom.png\npython -m rosteals_lab.extract --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/encoded-custom.png", output: "encoded image written to outputs/demo/encoded-custom.png\n0101010101010101", purpose: "Change the payload without changing the trained model.", interpretation: "The local decoder is trained for 16-bit messages. The official RoSteALS protocol uses a 100-bit code before BCH correction." },
+      { label: "Evaluate attacks", command: "python -m rosteals_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/encoded-custom.png --message 0101010101010101 --attacks identity,blur,crop,jpeg", output: '[\n  { "attack": "identity", "bit_error_rate": 0.0, "exact": true },\n  { "attack": "blur", "bit_error_rate": 0.0, "exact": true },\n  { "attack": "crop", "bit_error_rate": 0.25, "exact": false },\n  { "attack": "jpeg", "bit_error_rate": 0.0, "exact": true }\n]', purpose: "Separate clean extraction from robustness under named image operations.", interpretation: "Crop is a visible failure for this compact run. Do not infer the official model's robustness from this proxy." },
+    ],
+    codeMap: [
+      { concept: "Frozen latent autoencoder", paper: "Encode a cover into a latent representation and decode it after adding a learned offset.", upstream: "models/VQ4_mir_inference.yaml · inference.py", upstreamUrl: "https://github.com/TuBui/RoSteALS/blob/main/inference.py", local: "src/rosteals_lab/model.py · FrozenAutoencoder", note: "The local adapter is deterministic and small; it is not the released VQ-f4 checkpoint." },
+      { concept: "Message-to-latent offset", paper: "Map the secret bits to an additive latent perturbation.", upstream: "Embed_Secret.py", upstreamUrl: "https://github.com/TuBui/RoSteALS/blob/main/Embed_Secret.py", local: "src/rosteals_lab/model.py · SecretEncoder", note: "The offset is bounded before it is added to the base latent." },
+      { concept: "Image-space decoder", paper: "Recover the secret from the generated image.", upstream: "models/decoder.py", upstreamUrl: "https://github.com/TuBui/RoSteALS/tree/main/models", local: "src/rosteals_lab/model.py · SecretDecoder", note: "Blind extraction receives only the image." },
+    ],
+    methodology: [
+      { title: "Start at the representation boundary", question: "What is learned and what stays fixed?", method: "Freeze the image autoencoder and train only the secret encoder and decoder.", evidence: "The checkpoint contains trainable secret modules while the autoencoder has no optimiser parameters." },
+      { title: "Make the offset measurable", question: "Can the payload be traced into the latent?", method: "Save base latent, offset and encoded image, then amplify the image residual for inspection.", evidence: "Every run writes autoencoded, encoded and residual_amplified images plus a manifest." },
+      { title: "Test message capacity separately", question: "Does a changed payload use the same trained path?", method: "Train once, embed a second 16-bit message, and extract it from a new encoded image.", evidence: "The custom payload command has an exact clean recovery output." },
+    ],
+    decisions: [
+      { decision: "Use a compact frozen autoencoder", rationale: "The official VQ-f4 and checkpoint are large and tied to an older environment.", consequence: "This is a mechanism lab, not a visual or numerical reproduction of the released model." },
+      { decision: "Keep 16 bits locally", rationale: "It makes experiments fast and avoids pretending BCH and 100-bit capacity are implemented.", consequence: "Protocol capacity must be tested separately against the official code." },
+    ],
+    visuals: [
+      { src: "/latent-watermarking-101/experiments/rosteals/cover.png", label: "Cover", description: "Deterministic synthetic cover used for the local run." },
+      { src: "/latent-watermarking-101/experiments/rosteals/autoencoded.png", label: "Autoencoded cover", description: "The frozen latent autoencoder reconstruction." },
+      { src: "/latent-watermarking-101/experiments/rosteals/encoded.png", label: "Encoded image", description: "The cover after adding the learned message offset." },
+      { src: "/latent-watermarking-101/experiments/rosteals/residual_amplified.png", label: "Residual ×8", description: "Amplified difference between encoded and autoencoded images." },
+    ],
+    limitations: ["The local adapter does not load the official VQ-f4 autoencoder or 520 MB checkpoint.", "The local payload is 16 bits and omits the paper repository's BCH protocol.", "The synthetic cover and 600-step run are for mechanism inspection, not paper-scale quality or robustness claims."],
+  },
+  "stable-signature": {
+    slug: "stable-signature", status: "Runnable locally", runtime: "Python 3.11 or 3.12 · PyTorch · CPU or CUDA",
+    training: "Compact decoder fine-tuning demo runs on CPU; the official path fine-tunes a Stable Diffusion VAE decoder against a pretrained robust extractor.",
+    upstream: [{ label: "Authors · Facebook Research", url: "https://github.com/facebookresearch/stable_signature", note: "Official repository with extractor checkpoints, decoder fine-tuning and attack evaluation scripts." }],
+    commands: [
+      { label: "Install and fine-tune", command: "cd /c/amos/research/latent-watermarking-101/implementations/stable-signature\npython -m venv .venv\nsource .venv/Scripts/activate\npython -m pip install -e .\nexport PYTHONPATH=src\npython -m stable_signature_lab.train --config configs/demo.toml", output: '{\n  "device": "cpu",\n  "steps": 700,\n  "bit_error_rate": 0.0\n}', purpose: "Fine-tune a decoder while a fixed 48-bit extractor supplies the watermark loss.", interpretation: "The marked decoder recovers its registered 48-bit key cleanly. The local extractor is a deterministic carrier bank, not the official pretrained extractor." },
+      { label: "Detect and score", command: "python -m stable_signature_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/marked_decoder.png", output: '{\n  "agreements": 48,\n  "bits": 48,\n  "null_tail_probability": 3.55e-15\n}', purpose: "Recover the key and quantify how surprising the agreement is under a 50/50 null model.", interpretation: "This demonstrates the detection statistic and registered-key boundary. Threshold calibration on negatives is still required." },
+      { label: "Evaluate attacks", command: "python -m stable_signature_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/marked_decoder.png --attacks identity,blur,crop,jpeg", output: '[\n  { "attack": "identity", "bit_error_rate": 0.0 },\n  { "attack": "blur", "bit_error_rate": 0.1458 },\n  { "attack": "crop", "bit_error_rate": 0.4583 },\n  { "attack": "jpeg", "bit_error_rate": 0.0625 }\n]', purpose: "Measure extraction under explicit image attacks.", interpretation: "The attack results show why a clean pass is not the same as robustness. The official project evaluates a broader attack suite." },
+    ],
+    codeMap: [
+      { concept: "Fixed robust extractor", paper: "Use a pretrained decoder to turn the image into watermark logits.", upstream: "src/decoder.py", upstreamUrl: "https://github.com/facebookresearch/stable_signature/blob/main/src/decoder.py", local: "src/stable_signature_lab/model.py · FixedExtractor", note: "The local carrier bank preserves the fixed-extractor training boundary." },
+      { concept: "Marked VAE decoder", paper: "Fine-tune the generator decoder while preserving image quality.", upstream: "finetune_ldm_decoder.py", upstreamUrl: "https://github.com/facebookresearch/stable_signature/blob/main/finetune_ldm_decoder.py", local: "src/stable_signature_lab/train.py", note: "The local base and marked decoders share the same architecture and compare image MSE." },
+      { concept: "Statistical detection", paper: "Use agreement with a registered key rather than free-form message decoding.", upstream: "run_evals.py", upstreamUrl: "https://github.com/facebookresearch/stable_signature/blob/main/run_evals.py", local: "src/stable_signature_lab/stats.py · detect.py", note: "The local tail probability is a binomial null score." },
+    ],
+    methodology: [
+      { title: "Freeze the detector first", question: "Where does the watermark target come from?", method: "Register one fixed 48-bit key and optimise the decoder against fixed extractor logits.", evidence: "The key is stored in checkpoint and manifest; extractor parameters never enter the optimiser." },
+      { title: "Compare marked and base outputs", question: "What quality pressure is applied?", method: "Decode the same latent with a frozen base decoder and the fine-tuned marked decoder, then penalise MSE.", evidence: "The run writes base_decoder, marked_decoder and amplified residual images." },
+      { title: "Separate detection from calibration", question: "Is an agreement meaningful?", method: "Report agreements and a binomial upper-tail probability, then evaluate real negative images before choosing a threshold.", evidence: "The detector output exposes the null probability instead of only printing recovered bits." },
+    ],
+    decisions: [
+      { decision: "Use a deterministic extractor locally", rationale: "The official extractor checkpoints and Stable Diffusion stack are heavy for a first inspection loop.", consequence: "Robustness and calibration numbers cannot be compared with the paper." },
+      { decision: "Train one registered key", rationale: "This mirrors the simplest official fine-tuning command and keeps attribution explicit.", consequence: "Multi-key capacity and key management remain future experiments." },
+    ],
+    visuals: [
+      { src: "/latent-watermarking-101/experiments/stable-signature/base_decoder.png", label: "Base decoder", description: "Output before watermark fine-tuning." },
+      { src: "/latent-watermarking-101/experiments/stable-signature/marked_decoder.png", label: "Marked decoder", description: "Output after fine-tuning against the fixed key." },
+      { src: "/latent-watermarking-101/experiments/stable-signature/residual_amplified.png", label: "Residual ×8", description: "Amplified visual difference between base and marked output." },
+    ],
+    limitations: ["The local renderer is a small transposed-convolution decoder, not a Stable Diffusion VAE decoder.", "The local extractor is synthetic and does not use the official whitened robust decoder checkpoint.", "Attack outputs are illustrative and do not establish the paper's COCO, FID, LPIPS or false-positive results."],
+  },
+  zodiac: {
+    slug: "zodiac", status: "Runnable locally", runtime: "Python 3.11 or 3.12 · PyTorch · CPU or CUDA",
+    training: "No reusable watermark network is trained; one latent is optimised for one image and key.",
+    upstream: [{ label: "Authors · ZoDiac", url: "https://github.com/zhanglijun95/ZoDiac", note: "Official notebook-oriented implementation with Stable Diffusion inversion, trainable latents and attack modules." }],
+    commands: [
+      { label: "Optimise one image", command: "cd /c/amos/research/latent-watermarking-101/implementations/zodiac\npython -m venv .venv\nsource .venv/Scripts/activate\npython -m pip install -e .\nexport PYTHONPATH=src\npython -m zodiac_lab.optimise --config configs/demo.toml --message 0101010101010101", output: '{\n  "per_image_optimisation": true,\n  "steps": 450,\n  "recovered": "0101010101010101",\n  "bit_error_rate": 0.0\n}', purpose: "Invert a latent proxy, optimise that latent for the target signature, and render the result.", interpretation: "The clean pass confirms the optimisation loop. It is not a trained encoder and it does not claim Stable Diffusion fidelity." },
+      { label: "Detect", command: "python -m zodiac_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png", output: '{\n  "message": "0101010101010101",\n  "recovered": "0101010101010101",\n  "bit_error_rate": 0.0,\n  "exact": true\n}', purpose: "Run the image-space detector against the saved optimised result.", interpretation: "The checkpoint stores the optimised latent and target message for this one image only." },
+      { label: "Evaluate attacks", command: "python -m zodiac_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png --attacks identity,blur,crop,jpeg", output: '[\n  { "attack": "identity", "bit_error_rate": 0.0 },\n  { "attack": "blur", "bit_error_rate": 0.4375 },\n  { "attack": "crop", "bit_error_rate": 0.0 },\n  { "attack": "jpeg", "bit_error_rate": 0.3125 }\n]', purpose: "Show the trade-off between latent optimisation and post-processing robustness.", interpretation: "Blur and JPEG break this compact signature. Robustness requires attack-aware optimisation and a matched diffusion evaluation." },
+    ],
+    codeMap: [
+      { concept: "Inversion and rendering", paper: "Map a cover image into a diffusion latent and render it back.", upstream: "wmdiffusion.py", upstreamUrl: "https://github.com/zhanglijun95/ZoDiac/blob/master/main/wmdiffusion.py", local: "src/zodiac_lab/model.py · FixedDiffusionProxy", note: "The local renderer is frozen so the optimisation boundary is visible." },
+      { concept: "Trainable latent", paper: "Optimise selected latent degrees of freedom for watermark evidence.", upstream: "watermarker.py · wmpatch.py", upstreamUrl: "https://github.com/zhanglijun95/ZoDiac/tree/master/main", local: "src/zodiac_lab/optimise.py", note: "The latent, not a network, receives gradients for each image." },
+      { concept: "Attack and detector loop", paper: "Reconstruct and test the watermark after transformations.", upstream: "wmattacker.py · attackerpipe.py", upstreamUrl: "https://github.com/zhanglijun95/ZoDiac/tree/master/main", local: "src/zodiac_lab/evaluate.py", note: "Named image operations make each failure inspectable." },
+    ],
+    methodology: [
+      { title: "Mark the optimisation boundary", question: "What is trained once versus per image?", method: "Keep the renderer and detector fixed, then optimise one latent for one target message.", evidence: "The checkpoint stores the latent itself and the manifest labels per_image_optimisation true." },
+      { title: "Preserve the cover by construction", question: "How is visual drift controlled?", method: "Use the inversion reconstruction as the image target and penalise latent deviation while increasing detector score.", evidence: "The run writes inversion, watermarked and amplified residual images plus loss history." },
+      { title: "Measure attack-specific failure", question: "What does the signature survive?", method: "Apply blur, crop and JPEG separately and report bit error rather than a single success label.", evidence: "The example run exposes large blur and JPEG errors." },
+    ],
+    decisions: [
+      { decision: "Use one fixed renderer", rationale: "It isolates latent optimisation before introducing a full Stable Diffusion installation.", consequence: "Prompt semantics, scheduler choice and inversion error are not represented locally." },
+      { decision: "Optimise all latent channels", rationale: "It makes the gradient path easy to inspect in a small demonstration.", consequence: "A paper-faithful implementation should restrict and schedule latent coefficients as the official code does." },
+    ],
+    visuals: [
+      { src: "/latent-watermarking-101/experiments/zodiac/inversion.png", label: "Inversion", description: "The frozen renderer's reconstruction before watermark optimisation." },
+      { src: "/latent-watermarking-101/experiments/zodiac/watermarked.png", label: "Watermarked", description: "The image after per-image latent optimisation." },
+      { src: "/latent-watermarking-101/experiments/zodiac/residual_amplified.png", label: "Residual ×8", description: "Amplified difference between inversion and optimised output." },
+    ],
+    limitations: ["The local renderer is not Stable Diffusion and has no prompt or scheduler semantics.", "The optimisation is a compact proxy for the official inversion and latent-frequency procedure.", "The saved checkpoint is tied to one image and message; it is not a reusable encoder."],
+  },
+} satisfies Record<string, PaperLab>);
+
 export function getLab(slug: string) {
   return paperLabs[slug];
 }

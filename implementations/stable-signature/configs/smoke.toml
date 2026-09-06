@@ -1,0 +1,12 @@
+image = 64
+latent_channels = 8
+latent_size = 8
+message_length = 48
+hidden_channels = 32
+steps = 3
+batch_size = 2
+learning_rate = 0.001
+image_loss_weight = 0.35
+watermark_loss_weight = 1.0
+seed = 23
+output_dir = "outputs/smoke"

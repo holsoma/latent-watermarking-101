@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zodiac-lab"
+version = "0.1.0"
+requires-python = ">=3.11,<3.13"
+dependencies = ["numpy>=1.26", "Pillow>=10.0", "torch>=2.0"]
+
+[project.scripts]
+zodiac-optimise = "zodiac_lab.optimise:main"
+zodiac-detect = "zodiac_lab.detect:main"
+zodiac-evaluate = "zodiac_lab.evaluate:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

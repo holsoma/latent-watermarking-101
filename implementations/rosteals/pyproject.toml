@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rosteals-lab"
+version = "0.1.0"
+description = "A small experiment-first RoSteALS implementation"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "numpy>=1.26,<3",
+  "Pillow>=10,<13",
+  "torch>=2.2,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9"]
+
+[project.scripts]
+rosteals-train = "rosteals_lab.train:main"
+rosteals-embed = "rosteals_lab.embed:main"
+rosteals-extract = "rosteals_lab.extract:main"
+rosteals-evaluate = "rosteals_lab.evaluate:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

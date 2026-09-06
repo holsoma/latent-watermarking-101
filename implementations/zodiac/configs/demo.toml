@@ -1,0 +1,11 @@
+image = 64
+latent_channels = 8
+latent_size = 8
+message_length = 16
+steps = 450
+learning_rate = 0.08
+image_loss_weight = 3.0
+watermark_loss_weight = 1.0
+frequency_penalty = 0.02
+seed = 31
+output_dir = "outputs/demo"

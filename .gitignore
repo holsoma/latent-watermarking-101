@@ -4,6 +4,8 @@ dist
 *.log
 *.tsbuildinfo
 implementations/hidden/outputs
+implementations/*/outputs
+outputs
 implementations/hidden/.venv
 __pycache__
 *.py[cod]
