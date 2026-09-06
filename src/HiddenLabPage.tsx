@@ -40,12 +40,24 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
 
       <section className="article-section" id="run-it">
         <p className="section-number">01</p><h2>Run it</h2>
-        <p>Run these blocks in Git Bash on Windows. The browser documents the experiment; Python performs model training and inference. Outputs shown below were observed in this workspace and are included so you can distinguish a successful command from a successful research result.</p>
+        <p>Run these blocks in Git Bash on Windows. Start with the tiny-set learning demo. The 12-step smoke test is kept as an optional plumbing check because it is not trained long enough to recover a message.</p>
         <div className="command-list">{lab.commands.map((command) => <LabCommand key={command.label} {...command} />)}</div>
       </section>
 
+      <section className="article-section" id="visual-output">
+        <p className="section-number">02</p><h2>See the generated artefacts</h2>
+        <p>These files are produced by the learning demo, copied into the site's public assets, and shown here as a visual check. If you retrain, copy your new <code>cover.png</code> and <code>encoded.png</code> into <code>public/experiments/hidden/</code> to replace them.</p>
+        <div className="output-gallery">
+          {lab.visuals.map((visual) => <figure key={visual.src}>
+            <img src={visual.src} alt={visual.label} />
+            <figcaption><strong>{visual.label}</strong><span>{visual.description}</span></figcaption>
+          </figure>)}
+        </div>
+        <div className="callout warning"><strong>Read this correctly</strong><div><p>The images are evidence that the encoder emitted an artefact. Message accuracy still comes from the extraction and evaluation commands below. A smoke checkpoint can produce an image while failing to learn the payload.</p></div></div>
+      </section>
+
       <section className="article-section" id="methodology">
-        <p className="section-number">02</p><h2>From research question to implementation</h2>
+        <p className="section-number">03</p><h2>From research question to implementation</h2>
         <p>The implementation starts by deciding what evidence would count, then works backwards to modules and tests. This prevents a runnable repository from being mistaken for a reproduced result.</p>
         <ol className="methodology-list">
           {lab.methodology.map((step, index) => <li key={step.title}>
@@ -58,7 +70,7 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
       </section>
 
       <section className="article-section" id="decisions">
-        <p className="section-number">03</p><h2>Decision log</h2>
+        <p className="section-number">04</p><h2>Decision log</h2>
         <p>These choices make the lab practical, but each choice changes what can be inferred from the result.</p>
         <div className="decision-table">
           <div className="decision-heading"><span>Decision</span><span>Reason</span><span>Consequence</span></div>
@@ -67,7 +79,7 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
       </section>
 
       <section className="article-section" id="generation-pipeline">
-        <p className="section-number">04</p><h2>The generation process</h2>
+        <p className="section-number">05</p><h2>The generation process</h2>
         <p>HiDDeN does not generate an image from text. It generates a watermarked version of an existing cover image. The message travels through the encoder and must survive the sampled channel.</p>
         <ol className="implementation-flow">
           <li><b>01</b><div><strong>Cover + message</strong><p>Load an image and a binary payload of the configured length.</p></div></li>
@@ -79,7 +91,7 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
       </section>
 
       <section className="article-section" id="code-map">
-        <p className="section-number">05</p><h2>Paper to code</h2>
+        <p className="section-number">06</p><h2>Paper to code</h2>
         <p>The upstream links are evidence sources, not an assertion that either repository is a perfect reproduction. The local implementation keeps each stage inspectable and testable.</p>
         <div className="code-map">
           {lab.codeMap.map((row) => <div className="code-map-row" key={row.concept}>
@@ -93,14 +105,14 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
       </section>
 
       <section className="article-section" id="upstream">
-        <p className="section-number">06</p><h2>Upstream implementations</h2>
+        <p className="section-number">07</p><h2>Upstream implementations</h2>
         <div className="upstream-list">{lab.upstream.map((source) => <a href={source.url} target="_blank" rel="noreferrer" key={source.label}>
           <span>{source.label} ↗</span><strong>{source.url.replace("https://github.com/", "")}</strong><p>{source.note}</p>
         </a>)}</div>
       </section>
 
       <section className="article-section" id="reproduction-ladder">
-        <p className="section-number">07</p><h2>Reproduction ladder</h2>
+        <p className="section-number">08</p><h2>Reproduction ladder</h2>
         <p>Do not jump from a smoke run to full COCO training. Each stage answers a different question and supplies the evidence needed for the next one.</p>
         <ol className="reproduction-ladder">
           <li><b>01</b><div><strong>Mechanical smoke test</strong><p>Does every module execute, save, reload and emit inspectable outputs?</p><span>Current status: complete</span></div></li>
@@ -112,7 +124,7 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
       </section>
 
       <section className="article-section" id="evidence">
-        <p className="section-number">08</p><h2>What the results mean</h2>
+        <p className="section-number">09</p><h2>What the results mean</h2>
         <p>Every run should record its configuration, random seed, checkpoint, distortion parameters, bit error rate, exact-message recovery, PSNR, and hardware. A low error on the smoke test is a pipeline check, not a paper-level result.</p>
         <div className="callout warning"><strong>Known limits</strong><div><ul>{lab.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></div>
       </section>

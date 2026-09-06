@@ -29,6 +29,26 @@ def synthetic_batch(batch_size: int, image_size: int, message_length: int, devic
     return image, message
 
 
+def fixed_demo_batch(batch_size: int, image_size: int, message_length: int, device: torch.device):
+    """Return one repeatable cover/message pair for the tiny-set overfit demo.
+
+    Reusing the same pair is deliberate: this experiment asks whether the
+    implementation can learn the communication path before we add data and
+    distortion complexity. It is not a training recipe for paper results.
+    """
+    axis = torch.linspace(-1, 1, image_size, device=device)
+    grid_y, grid_x = torch.meshgrid(axis, axis, indexing="ij")
+    image = torch.stack((grid_x, grid_y, grid_x * grid_y), dim=0).unsqueeze(0)
+    message = torch.tensor([[1, 0, 1, 1, 0, 0, 1, 0]], device=device, dtype=torch.float32)
+    if message_length != message.shape[1]:
+        message = torch.tensor(
+            [[(101 + index * 17) % 2 for index in range(message_length)]],
+            device=device,
+            dtype=torch.float32,
+        )
+    return image.repeat(batch_size, 1, 1, 1), message.repeat(batch_size, 1)
+
+
 def dataset_batch(paths: list[Path], batch_size: int, image_size: int, message_length: int, device: torch.device):
     selected = random.choices(paths, k=batch_size)
     images = torch.cat([load_image(path, image_size, device) for path in selected], dim=0)
@@ -61,11 +81,16 @@ def train(config_path: str, data_dir: str | None = None) -> Path:
     image_loss = nn.MSELoss()
     adversarial_loss = nn.BCEWithLogitsLoss()
     channels = ["identity", "dropout", "blur", "crop", "jpeg"]
+    fixed_demo = bool(settings.get("fixed_demo", False))
+    demo_image, demo_message = fixed_demo_batch(int(settings.get("batch_size", 1)), config.image_size, config.message_length, device) if fixed_demo else (None, None)
     history: list[dict[str, float | int | str]] = []
 
     for step in range(1, int(settings.get("steps", 12)) + 1):
-        image, message = dataset_batch(image_paths, int(settings.get("batch_size", 4)), config.image_size, config.message_length, device) if image_paths else synthetic_batch(int(settings.get("batch_size", 4)), config.image_size, config.message_length, device)
-        channel_name = channels[(step - 1) % len(channels)]
+        if fixed_demo:
+            image, message = demo_image, demo_message
+        else:
+            image, message = dataset_batch(image_paths, int(settings.get("batch_size", 4)), config.image_size, config.message_length, device) if image_paths else synthetic_batch(int(settings.get("batch_size", 4)), config.image_size, config.message_length, device)
+        channel_name = "identity" if fixed_demo else channels[(step - 1) % len(channels)]
         model.channel = channel_from_name(channel_name).to(device)
         encoded, noised, decoded = model(image, message)
 
@@ -88,7 +113,7 @@ def train(config_path: str, data_dir: str | None = None) -> Path:
     checkpoint = output / "checkpoint.pt"
     torch.save({"config": values["model"], "state_dict": model.state_dict(), "history": history}, checkpoint)
     save_image(image[:1], output / "cover.png")
-    manifest = {"paper": "HiDDeN", "kind": "dataset" if image_paths else "smoke", "data_directory": data_root, "config": values, "history": history, "checkpoint": str(checkpoint), "device": str(device), "note": "Synthetic smoke run. Not a paper reproduction." if not image_paths else "Local dataset run. Match paper settings before comparing results."}
+    manifest = {"paper": "HiDDeN", "kind": "tiny-set-overfit" if fixed_demo else ("dataset" if image_paths else "smoke"), "data_directory": data_root, "config": values, "history": history, "checkpoint": str(checkpoint), "device": str(device), "note": "Fixed one-image demo. It validates learnability, not generalisation or paper reproduction." if fixed_demo else ("Synthetic smoke run. Not a paper reproduction." if not image_paths else "Local dataset run. Match paper settings before comparing results." )}
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps({"checkpoint": str(checkpoint), "manifest": str(output / 'manifest.json'), "device": str(device), "steps": len(history)}, indent=2))
     return checkpoint

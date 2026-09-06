@@ -13,7 +13,8 @@ cd /c/amos/research/latent-watermarking-101/implementations/hidden
 PYTHON311='/c/Users/amosl/AppData/Local/Programs/Python/Python311/python.exe'
 "$PYTHON311" -m venv .venv
 source .venv/Scripts/activate
-python -m pip install -e '.[dev]'
+python -m pip install wheel
+python -m pip install --no-build-isolation -e '.[dev]'
 export PYTHONPATH=src
 ```
 
@@ -26,9 +27,30 @@ Successfully installed hidden-lab-0.1.0
 
 Keep the virtual environment active and run the following commands from `implementations/hidden`.
 
-## Smoke run
+## Learning demo: tiny-set overfit
 
-The smoke configuration creates deterministic synthetic cover images, trains for twelve steps, and writes a checkpoint and JSON manifest under `outputs/smoke`.
+Run this first. It reuses one deterministic cover and one eight-bit message for 300 identity-channel steps. The purpose is to answer one narrow question: can this encoder-decoder learn the communication path at all?
+
+```bash
+python -m hidden_lab.train --config configs/demo.toml
+```
+
+Expected output shape:
+
+```text
+{
+  "checkpoint": "outputs\\demo\\checkpoint.pt",
+  "manifest": "outputs\\demo\\manifest.json",
+  "device": "cpu",
+  "steps": 300
+}
+```
+
+This is an overfit demonstration, not a paper result. It does not test generalisation or robustness. It should be followed by the extraction command below, where the expected recovered message is `10110010`.
+
+## Smoke run (optional plumbing check)
+
+The smoke configuration creates synthetic cover images, cycles through all distortion modules for twelve steps, and writes a checkpoint and JSON manifest under `outputs/smoke`.
 
 ```bash
 python -m hidden_lab.train --config configs/smoke.toml
@@ -55,37 +77,37 @@ python -m hidden_lab.train \
   --data-dir /c/path/to/covers
 ```
 
-## Embed and recover a message
+## Embed and recover a message from the learning demo
 
-The smoke run writes `cover.png`, so it can be used without preparing another image:
+The learning demo writes `cover.png`, so it can be used without preparing another image:
 
 ```bash
 python -m hidden_lab.embed \
-  --checkpoint outputs/smoke/checkpoint.pt \
-  --image outputs/smoke/cover.png \
-  --message 10110110 \
-  --output outputs/smoke/encoded.png
+  --checkpoint outputs/demo/checkpoint.pt \
+  --image outputs/demo/cover.png \
+  --message 10110010 \
+  --output outputs/demo/encoded.png
 
 python -m hidden_lab.extract \
-  --checkpoint outputs/smoke/checkpoint.pt \
-  --image outputs/smoke/encoded.png
+  --checkpoint outputs/demo/checkpoint.pt \
+  --image outputs/demo/encoded.png
 ```
 
 Verified output from the twelve-step checkpoint:
 
 ```text
-encoded image written to outputs/smoke/encoded.png
-01101101
+encoded image written to outputs/demo/encoded.png
+10110010
 ```
 
-The recovered message does not match `10110110`. That failure is expected from the deliberately under-trained smoke checkpoint and is useful evidence that execution success and research success are different claims.
+The recovered message should match `10110010` for the fixed demo. If it does not, inspect the manifest and loss history before adding distortions.
 
 ## Evaluate attack channels
 
 ```bash
 python -m hidden_lab.evaluate \
-  --checkpoint outputs/smoke/checkpoint.pt \
-  --image outputs/smoke/cover.png \
+  --checkpoint outputs/demo/checkpoint.pt \
+  --image outputs/demo/cover.png \
   --attacks identity,jpeg,crop,blur
 ```
 
@@ -103,7 +125,7 @@ Verified output:
 }
 ```
 
-Identical poor scores do not mean the attacks are harmless. They mean the checkpoint has not yet learned a useful clean channel, so attack comparisons are premature.
+Identity is the clean baseline. The other attacks may still fail because the tiny demo trains only the identity channel. Robustness is a separate experiment.
 
 ## Methodology
 
@@ -111,7 +133,7 @@ The lab follows five stages.
 
 1. Define the information path. A cover and message enter the encoder; a distortion changes the encoded image; a blind decoder recovers the message.
 2. Triangulate sources. Use the paper for the research claim, the authors' Torch7 code for original intent, and the community PyTorch port for a readable implementation comparison.
-3. Build the smallest falsifiable path. Exercise the complete system on synthetic data before downloading COCO or running long training jobs.
+3. Build the smallest falsifiable path. First overfit one fixed cover and message, then run the twelve-step synthetic smoke test to exercise every distortion module before downloading COCO or running long training jobs.
 4. Separate mechanical validation from empirical validation. Tensor shapes, gradients and checkpoints show that code executes. They do not establish robustness or fidelity.
 5. Let failure define the next experiment. First obtain clean recovery on a tiny fixed dataset, then add one distortion at a time, then compare differentiable proxies with real image operations.
 

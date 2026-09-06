@@ -123,9 +123,9 @@ The site uses React, TypeScript and Vite. Hash routes allow every chapter and pa
 
 ## Implementation labs
 
-Paper studies are being converted into runnable implementation labs. The first lab is HiDDeN, under [`implementations/hidden`](implementations/hidden/). It contains a readable PyTorch model, configurable distortion channels, smoke training, message embedding, extraction, evaluation, and tests. The `/papers/hidden` page provides the generation flow and a paper-to-code map.
+Paper studies are being converted into runnable implementation labs. The first lab is HiDDeN, under [`implementations/hidden`](implementations/hidden/). It contains a readable PyTorch model, a tiny-set learning demo, configurable distortion channels, an optional smoke run, message embedding, extraction, evaluation, and tests. The `/papers/hidden` page provides the generation flow, visible output artefacts, methodology, and a paper-to-code map.
 
-The lab is intentionally separate from the static site. GitHub Pages documents the experiment and displays committed result manifests; Python performs training and inference locally. Smoke results are pipeline checks and must not be presented as exact reproductions of the paper.
+The lab is intentionally separate from the static site. GitHub Pages documents the experiment and displays committed sample images; Python performs training and inference locally. The tiny-set demo tests learnability. Smoke results are pipeline checks and must not be presented as exact reproductions of the paper.
 
 ## Contributing
 

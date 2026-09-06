@@ -30,6 +30,12 @@ export type DesignDecision = {
   consequence: string;
 };
 
+export type LabVisual = {
+  src: string;
+  label: string;
+  description: string;
+};
+
 export type PaperLab = {
   slug: string;
   status: LabStatus;
@@ -40,6 +46,7 @@ export type PaperLab = {
   codeMap: CodeMapRow[];
   methodology: MethodologyStep[];
   decisions: DesignDecision[];
+  visuals: LabVisual[];
   limitations: string[];
 };
 
@@ -48,7 +55,7 @@ export const paperLabs: Record<string, PaperLab> = {
     slug: "hidden",
     status: "Runnable locally",
     runtime: "Python 3.11 or 3.12 · PyTorch · CPU or CUDA",
-    training: "Training required. No pre-trained checkpoint is bundled.",
+    training: "A tiny-set demo is reproducible locally; paper-scale training is still required.",
     upstream: [
       {
         label: "Authors · Lua/Torch7",
@@ -71,31 +78,38 @@ export const paperLabs: Record<string, PaperLab> = {
       },
       {
         label: "Install",
-        command: "cd /c/amos/research/latent-watermarking-101/implementations/hidden\nPYTHON311='/c/Users/amosl/AppData/Local/Programs/Python/Python311/python.exe'\n\"$PYTHON311\" -m venv .venv\nsource .venv/Scripts/activate\npython -m pip install -e '.[dev]'\nexport PYTHONPATH=src",
+        command: "cd /c/amos/research/latent-watermarking-101/implementations/hidden\nPYTHON311='/c/Users/amosl/AppData/Local/Programs/Python/Python311/python.exe'\n\"$PYTHON311\" -m venv .venv\nsource .venv/Scripts/activate\npython -m pip install wheel\npython -m pip install --no-build-isolation -e '.[dev]'\nexport PYTHONPATH=src",
         output: "Successfully built hidden-lab\nSuccessfully installed hidden-lab-0.1.0",
         purpose: "Create an isolated environment for the lab.",
         interpretation: "The prompt should now begin with (.venv). Run the remaining commands from implementations/hidden in the same Git Bash session.",
       },
       {
+        label: "Train the learning demo",
+        command: "python -m hidden_lab.train --config configs/demo.toml",
+        output: "{\n  \"checkpoint\": \"outputs\\\\demo\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\demo\\\\manifest.json\",\n  \"device\": \"cpu\",\n  \"steps\": 300\n}",
+        purpose: "Overfit one deterministic cover and one eight-bit message for 300 identity-channel steps.",
+        interpretation: "This is the first meaningful check: it asks whether the encoder-decoder pair can learn the communication path at all. It is still not a generalisation or paper-reproduction result.",
+      },
+      {
         label: "Smoke test",
         command: "python -m hidden_lab.train --config configs/smoke.toml",
         output: "{\n  \"checkpoint\": \"outputs\\\\smoke\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\smoke\\\\manifest.json\",\n  \"device\": \"cuda\",\n  \"steps\": 12\n}",
-        purpose: "Run a small end-to-end training pass and write a checkpoint.",
-        interpretation: "This proves that the model, optimiser, distortion selection, checkpoint writer and GPU path execute. Twelve steps are not enough to establish message accuracy.",
+        purpose: "Run the optional fast plumbing check and write a checkpoint.",
+        interpretation: "This proves that the model, optimiser, distortion selection, checkpoint writer and GPU path execute. It is deliberately short and should not be used to judge message accuracy.",
       },
       {
         label: "Embed and extract",
-        command: "python -m hidden_lab.embed --checkpoint outputs/smoke/checkpoint.pt --image outputs/smoke/cover.png --message 10110110 --output outputs/smoke/encoded.png\npython -m hidden_lab.extract --checkpoint outputs/smoke/checkpoint.pt --image outputs/smoke/encoded.png",
-        output: "encoded image written to outputs/smoke/encoded.png\n01101101",
+        command: "python -m hidden_lab.embed --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/cover.png --message 10110010 --output outputs/demo/encoded.png\npython -m hidden_lab.extract --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/encoded.png",
+        output: "encoded image written to outputs/demo/encoded.png\n10110010",
         purpose: "Write a message into a cover image, then recover it from the encoded image.",
-        interpretation: "This is the verified output from the 12-step smoke checkpoint. The recovered bits do not match the input, which is expected from an intentionally under-trained model.",
+        interpretation: "The demo reuses one fixed cover and message, so exact recovery is the expected pass condition. Change the message or cover and the experiment is no longer the same recorded run.",
       },
       {
         label: "Evaluate attacks",
-        command: "python -m hidden_lab.evaluate --checkpoint outputs/smoke/checkpoint.pt --image outputs/smoke/cover.png --attacks identity,jpeg,crop,blur",
-        output: "{\n  \"message\": \"10101010\",\n  \"results\": [\n    { \"attack\": \"identity\", \"bit_error_rate\": 0.625, \"exact_message\": false },\n    { \"attack\": \"jpeg\", \"bit_error_rate\": 0.625, \"exact_message\": false },\n    { \"attack\": \"crop\", \"bit_error_rate\": 0.625, \"exact_message\": false },\n    { \"attack\": \"blur\", \"bit_error_rate\": 0.625, \"exact_message\": false }\n  ]\n}",
+        command: "python -m hidden_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/cover.png --message 10110010 --attacks identity,jpeg,crop,blur",
+        output: "{\n  \"message\": \"10110010\",\n  \"results\": [\n    { \"attack\": \"identity\", \"bit_error_rate\": 0.0, \"exact_message\": true },\n    { \"attack\": \"jpeg\", \"bit_error_rate\": 0.0, \"exact_message\": true },\n    { \"attack\": \"crop\", \"bit_error_rate\": 0.0, \"exact_message\": true },\n    { \"attack\": \"blur\", \"bit_error_rate\": 0.0, \"exact_message\": true }\n  ]\n}",
         purpose: "Measure bit error and exact-message recovery under named distortions.",
-        interpretation: "Identical poor scores across attacks show that this checkpoint has not learned the message channel yet. They do not show that the attacks are harmless.",
+        interpretation: "Identity should be the clean baseline. The other attacks can still fail because this demo deliberately trains only the identity channel; robustness is the next experiment, not a hidden property of this checkpoint.",
       },
     ],
     codeMap: [
@@ -148,8 +162,8 @@ export const paperLabs: Record<string, PaperLab> = {
       {
         title: "Build the smallest falsifiable path",
         question: "Can the complete system execute before expensive training begins?",
-        method: "Use synthetic covers, an eight-bit payload, small feature widths and twelve steps. Exercise every subsystem without claiming accuracy.",
-        evidence: "The run writes a checkpoint, manifest and cover image, then supports embedding, extraction and attack evaluation.",
+        method: "First reuse one deterministic cover and eight-bit payload to test learnability. Then use synthetic covers, small feature widths and twelve rotating channels to exercise every subsystem without claiming accuracy.",
+        evidence: "The demo must recover its fixed payload; the smoke run must write a checkpoint, manifest and cover image, then support embedding, extraction and attack evaluation.",
       },
       {
         title: "Separate mechanical and empirical validation",
@@ -184,6 +198,18 @@ export const paperLabs: Record<string, PaperLab> = {
         decision: "Label differentiable JPEG as a proxy",
         rationale: "Straight-through quantisation permits gradients but is not a real JPEG codec.",
         consequence: "A later experiment must test a real encoder at explicit quality levels.",
+      },
+    ],
+    visuals: [
+      {
+        src: "/latent-watermarking-101/experiments/hidden/cover.png",
+        label: "Cover image",
+        description: "The deterministic cover presented to the encoder.",
+      },
+      {
+        src: "/latent-watermarking-101/experiments/hidden/encoded.png",
+        label: "Encoded image",
+        description: "The encoder output carrying the eight-bit payload.",
       },
     ],
     limitations: [

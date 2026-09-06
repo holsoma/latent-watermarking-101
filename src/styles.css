@@ -534,6 +534,12 @@ footer a { color: var(--accent); }
 .lab-command .command-output { background: #101724; color: #c8d5ea; }
 .lab-command .command-interpretation { padding-top: 13px; border-top: 1px solid var(--line); background: var(--accent-soft); color: #2e3d52; }
 .lab-command .command-interpretation strong { color: var(--ink); }
+.output-gallery { max-width: 900px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 26px 0; }
+.output-gallery figure { margin: 0; border: 1px solid var(--ink); background: var(--surface); }
+.output-gallery img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; image-rendering: auto; background: #101724; }
+.output-gallery figcaption { display: grid; gap: 6px; padding: 13px 15px 15px; border-top: 1px solid var(--line); }
+.output-gallery figcaption strong { font-size: 13px; }
+.output-gallery figcaption span { color: var(--muted); font-size: 12px; line-height: 1.45; }
 .methodology-list { max-width: 900px; margin: 28px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
 .methodology-list li { display: grid; grid-template-columns: 42px 1.2fr 1.5fr 1.3fr; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--line); }
 .methodology-list li > b { color: var(--accent); font: 750 10px ui-monospace, SFMono-Regular, Consolas, monospace; }
@@ -589,6 +595,7 @@ footer a { color: var(--accent); }
   .implementation-flow b { margin-bottom: 15px; }
   .code-map-row { grid-template-columns: 1fr 1fr; }
   .upstream-list { grid-template-columns: 1fr; }
+  .output-gallery { grid-template-columns: 1fr; }
   .methodology-list li { grid-template-columns: 36px 1fr; }
   .methodology-list li > div:not(.methodology-title) { grid-column: 2; }
   .decision-heading { display: none; }
