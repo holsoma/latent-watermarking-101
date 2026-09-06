@@ -3,3 +3,7 @@ dist
 .vite
 *.log
 *.tsbuildinfo
+implementations/hidden/outputs
+implementations/hidden/.venv
+__pycache__
+*.py[cod]

@@ -121,6 +121,12 @@ npm test
 
 The site uses React, TypeScript and Vite. Hash routes allow every chapter and paper study to open directly on GitHub Pages.
 
+## Implementation labs
+
+Paper studies are being converted into runnable implementation labs. The first lab is HiDDeN, under [`implementations/hidden`](implementations/hidden/). It contains a readable PyTorch model, configurable distortion channels, smoke training, message embedding, extraction, evaluation, and tests. The `/papers/hidden` page provides the generation flow and a paper-to-code map.
+
+The lab is intentionally separate from the static site. GitHub Pages documents the experiment and displays committed result manifests; Python performs training and inference locally. Smoke results are pipeline checks and must not be presented as exact reproductions of the paper.
+
 ## Contributing
 
 Contributions should improve factual accuracy, explanation, accessibility or public source coverage.

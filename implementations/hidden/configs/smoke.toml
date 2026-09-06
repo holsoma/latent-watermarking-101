@@ -1,0 +1,21 @@
+[model]
+image_size = 64
+message_length = 8
+encoder_channels = 32
+encoder_blocks = 4
+decoder_channels = 32
+decoder_blocks = 4
+discriminator_channels = 32
+discriminator_blocks = 3
+
+[training]
+steps = 12
+batch_size = 4
+learning_rate = 0.001
+image_loss_weight = 1.0
+adversarial_loss_weight = 0.001
+message_loss_weight = 1.0
+seed = 7
+
+[output]
+directory = "outputs/smoke"

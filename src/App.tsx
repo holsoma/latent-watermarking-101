@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { glossary, papers as originalPapers, type Paper, type TrainingBoundary } from "./content";
 import { additionalPapers, additionalReading, studyContent, type PaperStudy } from "./studies";
+import { getLab } from "./labs";
+import { HiddenLabPage } from "./HiddenLabPage";
+import { PlannedLabPage } from "./PlannedLabPage";
 
 const studyCategories: PaperStudy["category"][] = [
   "Foundations and bridges",
@@ -41,7 +44,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Research",
     items: [
-      { label: "Paper studies", path: "/papers" },
+      { label: "Paper labs", path: "/papers" },
       { label: "Threats and gaps", path: "/research/gaps" },
       { label: "Glossary", path: "/glossary" },
     ],
@@ -263,7 +266,7 @@ function HomePage() {
     >
       <div className="home-actions">
         <Link to="/foundations/watermarking" className="button primary">Begin the guide</Link>
-        <Link to="/papers" className="button secondary">Open the paper studies</Link>
+        <Link to="/papers" className="button secondary">Open the paper labs</Link>
       </div>
 
       <div className="home-chapters" aria-label="Core chapters">
@@ -953,10 +956,10 @@ function PapersPage() {
   const filtered = papers.filter((paper) => boundary === "All" || paper.boundary === boundary);
   return (
     <Article
-      eyebrow="Literature guide"
-      title="Read the methods as arguments, not entries in a catalogue."
-      lead="Start with the field-level differences, then open a paper study for the mechanism, mathematics, detector assumptions, evidence and unresolved failure modes."
-      meta="The reading path includes neural watermarking foundations, generator-integrated methods, initial-noise methods, model ownership, semantic binding and adversarial counter-evidence."
+      eyebrow="Implementation labs"
+      title="Inspect the method, then run the path yourself."
+      lead="Each paper gets a reproducible implementation surface: upstream code, local modules, commands, experiments, and the limits of what the result can show."
+      meta="HiDDeN is the first runnable lab. The remaining papers are queued with an implementation plan rather than another prose-only summary."
     >
       <div className="filter-bar" aria-label="Filter papers by training boundary">
         {(["All", "No method-specific training", "Auxiliary training", "Base model fine-tuning", "Conditioning fine-tuning", "Per-image optimisation"] as const).map((value) => (
@@ -977,9 +980,9 @@ function PapersPage() {
                   </div>
                   <div>
                     <h3>{paper.shortTitle}</h3>
-                    <p>{paper.oneLine}</p>
+                    <p>{getLab(paper.slug)?.status ?? "Implementation planned"} · {paper.oneLine}</p>
                   </div>
-                  <b>Study the paper →</b>
+                  <b>{getLab(paper.slug) ? "Open implementation lab →" : "Open study plan →"}</b>
                 </Link>
               ))}
             </div>
@@ -1008,79 +1011,9 @@ function PaperPage({ paper }: { paper: Paper }) {
   const next = papers[(currentIndex + 1) % papers.length];
   const study = studyContent[paper.slug];
   if (!study) return <NotFoundPage />;
-  return (
-    <Article
-      eyebrow={`${study.category} · ${paper.venue} ${paper.year}`}
-      title={paper.shortTitle}
-      lead={paper.oneLine}
-      meta={paper.title}
-    >
-      <div className="study-meta">
-        <p><span>Authors</span>{paper.authors}</p>
-        <p><span>Training boundary</span><BoundaryBadge value={paper.boundary} /></p>
-        <p><span>Sources</span><ExternalLink href={paper.paperUrl}>Paper</ExternalLink>{paper.codeUrl && <> · <ExternalLink href={paper.codeUrl}>Code</ExternalLink></>}</p>
-      </div>
-
-      <Section id="argument" number="01" title="The argument">
-        <p>{paper.problem}</p>
-        <p className="thesis">{study.thesis}</p>
-        <div className="orientation-lines">
-          <div><span>What changes</span><p>{study.intervention}</p></div>
-          <div><span>What stays fixed</span><p>{study.fixedPoint}</p></div>
-          <div><span>Verification depends on</span><p>{study.verificationAssumption}</p></div>
-        </div>
-        <p className="boundary-note"><strong>{paper.boundary}:</strong> {paper.boundaryDetail}</p>
-      </Section>
-
-      <Section id="information-path" number="02" title="The information path">
-        <ol className="reading-trace">
-          {paper.mechanism.map((text, index) => (
-            <li key={text}><span>{String(index + 1).padStart(2, "0")}</span><p>{text}</p></li>
-          ))}
-        </ol>
-        <p><strong>Verification:</strong> {paper.detection}</p>
-      </Section>
-
-      {study.sections.map((item, index) => (
-        <Section
-          id={`deep-reading-${index + 1}`}
-          number={String(index + 3).padStart(2, "0")}
-          title={item.title}
-          key={item.title}
-        >
-          {item.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-          {item.equation && <Equation><MathExpression value={item.equation.expression} /><small>{item.equation.note}</small></Equation>}
-          {item.bullets && <ul className="check-list">{item.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
-          {item.takeaway && <p className="takeaway"><strong>Reading conclusion:</strong> {item.takeaway}</p>}
-        </Section>
-      ))}
-
-      <Section id="evidence" title="How to judge the evidence">
-        <p>{study.judgement}</p>
-        <div className="evidence-reading">
-          <div>
-            <h3>Claims to locate in the paper</h3>
-            <ul>{paper.contributions.map((item) => <li key={item}>{item}</li>)}</ul>
-          </div>
-          <div>
-            <h3>Boundaries to test</h3>
-            <ul>{paper.limitations.map((item) => <li key={item}>{item}</li>)}</ul>
-          </div>
-        </div>
-      </Section>
-
-      <Section id="connections" title="Place it beside neighbouring work">
-        <ul className="connection-list">{study.connections.map((item) => <li key={item}>{item}</li>)}</ul>
-      </Section>
-
-      <Section id="questions" title="Questions to carry into a close reading">
-        <ol className="study-questions">{paper.studyQuestions.map((item) => <li key={item}>{item}</li>)}</ol>
-      </Section>
-
-      <p className="source-line">This study interprets the public primary paper and official implementation. Use the linked paper for experimental tables, theorem assumptions and exact configurations.</p>
-      <NextPage path={`/papers/${next.slug}`} label={`Next paper: ${next.shortTitle}`} />
-    </Article>
-  );
+  const lab = getLab(paper.slug);
+  if (paper.slug === "hidden" && lab) return <HiddenLabPage paper={paper} lab={lab} />;
+  return <PlannedLabPage paper={paper} next={next} lab={lab} />;
 }
 
 function GapsPage() {
@@ -1257,7 +1190,7 @@ function App() {
           </nav>
         ))}
         <nav>
-          <p>Paper studies</p>
+          <p>Paper labs</p>
           {papers.map((paper) => (
             <Link key={paper.slug} to={`/papers/${paper.slug}`} className={route === `/papers/${paper.slug}` ? "active" : ""} onClick={() => setMenuOpen(false)}>{paper.shortTitle}</Link>
           ))}

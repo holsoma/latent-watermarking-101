@@ -64,6 +64,7 @@ export const additionalPapers: Paper[] = [
     ],
     paperUrl:
       "https://openaccess.thecvf.com/content_ECCV_2018/html/Jiren_Zhu_HiDDeN_Hiding_Data_ECCV_2018_paper.html",
+    codeUrl: "https://github.com/jirenz/HiDDeN",
   },
   {
     slug: "rosteals",
