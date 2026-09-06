@@ -7,3 +7,7 @@ implementations/hidden/outputs
 implementations/hidden/.venv
 __pycache__
 *.py[cod]
+venv
+.venv
+.uv-cache*
+*.egg-info
