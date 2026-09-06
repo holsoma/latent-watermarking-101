@@ -105,6 +105,13 @@ export const paperLabs: Record<string, PaperLab> = {
         interpretation: "The demo reuses one fixed cover and message, so exact recovery is the expected pass condition. Change the message or cover and the experiment is no longer the same recorded run.",
       },
       {
+        label: "Try a different message",
+        command: "python -m hidden_lab.train --config configs/demo.toml --demo-message 01010101 --output-dir outputs/demo-custom\npython -m hidden_lab.embed --checkpoint outputs/demo-custom/checkpoint.pt --image outputs/demo-custom/cover.png --message 01010101 --output outputs/demo-custom/encoded.png\npython -m hidden_lab.extract --checkpoint outputs/demo-custom/checkpoint.pt --image outputs/demo-custom/encoded.png",
+        output: "{\n  \"checkpoint\": \"outputs\\\\demo-custom\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\demo-custom\\\\manifest.json\",\n  \"device\": \"cpu\",\n  \"steps\": 300\n}\nencoded image written to outputs/demo-custom/encoded.png\n01010101",
+        purpose: "Retrain the tiny-set demo for a new eight-bit payload, then embed and extract that same payload.",
+        interpretation: "The output directory is separate so the recorded 10110010 demo remains unchanged. This is the correct way to test a different message with this intentionally fixed demonstration.",
+      },
+      {
         label: "Evaluate attacks",
         command: "python -m hidden_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/cover.png --message 10110010 --attacks identity,jpeg,crop,blur",
         output: "{\n  \"message\": \"10110010\",\n  \"results\": [\n    { \"attack\": \"identity\", \"bit_error_rate\": 0.0, \"exact_message\": true },\n    { \"attack\": \"jpeg\", \"bit_error_rate\": 0.0, \"exact_message\": true },\n    { \"attack\": \"crop\", \"bit_error_rate\": 0.0, \"exact_message\": true },\n    { \"attack\": \"blur\", \"bit_error_rate\": 0.0, \"exact_message\": true }\n  ]\n}",

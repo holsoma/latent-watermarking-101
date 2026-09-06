@@ -29,7 +29,7 @@ def synthetic_batch(batch_size: int, image_size: int, message_length: int, devic
     return image, message
 
 
-def fixed_demo_batch(batch_size: int, image_size: int, message_length: int, device: torch.device):
+def fixed_demo_batch(batch_size: int, image_size: int, message_length: int, device: torch.device, message_bits: str):
     """Return one repeatable cover/message pair for the tiny-set overfit demo.
 
     Reusing the same pair is deliberate: this experiment asks whether the
@@ -39,13 +39,9 @@ def fixed_demo_batch(batch_size: int, image_size: int, message_length: int, devi
     axis = torch.linspace(-1, 1, image_size, device=device)
     grid_y, grid_x = torch.meshgrid(axis, axis, indexing="ij")
     image = torch.stack((grid_x, grid_y, grid_x * grid_y), dim=0).unsqueeze(0)
-    message = torch.tensor([[1, 0, 1, 1, 0, 0, 1, 0]], device=device, dtype=torch.float32)
-    if message_length != message.shape[1]:
-        message = torch.tensor(
-            [[(101 + index * 17) % 2 for index in range(message_length)]],
-            device=device,
-            dtype=torch.float32,
-        )
+    if len(message_bits) != message_length or set(message_bits) - {"0", "1"}:
+        raise ValueError(f"Demo message must contain exactly {message_length} binary digits")
+    message = torch.tensor([[int(bit) for bit in message_bits]], device=device, dtype=torch.float32)
     return image.repeat(batch_size, 1, 1, 1), message.repeat(batch_size, 1)
 
 
@@ -56,11 +52,11 @@ def dataset_batch(paths: list[Path], batch_size: int, image_size: int, message_l
     return images, message
 
 
-def train(config_path: str, data_dir: str | None = None) -> Path:
+def train(config_path: str, data_dir: str | None = None, demo_message: str | None = None, output_directory: str | None = None) -> Path:
     values = read_config(config_path)
     config = config_from_values(values)
     settings = values["training"]
-    output = Path(values["output"]["directory"])
+    output = Path(output_directory or values["output"]["directory"])
     output.mkdir(parents=True, exist_ok=True)
     seed = int(settings.get("seed", 7))
     random.seed(seed)
@@ -82,12 +78,13 @@ def train(config_path: str, data_dir: str | None = None) -> Path:
     adversarial_loss = nn.BCEWithLogitsLoss()
     channels = ["identity", "dropout", "blur", "crop", "jpeg"]
     fixed_demo = bool(settings.get("fixed_demo", False))
-    demo_image, demo_message = fixed_demo_batch(int(settings.get("batch_size", 1)), config.image_size, config.message_length, device) if fixed_demo else (None, None)
+    selected_demo_message = demo_message or str(settings.get("demo_message", "10110010"))
+    demo_image, demo_message_tensor = fixed_demo_batch(int(settings.get("batch_size", 1)), config.image_size, config.message_length, device, selected_demo_message) if fixed_demo else (None, None)
     history: list[dict[str, float | int | str]] = []
 
     for step in range(1, int(settings.get("steps", 12)) + 1):
         if fixed_demo:
-            image, message = demo_image, demo_message
+            image, message = demo_image, demo_message_tensor
         else:
             image, message = dataset_batch(image_paths, int(settings.get("batch_size", 4)), config.image_size, config.message_length, device) if image_paths else synthetic_batch(int(settings.get("batch_size", 4)), config.image_size, config.message_length, device)
         channel_name = "identity" if fixed_demo else channels[(step - 1) % len(channels)]
@@ -113,7 +110,7 @@ def train(config_path: str, data_dir: str | None = None) -> Path:
     checkpoint = output / "checkpoint.pt"
     torch.save({"config": values["model"], "state_dict": model.state_dict(), "history": history}, checkpoint)
     save_image(image[:1], output / "cover.png")
-    manifest = {"paper": "HiDDeN", "kind": "tiny-set-overfit" if fixed_demo else ("dataset" if image_paths else "smoke"), "data_directory": data_root, "config": values, "history": history, "checkpoint": str(checkpoint), "device": str(device), "note": "Fixed one-image demo. It validates learnability, not generalisation or paper reproduction." if fixed_demo else ("Synthetic smoke run. Not a paper reproduction." if not image_paths else "Local dataset run. Match paper settings before comparing results." )}
+    manifest = {"paper": "HiDDeN", "kind": "tiny-set-overfit" if fixed_demo else ("dataset" if image_paths else "smoke"), "data_directory": data_root, "demo_message": selected_demo_message if fixed_demo else None, "config": values, "history": history, "checkpoint": str(checkpoint), "device": str(device), "note": "Fixed one-image demo. It validates learnability, not generalisation or paper reproduction." if fixed_demo else ("Synthetic smoke run. Not a paper reproduction." if not image_paths else "Local dataset run. Match paper settings before comparing results." )}
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps({"checkpoint": str(checkpoint), "manifest": str(output / 'manifest.json'), "device": str(device), "steps": len(history)}, indent=2))
     return checkpoint
@@ -123,8 +120,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Train the HiDDeN smoke or reproduction configuration")
     parser.add_argument("--config", required=True, help="Path to a TOML configuration")
     parser.add_argument("--data-dir", default=None, help="Optional directory of JPG, PNG, or WebP cover images")
+    parser.add_argument("--demo-message", default=None, help="Override the fixed payload used by a tiny-set demo")
+    parser.add_argument("--output-dir", default=None, help="Override the output directory from the TOML file")
     args = parser.parse_args()
-    train(args.config, args.data_dir)
+    train(args.config, args.data_dir, args.demo_message, args.output_dir)
 
 
 if __name__ == "__main__":

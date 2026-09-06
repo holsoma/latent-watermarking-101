@@ -102,6 +102,33 @@ encoded image written to outputs/demo/encoded.png
 
 The recovered message should match `10110010` for the fixed demo. If it does not, inspect the manifest and loss history before adding distortions.
 
+### Try another payload
+
+Changing only `--message` in the embed command does not retrain the checkpoint. The bundled checkpoint learned `10110010`, so use a separate output directory when testing another payload:
+
+```bash
+python -m hidden_lab.train \
+  --config configs/demo.toml \
+  --demo-message 01010101 \
+  --output-dir outputs/demo-custom
+
+python -m hidden_lab.embed \
+  --checkpoint outputs/demo-custom/checkpoint.pt \
+  --image outputs/demo-custom/cover.png \
+  --message 01010101 \
+  --output outputs/demo-custom/encoded.png
+
+python -m hidden_lab.extract \
+  --checkpoint outputs/demo-custom/checkpoint.pt \
+  --image outputs/demo-custom/encoded.png
+```
+
+Expected extracted output:
+
+```text
+01010101
+```
+
 ## Evaluate attack channels
 
 ```bash

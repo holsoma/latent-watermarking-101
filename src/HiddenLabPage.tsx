@@ -40,7 +40,8 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
 
       <section className="article-section" id="run-it">
         <p className="section-number">01</p><h2>Run it</h2>
-        <p>Run these blocks in Git Bash on Windows. Start with the tiny-set learning demo. The 12-step smoke test is kept as an optional plumbing check because it is not trained long enough to recover a message.</p>
+        <p>Run these blocks in Git Bash on Windows. Start with the tiny-set learning demo. The output panels are recorded examples, not a live terminal. If you change a command, run it in Git Bash and inspect the new files yourself. The 12-step smoke test is kept as an optional plumbing check because it is not trained long enough to recover a message.</p>
+        <div className="callout plain"><strong>Changing the payload</strong><div><p>The bundled demo checkpoint learned <code>10110010</code>. Changing only <code>--message</code> in the embed command does not retrain it. Use the “Try a different message” command below, which trains a new fixed payload into a separate output directory.</p></div></div>
         <div className="command-list">{lab.commands.map((command) => <LabCommand key={command.label} {...command} />)}</div>
       </section>
 

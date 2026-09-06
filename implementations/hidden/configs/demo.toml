@@ -17,6 +17,7 @@ adversarial_loss_weight = 0.001
 message_loss_weight = 1.0
 seed = 7
 fixed_demo = true
+demo_message = "10110010"
 
 [output]
 directory = "outputs/demo"
