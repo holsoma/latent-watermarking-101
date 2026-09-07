@@ -1,0 +1,11 @@
+# Plumbing only. Do not use this run for accuracy claims.
+image = 32
+latent_channels = 3
+latent_size = 4
+ring_radius = 1
+ring_width = 1
+amplitude = 0.25
+seed = 1
+steps = 0
+output_dir = "outputs/smoke"
+message = "smoke"

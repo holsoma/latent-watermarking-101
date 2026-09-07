@@ -1,0 +1,9 @@
+# Keep the meaningful local run small enough for CPU execution.
+image = 64
+latent_channels = 3
+latent_size = 8
+payload_bits = 16
+seed = 23
+steps = 0
+output_dir = "outputs/demo"
+message = "1011001110001111"

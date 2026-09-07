@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wouaf-lab"
+version = "0.1.0"
+requires-python = ">=3.11,<3.13"
+dependencies = ["numpy>=1.26", "Pillow>=10.0", "torch>=2.0"]
+
+[project.scripts]
+stable-signature-train = "stable_signature_lab.train:main"
+stable-signature-detect = "stable_signature_lab.detect:main"
+stable-signature-evaluate = "stable_signature_lab.evaluate:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

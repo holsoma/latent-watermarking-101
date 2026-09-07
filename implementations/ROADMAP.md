@@ -16,7 +16,9 @@ This roadmap tracks the runnable-lab programme. Every paper gets its own branch 
 
 The last five are Level B mechanism adapters. They expose the paper's trainable or frozen boundary and include an optional path to the official model stack. Their local manifests explicitly mark `local_adapter: true`.
 
-## Queue
+## Fidelity backlog
+
+All 24 paper slugs now have contract-compliant local adapters and site entries. The items below are the next method-specific fidelity passes. They must not be described as paper reproductions until their named mechanism, official model and evaluation protocol are implemented.
 
 ### Initial-noise and inversion
 

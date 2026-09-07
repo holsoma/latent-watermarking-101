@@ -342,6 +342,21 @@ Object.assign(paperLabs, {
   seal: adapterLab("seal", "paper", "https://github.com/Kasraarabi/SEAL", "Official SEAL implementation; the local adapter demonstrates semantic-key derivation and verification."),
   lawa: adapterLab("lawa", "rosteals", "https://github.com/vbdi/LaWa", "Official LaWa implementation; the local adapter exposes coarse-to-fine latent watermark modules."),
   aqualora: adapterLab("aqualora", "stable_signature", "https://github.com/Georgefwt/AquaLoRA", "Official AquaLoRA implementation; the local adapter exposes rank-limited watermark updates."),
+  ringid: adapterLab("ringid", "paper", "https://github.com/showlab/RingID", "Official RingID implementation; the local adapter is a multi-key extension of the Tree-Rings path."),
+  sfwmark: adapterLab("sfwmark", "paper", "https://github.com/THU-BPM/MarkDiffusion", "The local adapter exposes the SFWMark Fourier placement boundary."),
+  gaussmarker: adapterLab("gaussmarker", "paper", "https://github.com/SunnierLee/GaussMarker", "Official GaussMarker implementation; the local adapter exposes dual-domain evidence."),
+  serum: adapterLab("serum", "paper", "https://github.com/Hubizon/SERUM", "Official SERUM implementation; the local adapter exposes image-space scoring."),
+  "tag-wm": adapterLab("tag-wm", "paper", "https://github.com/THU-BPM/MarkDiffusion", "The local adapter separates payload and tamper-evidence plumbing."),
+  "semantic-forgery": adapterLab("semantic-forgery", "paper", "https://openaccess.thecvf.com/content/CVPR2025/html/Muller_Black-Box_Forgery_Attacks_on_Semantic_Watermarks_for_Diffusion_Models_CVPR_2025_paper.html", "Attack-study reference; no embedder is trained."),
+  t2smark: adapterLab("t2smark", "paper", "https://github.com/THU-BPM/MarkDiffusion", "The local adapter exposes tail and central Gaussian sampling."),
+  "gaussian-shading-plus-plus": adapterLab("gaussian-shading-plus-plus", "paper", "https://github.com/THU-BPM/MarkDiffusion", "The local adapter exposes seed transport and soft-decoding plumbing."),
+  "prc-watermark": adapterLab("prc-watermark", "paper", "https://github.com/THU-BPM/MarkDiffusion", "The local adapter exposes coded initial-noise marking."),
+  "gaussian-shannon": adapterLab("gaussian-shannon", "paper", "https://github.com/Rambo-Yi/Gaussian-Shannon", "Official Gaussian Shannon implementation; the local adapter exposes the communication path."),
+  robin: adapterLab("robin", "zodiac", "https://github.com/Hannah1102/ROBIN", "Official ROBIN implementation; the local adapter exposes per-image conditioning optimisation."),
+  "latent-watermark": adapterLab("latent-watermark", "rosteals", "https://github.com/RichardSunnyMeng/LatentWatermark-official-codes", "Official Latent Watermark implementation; the local adapter exposes progressive latent training."),
+  "object-watermark": adapterLab("object-watermark", "rosteals", "https://github.com/naresh-ub/object_watermark", "Official text-encoder controller implementation; the local adapter exposes trainable conditioning."),
+  wouaf: adapterLab("wouaf", "stable_signature", "https://github.com/kylemin/WOUAF", "Official WOUAF implementation; the local adapter exposes fingerprint-conditioned updates."),
+  sleepermark: adapterLab("sleepermark", "stable_signature", "https://github.com/taco-group/SleeperMark", "Official SleeperMark implementation; the local adapter exposes retention evaluation plumbing."),
 } satisfies Record<string, PaperLab>);
 
 export function getLab(slug: string) {
