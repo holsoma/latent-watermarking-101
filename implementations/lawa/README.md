@@ -18,4 +18,6 @@ python -m rosteals_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image 
 
 The local run uses 16 bits. The official LaWa repository uses its own multi-scale modules, dataset and autoencoder configuration. To inspect that path, follow the setup instructions in the [official repository](https://github.com/vbdi/LaWa) before comparing results.
 
+An optional `python -m rosteals_lab.official --model-id <model> --image <image.png> --message 0101` command runs the latent offset through a pretrained Diffusers VAE.
+
 The useful evidence is in `outputs/demo/manifest.json`: it records the seed, steps, payload, recovered payload and bit error rate. `cover.png`, `autoencoded.png`, `encoded.png` and `residual_amplified.png` show where the latent offset changes the image.

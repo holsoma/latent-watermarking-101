@@ -15,3 +15,5 @@ python -m paper_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image out
 ```
 
 No embedder or detector is trained. The local adapter reports a continuous Fourier score, named attacks and a manifest with `steps: 0`; it does not establish the paper's Stable Diffusion, scheduler, inversion or false-positive results.
+
+For an official-stack generation, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake" --semantic-key 2122122333`.

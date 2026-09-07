@@ -15,6 +15,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
+official = ["diffusers>=0.31", "transformers>=4.44", "accelerate>=0.34"]
 
 [project.scripts]
 rosteals-train = "rosteals_lab.train:main"
