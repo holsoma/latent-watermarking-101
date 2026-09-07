@@ -1,6 +1,6 @@
 import torch
 
-from rosteals_lab.model import RoSteALSConfig, RoSteALSModel
+from rosteals_lab.model import RoSteALSConfig, RoSteALSModel, progressive_weights
 
 
 def test_latent_offset_and_outputs_have_expected_shapes():
@@ -12,3 +12,6 @@ def test_latent_offset_and_outputs_have_expected_shapes():
     assert latent.shape == (2, 3, 16, 16)
     assert offset.shape == latent.shape
     assert encoded.shape == cover.shape
+
+def test_progressive_weights_ramp():
+    assert progressive_weights(0)["message"]==0 and progressive_weights(100)["message"]==1

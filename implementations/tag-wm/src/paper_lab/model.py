@@ -43,6 +43,9 @@ def score_noise(noise, config, key):
     dot=(observed.real*expected.real+observed.imag*expected.imag).sum()
     return float((dot/(observed.abs().norm()*expected.abs().norm()+1e-8)).detach().cpu())
 
+def tamper_map(before, after):
+    delta=(before-after).abs().mean(dim=1,keepdim=True); return delta/(delta.amax(dim=(-2,-1),keepdim=True)+1e-8)
+
 class LocalDiffusionAdapter:
     """Reversible stand-in for SD encode/decode used by CPU smoke tests."""
     def __init__(self, config): self.config=config

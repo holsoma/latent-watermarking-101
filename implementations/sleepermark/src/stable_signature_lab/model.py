@@ -83,6 +83,9 @@ class SignatureModel(nn.Module):
     def logits(self, image):
         return self.extractor(image)
 
+def retention_score(before, after):
+    return float((torch.sign(before)==torch.sign(after)).float().mean().item())
+
 
 def bits_to_tensor(bits: str, device=None) -> torch.Tensor:
     if len(bits) == 0 or any(ch not in "01" for ch in bits):

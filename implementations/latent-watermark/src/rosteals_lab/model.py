@@ -57,6 +57,9 @@ class SecretEncoder(nn.Module):
         medium = F.interpolate(medium, size=fine.shape[-2:], mode="bilinear", align_corners=False)
         return (0.10 * coarse + 0.06 * medium + 0.02 * fine)
 
+def progressive_weights(step, warmup=100):
+    ratio=min(1.0,max(0.0,step/max(1,warmup))); return {"image":1.0,"message":ratio,"attack":ratio*ratio}
+
 
 class SecretDecoder(nn.Module):
     def __init__(self, config: RoSteALSConfig) -> None:

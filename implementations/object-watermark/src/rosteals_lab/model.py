@@ -57,6 +57,12 @@ class SecretEncoder(nn.Module):
         medium = F.interpolate(medium, size=fine.shape[-2:], mode="bilinear", align_corners=False)
         return (0.10 * coarse + 0.06 * medium + 0.02 * fine)
 
+class ControlToken(nn.Module):
+    """Trainable prompt token used to request image or object marking."""
+    def __init__(self, dimensions=16):
+        super().__init__(); self.embedding=nn.Parameter(torch.zeros(dimensions))
+    def forward(self, message): return message + self.embedding.unsqueeze(0)
+
 
 class SecretDecoder(nn.Module):
     def __init__(self, config: RoSteALSConfig) -> None:

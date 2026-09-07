@@ -83,6 +83,12 @@ class SignatureModel(nn.Module):
     def logits(self, image):
         return self.extractor(image)
 
+class FingerprintModulator(nn.Module):
+    """Map a user fingerprint to low-rank modulation coefficients."""
+    def __init__(self, fingerprint_length=48, rank=2):
+        super().__init__(); self.net=nn.Sequential(nn.Linear(fingerprint_length,32),nn.Tanh(),nn.Linear(32,rank))
+    def forward(self, fingerprint): return self.net(fingerprint)
+
 
 def bits_to_tensor(bits: str, device=None) -> torch.Tensor:
     if len(bits) == 0 or any(ch not in "01" for ch in bits):
