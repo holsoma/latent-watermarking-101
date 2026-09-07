@@ -50,6 +50,24 @@ export type PaperLab = {
   limitations: string[];
 };
 
+const adapterLab = (slug: string, packageName: string, upstreamUrl: string, upstreamNote: string): PaperLab => ({
+  slug,
+  status: "Runnable locally",
+  runtime: "Python 3.11 or 3.12 · PyTorch · CPU or CUDA",
+  training: "The default run is a deterministic local adapter. Install Diffusers and provide model weights for the paper-scale backend.",
+  upstream: [{ label: "Official implementation", url: upstreamUrl, note: upstreamNote }],
+  commands: [
+    { label: "Run demo", command: `cd /c/amos/research/latent-watermarking-101/implementations/${slug}\npython -m venv .venv\nsource .venv/Scripts/activate\npython -m pip install -e .\nexport PYTHONPATH=src\npython -m ${packageName}_lab.train --config configs/demo.toml`, output: "manifest.json written", purpose: "Run the smallest meaningful experiment.", interpretation: "Read the manifest and inspect the generated images before interpreting robustness." },
+    { label: "Detect", command: `python -m ${packageName}_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png`, output: "Detection result written to stdout", purpose: "Recover the registered payload or score.", interpretation: "Detection is calibrated only for the local adapter unless a paper-scale model is supplied." },
+    { label: "Evaluate attacks", command: `python -m ${packageName}_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png`, output: "Named attack results written to stdout", purpose: "Measure attack-specific degradation.", interpretation: "Do not treat these adapter results as published benchmark numbers." },
+  ],
+  codeMap: [{ concept: "Paper information path", paper: "See the lab README for the exact boundary.", upstream: "Official repository", upstreamUrl, local: `src/${packageName}_lab`, note: "The local adapter keeps frozen, trained and optimised components explicit." }],
+  methodology: [{ title: "Expose the boundary", question: "What is actually changed?", method: "Run the paper mechanism through separate generation, detection and evaluation commands.", evidence: "The checkpoint and manifest record the run kind and artefacts." }],
+  decisions: [{ decision: "Keep the adapter small", rationale: "Make the information path runnable on CPU.", consequence: "Paper-scale model, scheduler and dataset results require the optional backend." }],
+  visuals: [],
+  limitations: ["The default adapter is not a paper-scale benchmark reproduction.", "False-positive calibration and cross-model transfer remain to be measured with the official stack."],
+});
+
 export const paperLabs: Record<string, PaperLab> = {
   hidden: {
     slug: "hidden",
@@ -319,6 +337,9 @@ Object.assign(paperLabs, {
     ],
     limitations: ["The local renderer is not Stable Diffusion and has no prompt or scheduler semantics.", "The optimisation is a compact proxy for the official inversion and latent-frequency procedure.", "The saved checkpoint is tied to one image and message; it is not a reusable encoder."],
   },
+  "tree-rings": adapterLab("tree-rings", "paper", "https://github.com/YuxinWenRick/tree-ring-watermark", "Official Tree-Rings implementation."),
+  "gaussian-shading": adapterLab("gaussian-shading", "paper", "https://github.com/bsmhmmlf/Gaussian-Shading", "Official Gaussian Shading implementation with DDIM inversion."),
+  seal: adapterLab("seal", "paper", "https://github.com/Kasraarabi/SEAL", "Official SEAL implementation; the local adapter demonstrates semantic-key derivation and verification."),
 } satisfies Record<string, PaperLab>);
 
 export function getLab(slug: string) {

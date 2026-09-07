@@ -8,7 +8,7 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LABS = ("hidden", "rosteals", "stable-signature", "zodiac")
+EXCLUDED_DIRS = {"_template", "shared"}
 REQUIRED_ROOT = ("README.md", "pyproject.toml")
 
 
@@ -59,15 +59,25 @@ def check_manifest(path: Path) -> list[str]:
     return errors
 
 
+def lab_names() -> list[str]:
+    """Return every concrete lab directory in implementations/."""
+    return sorted(
+        path.name
+        for path in ROOT.iterdir()
+        if path.is_dir() and path.name not in EXCLUDED_DIRS and not path.name.startswith(".")
+    )
+
+
 def main() -> int:
-    errors = [error for lab in LABS for error in check_lab(lab)]
+    labs = lab_names()
+    errors = [error for lab in labs for error in check_lab(lab)]
     for manifest in ROOT.glob("*/outputs/*/manifest.json"):
         errors.extend(check_manifest(manifest))
     if errors:
         print("LAB CONTRACT FAILED")
         print("\n".join(f"- {error}" for error in errors))
         return 1
-    print(f"LAB CONTRACT OK: {len(LABS)} labs match the shared structure")
+    print(f"LAB CONTRACT OK: {len(labs)} labs match the shared structure")
     return 0
 
 

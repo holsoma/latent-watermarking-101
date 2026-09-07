@@ -123,7 +123,7 @@ The site uses React, TypeScript and Vite. Hash routes allow every chapter and pa
 
 ## Implementation labs
 
-Paper studies are being converted into runnable implementation labs. HiDDeN, RoSteALS, Stable Signature and ZoDiac now have local labs under `implementations/`. Each contains a readable PyTorch path, Git Bash commands, saved outputs, evaluation scripts and tests. The paper pages provide the generation flow, visible output artefacts, ideation and methodology, design decisions, and a paper-to-code map.
+Paper studies are being converted into runnable implementation labs. HiDDeN, RoSteALS, Stable Signature, ZoDiac, Tree-Rings, Gaussian Shading and SEAL now have local labs under `implementations/`. Each contains a readable PyTorch path, Git Bash commands, saved outputs, evaluation scripts and tests. The paper pages provide the generation flow, visible output artefacts, ideation and methodology, design decisions, and a paper-to-code map.
 
 The labs are intentionally separate from the static site. GitHub Pages documents the experiment and displays committed sample images; Python performs training and inference locally. Compact adapters test the information path. They are not replacements for the official repositories, model weights or paper-scale data, and every page states those limits before presenting a result.
 
