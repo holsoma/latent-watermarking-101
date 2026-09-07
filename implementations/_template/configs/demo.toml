@@ -1,0 +1,5 @@
+# Keep the meaningful local run small enough for CPU execution.
+image = 64
+steps = 10
+seed = 0
+output_dir = "outputs/demo"

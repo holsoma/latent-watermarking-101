@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Latent Watermarking 101 experiment manifest",
+  "type": "object",
+  "required": ["schema_version", "paper_slug", "run_kind", "status", "device", "steps", "bit_error_rate", "artifacts"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "paper_slug": {"type": "string"},
+    "run_kind": {"type": "string"},
+    "status": {"enum": ["completed", "failed"]},
+    "local_adapter": {"type": "boolean"},
+    "per_image_optimisation": {"type": "boolean"},
+    "device": {"type": "string"},
+    "seed": {"type": "integer"},
+    "steps": {"type": "integer", "minimum": 0},
+    "bit_error_rate": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "artifacts": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

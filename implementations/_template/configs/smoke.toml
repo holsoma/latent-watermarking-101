@@ -1,0 +1,5 @@
+# Plumbing only. Do not use this run for accuracy claims.
+image = 64
+steps = 1
+seed = 0
+output_dir = "outputs/smoke"

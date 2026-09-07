@@ -79,7 +79,7 @@ def train(args):
     save_image((marked_image - base_image) * 8, output / "residual_amplified.png")
     checkpoint = output / "checkpoint.pt"
     torch.save({"config": config.to_dict(), "decoder": model.decoder.state_dict(), "key": key_text, "history": history}, checkpoint)
-    manifest = {"method": "stable-signature", "local_adapter": True, "device": str(device), "steps": int(values.get("steps", 700)), "key": key_text, "recovered": recovered, "bit_error_rate": errors / config.message_length, "history": history, "checkpoint": str(checkpoint)}
+    manifest = {"schema_version": "1.0", "paper_slug": "stable-signature", "method": "stable-signature", "run_kind": "fixed-key-decoder-finetune", "status": "completed", "local_adapter": True, "device": str(device), "seed": int(values.get("seed", 23)), "steps": int(values.get("steps", 700)), "key": key_text, "recovered": recovered, "bit_error_rate": errors / config.message_length, "artifacts": ["checkpoint.pt", "base_decoder.png", "marked_decoder.png", "residual_amplified.png", "manifest.json"], "history": history, "checkpoint": str(checkpoint)}
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps(manifest, indent=2))
 

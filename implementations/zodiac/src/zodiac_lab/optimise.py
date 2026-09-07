@@ -49,7 +49,7 @@ def optimise(args):
     errors = sum(a != b for a,b in zip(key, recovered))
     save_image(inversion, output / "inversion.png"); save_image(encoded, output / "watermarked.png"); save_image((encoded-inversion)*8, output / "residual_amplified.png")
     torch.save({"config": config.to_dict(), "latent": latent.detach().cpu(), "message": key, "history": history}, output / "checkpoint.pt")
-    manifest = {"method":"zodiac", "local_adapter":True, "per_image_optimisation":True, "device":str(device), "steps":int(values.get("steps",450)), "message":key, "recovered":recovered, "bit_error_rate":errors/config.message_length, "history":history, "checkpoint":str(output/"checkpoint.pt")}
+    manifest = {"schema_version":"1.0", "paper_slug":"zodiac", "method":"zodiac", "run_kind":"per-image-latent-optimisation", "status":"completed", "local_adapter":True, "per_image_optimisation":True, "device":str(device), "seed":seed, "steps":int(values.get("steps",450)), "message":key, "recovered":recovered, "bit_error_rate":errors/config.message_length, "artifacts":["checkpoint.pt", "inversion.png", "watermarked.png", "residual_amplified.png", "manifest.json"], "history":history, "checkpoint":str(output/"checkpoint.pt")}
     (output/"manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8"); print(json.dumps(manifest, indent=2))
 
 
