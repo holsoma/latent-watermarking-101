@@ -43,6 +43,12 @@ def score_noise(noise, config, key):
     dot=(observed.real*expected.real+observed.imag*expected.imag).sum()
     return float((dot/(observed.abs().norm()*expected.abs().norm()+1e-8)).detach().cpu())
 
+def dual_score(noise, config, key):
+    """Fuse spatial and Fourier evidence as the GaussMarker boundary."""
+    target=torch.fft.ifft2(torch.fft.ifftshift(key_pattern(config,key),dim=(-2,-1))).real
+    spatial=torch.cosine_similarity(noise.flatten(),target.flatten(),dim=0).item()
+    return (score_noise(noise,config,key)+spatial)/2
+
 class LocalDiffusionAdapter:
     """Reversible stand-in for SD encode/decode used by CPU smoke tests."""
     def __init__(self, config): self.config=config

@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 @dataclass
 class GaussianShadingConfig:
-    image:int=64; latent_channels:int=3; latent_size:int=8; payload_bits:int=16; seed:int=23
+    image:int=64; latent_channels:int=3; latent_size:int=8; payload_bits:int=16; seed:int=23; tail_fraction:float=0.5
     def to_dict(self): return asdict(self)
 
 def bits_tensor(message, device=None):
@@ -18,7 +18,10 @@ def _groups(config):
 def shade_noise(noise,config,message):
     if len(message)!=config.payload_bits: raise ValueError(f"message must be {config.payload_bits} bits")
     flat=noise.flatten(); groups=_groups(config); target=bits_tensor(message,noise.device); result=flat.abs()
-    for index,group in enumerate(groups): result[group]=result[group]*target[index]
+    threshold=torch.quantile(flat.abs(),1-config.tail_fraction)
+    for index,group in enumerate(groups):
+        selected=group[flat[group].abs()>=threshold]
+        result[selected]=result[selected]*target[index]
     return result.reshape_as(noise)
 
 def decode_noise(noise,config):

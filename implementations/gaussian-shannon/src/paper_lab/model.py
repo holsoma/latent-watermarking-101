@@ -28,6 +28,14 @@ def decode_message(noise,config): return "".join(str(int(v)) for v in decode_noi
 
 def bit_error(a,b): return sum(x!=y for x,y in zip(a,b))/len(a)
 
+def repeat_payload(message, repeats=3): return [message for _ in range(repeats)]
+
+def majority_decode(messages):
+    if not messages: return ""
+    return "".join("1" if sum(int(row[i]) for row in messages)>=len(messages)/2 else "0" for i in range(len(messages[0])))
+
+def word_error_rate(expected, observed): return float(expected != observed)
+
 class LocalDiffusionAdapter:
     def __init__(self,config): self.config=config
     def render(self,noise): return F.interpolate(noise,size=(self.config.image,self.config.image),mode="nearest").clamp(-1,1)

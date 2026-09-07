@@ -26,6 +26,10 @@ def decode_noise(noise,config):
 
 def decode_message(noise,config): return "".join(str(int(v)) for v in decode_noise(noise,config).tolist())
 
+def decode_soft(noise,config):
+    """Return calibrated bit probabilities instead of hard thresholding."""
+    groups=_groups(config); flat=noise.flatten(); return torch.sigmoid(flat[groups].mean(dim=1)*4)
+
 def bit_error(a,b): return sum(x!=y for x,y in zip(a,b))/len(a)
 
 class LocalDiffusionAdapter:

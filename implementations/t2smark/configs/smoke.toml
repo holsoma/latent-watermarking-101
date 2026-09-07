@@ -3,6 +3,7 @@ image = 32
 latent_channels = 3
 latent_size = 4
 payload_bits = 4
+tail_fraction = 0.5
 seed = 2
 steps = 0
 output_dir = "outputs/smoke"

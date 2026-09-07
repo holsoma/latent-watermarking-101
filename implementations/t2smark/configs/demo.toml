@@ -3,6 +3,7 @@ image = 64
 latent_channels = 3
 latent_size = 8
 payload_bits = 16
+tail_fraction = 0.5
 seed = 23
 steps = 0
 output_dir = "outputs/demo"

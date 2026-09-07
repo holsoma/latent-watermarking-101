@@ -43,6 +43,12 @@ def score_noise(noise, config, key):
     dot=(observed.real*expected.real+observed.imag*expected.imag).sum()
     return float((dot/(observed.abs().norm()*expected.abs().norm()+1e-8)).detach().cpu())
 
+def image_score(image, config, key):
+    """Image-space detector used by SERUM's no-inversion path."""
+    if image.ndim==3: image=image.unsqueeze(0)
+    carrier=F.interpolate(torch.fft.ifft2(torch.fft.ifftshift(key_pattern(config,key),dim=(-2,-1))).real.unsqueeze(0),size=image.shape[-2:],mode="nearest")
+    return float(torch.cosine_similarity(image.flatten(),carrier.flatten(),dim=0).detach().cpu())
+
 class LocalDiffusionAdapter:
     """Reversible stand-in for SD encode/decode used by CPU smoke tests."""
     def __init__(self, config): self.config=config

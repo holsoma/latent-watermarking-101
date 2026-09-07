@@ -28,6 +28,15 @@ def decode_message(noise,config): return "".join(str(int(v)) for v in decode_noi
 
 def bit_error(a,b): return sum(x!=y for x,y in zip(a,b))/len(a)
 
+def prc_encode(message, redundancy=3, seed=41):
+    """Repeat each bit with a seeded pseudorandom chip sequence."""
+    generator=torch.Generator().manual_seed(seed); chips=torch.randint(0,2,(len(message)*redundancy,),generator=generator)
+    bits=torch.tensor([int(ch) for ch in message]).repeat_interleave(redundancy); return (bits^chips).tolist()
+
+def prc_decode(chips, length, redundancy=3, seed=41):
+    generator=torch.Generator().manual_seed(seed); mask=torch.randint(0,2,(length*redundancy,),generator=generator); values=torch.tensor(chips)^mask
+    return "".join(str(int(values[i*redundancy:(i+1)*redundancy].float().mean()>=.5)) for i in range(length))
+
 class LocalDiffusionAdapter:
     def __init__(self,config): self.config=config
     def render(self,noise): return F.interpolate(noise,size=(self.config.image,self.config.image),mode="nearest").clamp(-1,1)

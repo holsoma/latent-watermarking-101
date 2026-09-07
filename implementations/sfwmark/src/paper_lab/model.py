@@ -25,7 +25,11 @@ def key_pattern(config, key, device=None):
     g=torch.Generator(device="cpu").manual_seed(seed)
     pattern=torch.randn(config.latent_channels,config.latent_size,config.latent_size,generator=g)
     pattern=torch.fft.fftshift(torch.fft.fft2(pattern),dim=(-2,-1))
-    return (pattern*_ring_mask(config.latent_size,config.ring_radius,config.ring_width)).to(device)
+    pattern=pattern*_ring_mask(config.latent_size,config.ring_radius,config.ring_width)
+    # Hermitian symmetry makes the inverse FFT real and is the key SFWMark
+    # constraint missing from a plain Tree-Rings mask.
+    pattern=(pattern+torch.conj(torch.flip(pattern,dims=(-2,-1))))/2
+    return pattern.to(device)
 
 def embed_noise(noise, config, key):
     spectrum=torch.fft.fftshift(torch.fft.fft2(noise),dim=(-2,-1)); mark=key_pattern(config,key,noise.device)
