@@ -26,4 +26,4 @@ cd /c/amos/research/latent-watermarking-101
 python implementations/shared/check_structure.py
 ```
 
-The current labs use this structure while retaining their different research boundaries: HiDDeN trains an encoder and decoder, RoSteALS trains a latent offset path around a frozen autoencoder, Stable Signature fine-tunes a decoder against a fixed key, ZoDiac optimises one latent per image, Tree-Rings marks Fourier rings in initial noise, Gaussian Shading maps payload bits to a Gaussian latent, and SEAL derives its key from coarse image semantics.
+The current labs use this structure while retaining their different research boundaries: HiDDeN trains an encoder and decoder, RoSteALS trains a latent offset path around a frozen autoencoder, Stable Signature fine-tunes a decoder against a fixed key, ZoDiac optimises one latent per image, Tree-Rings marks Fourier rings in initial noise, Gaussian Shading maps payload bits to a Gaussian latent, SEAL derives its key from coarse image semantics, LaWa combines coarse-to-fine latent modules, and AquaLoRA trains rank-limited weight updates.
