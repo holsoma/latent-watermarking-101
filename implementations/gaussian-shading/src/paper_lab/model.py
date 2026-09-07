@@ -35,6 +35,30 @@ class LocalDiffusionAdapter:
         if image.ndim==3: image=image.unsqueeze(0)
         return F.adaptive_avg_pool2d(image.clamp(-1,1),(self.config.latent_size,self.config.latent_size))
 
+class OfficialGaussianShading:
+    """Paper-faithful channel/spatial replication and truncated-normal path."""
+    def __init__(self, ch_factor=1, hw_factor=8, seed=23):
+        if 4%ch_factor or 64%hw_factor: raise ValueError("factors must divide the 4x64x64 latent")
+        self.ch_factor=ch_factor; self.hw_factor=hw_factor; self.seed=seed
+        self.mark_shape=(4//ch_factor,64//hw_factor,64//hw_factor)
+
+    def sample(self, bits):
+        generator=torch.Generator().manual_seed(self.seed)
+        watermark=torch.randint(0,2,self.mark_shape,generator=generator)
+        key=torch.randint(0,2,(4,64,64),generator=generator)
+        target=(watermark.repeat_interleave(self.ch_factor,0).repeat_interleave(self.hw_factor,1).repeat_interleave(self.hw_factor,2)+key)%2
+        uniform=torch.rand(target.shape,generator=generator).clamp(1e-5,1-1e-5)
+        normal=torch.distributions.Normal(0.,1.)
+        target_float=target.float()
+        probability=torch.where(target.bool(),torch.full_like(target_float,.5),torch.zeros_like(target_float))+uniform*.5
+        latent=normal.icdf(probability).unsqueeze(0)
+        return latent,key,watermark
+
+    def decode(self, latent, key):
+        observed=(latent.squeeze(0)>0).to(torch.int64); unkeyed=(observed+key.to(observed.device))%2
+        c=self.ch_factor; h=self.hw_factor; grouped=unkeyed.view(4//c,c,64//h,h,64//h,h)
+        return (grouped.float().mean(dim=(1,3,5))>=.5).to(torch.int64)
+
 def diffusers_pipeline(model_id,device="cpu"):
     try: from diffusers import DiffusionPipeline
     except ImportError as exc: raise RuntimeError("Install the optional diffusers extra to use an actual pipeline") from exc

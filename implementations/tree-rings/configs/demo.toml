@@ -9,3 +9,5 @@ seed = 17
 steps = 0
 output_dir = "outputs/demo"
 message = "tree-rings-demo"
+w_channel = -1
+w_pattern = "ring"

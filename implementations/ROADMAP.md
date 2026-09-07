@@ -14,7 +14,7 @@ This roadmap tracks the runnable-lab programme. Every paper gets its own branch 
 - `lawa` — LaWa
 - `aqualora` — AquaLoRA
 
-The last five are Level B mechanism adapters. They expose the paper's trainable or frozen boundary and include an optional path to the official model stack. Their local manifests explicitly mark `local_adapter: true`.
+The last five are Level B mechanism adapters. Tree-Rings and Gaussian Shading also expose `official.py` entry points that pass paper-shaped latents into a real Diffusers pipeline when model weights are supplied. Their local manifests explicitly mark `local_adapter: true`; official-stack runs mark it false.
 
 ## Fidelity backlog
 

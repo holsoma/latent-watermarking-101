@@ -9,3 +9,5 @@ seed = 1
 steps = 0
 output_dir = "outputs/smoke"
 message = "smoke"
+w_channel = -1
+w_pattern = "ring"

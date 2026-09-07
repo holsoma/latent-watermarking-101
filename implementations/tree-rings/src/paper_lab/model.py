@@ -13,6 +13,8 @@ class TreeRingsConfig:
     ring_width: int = 2
     amplitude: float = 0.35
     seed: int = 17
+    w_channel: int = -1
+    w_pattern: str = "ring"
     def to_dict(self): return asdict(self)
 
 def _ring_mask(size, radius, width, device=None):
@@ -31,6 +33,11 @@ def embed_noise(noise, config, key):
     spectrum=torch.fft.fftshift(torch.fft.fft2(noise),dim=(-2,-1)); mark=key_pattern(config,key,noise.device)
     mask=_ring_mask(config.latent_size,config.ring_radius,config.ring_width,noise.device)
     return torch.fft.ifft2(torch.fft.ifftshift(spectrum+config.amplitude*mark*mask,dim=(-2,-1))).real
+
+def official_mask(config):
+    """Expose the official ``w_pattern=ring`` mask boundary."""
+    if config.w_pattern == "zeros": return torch.zeros(config.latent_size,config.latent_size,dtype=torch.bool)
+    return _ring_mask(config.latent_size,config.ring_radius,config.ring_width)
 
 def recover_noise(image, config):
     if image.ndim==3: image=image.unsqueeze(0)
