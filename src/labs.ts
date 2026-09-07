@@ -340,6 +340,8 @@ Object.assign(paperLabs, {
   "tree-rings": adapterLab("tree-rings", "paper", "https://github.com/YuxinWenRick/tree-ring-watermark", "Official Tree-Rings implementation."),
   "gaussian-shading": adapterLab("gaussian-shading", "paper", "https://github.com/bsmhmmlf/Gaussian-Shading", "Official Gaussian Shading implementation with DDIM inversion."),
   seal: adapterLab("seal", "paper", "https://github.com/Kasraarabi/SEAL", "Official SEAL implementation; the local adapter demonstrates semantic-key derivation and verification."),
+  lawa: adapterLab("lawa", "rosteals", "https://github.com/vbdi/LaWa", "Official LaWa implementation; the local adapter exposes coarse-to-fine latent watermark modules."),
+  aqualora: adapterLab("aqualora", "stable_signature", "https://github.com/Georgefwt/AquaLoRA", "Official AquaLoRA implementation; the local adapter exposes rank-limited watermark updates."),
 } satisfies Record<string, PaperLab>);
 
 export function getLab(slug: string) {

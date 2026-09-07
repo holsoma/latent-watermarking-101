@@ -1,0 +1,18 @@
+[model]
+image_size = 64
+latent_channels = 3
+latent_size = 16
+message_length = 16
+hidden_channels = 24
+
+[training]
+steps = 600
+batch_size = 8
+learning_rate = 0.002
+image_loss_weight = 0.5
+message_loss_weight = 1.0
+offset_weight = 0.005
+seed = 11
+
+[output]
+directory = "outputs/demo"
