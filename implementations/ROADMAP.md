@@ -2,7 +2,7 @@
 
 This roadmap tracks the runnable-lab programme. Every paper gets its own branch copied from `_template`; the shared contract stays on `main`.
 
-## Complete
+## Runnable locally
 
 - `hidden` — HiDDeN
 - `rosteals` — RoSteALS
@@ -14,7 +14,7 @@ This roadmap tracks the runnable-lab programme. Every paper gets its own branch 
 - `lawa` — LaWa
 - `aqualora` — AquaLoRA
 
-The last five are Level B mechanism adapters. Tree-Rings and Gaussian Shading also expose `official.py` entry points that pass paper-shaped latents into a real Diffusers pipeline when model weights are supplied. Their local manifests explicitly mark `local_adapter: true`; official-stack runs mark it false.
+The last five are Level B candidates, not paper reproductions. They expose the named information path through local mechanism adapters. A command that merely passes an adapter-produced latent through Diffusers remains a mechanism-adapter run and must not set `local_adapter: false`. Only an end-to-end run using the paper's model, checkpoint and detector may declare `implementation_fidelity: official-stack` and `verification_status: passed`.
 
 ## Fidelity backlog
 
@@ -52,3 +52,6 @@ All 24 paper slugs now have contract-compliant local adapters and site entries. 
 - `manifest.json` records the run kind, device, seed, steps, payload result, bit error rate and artefacts.
 - Evaluation names attacks individually and reports fidelity, exact recovery where relevant, and negative-image false positives.
 - `python implementations/shared/check_structure.py` and `npm test` pass before the pull request.
+- `python implementations/shared/check_structure.py --strict-output-slugs` passes after old ignored output directories have been regenerated or removed.
+
+For a Level B promotion, the official generation and detection path must run end to end. Loading one official component, such as a VAE or a generic Diffusers pipeline, is not sufficient.

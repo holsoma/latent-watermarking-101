@@ -1,6 +1,6 @@
 # AquaLoRA implementation lab
 
-This compact lab follows AquaLoRA's white-box boundary: register a fixed binary key, freeze the base decoder and train rank-limited LoRA updates while penalising visual change. The local extractor and decoder are small deterministic adapters so the loop can run on CPU.
+This compact lab follows AquaLoRA's white-box boundary: freeze the base decoder, train rank-limited updates, map a registered fingerprint into a latent residual and penalise visual change. The local extractor, message mapper and decoder are small deterministic adapters so the loop can run on CPU.
 
 ## Git Bash
 
@@ -19,4 +19,4 @@ The official [AquaLoRA repository](https://github.com/Georgefwt/AquaLoRA) merges
 
 `outputs/demo/manifest.json` records the key, recovered bits, training loss history and clean bit error rate. Compare `base_decoder.png`, `marked_decoder.png` and `residual_amplified.png` before making any quality claim.
 
-For an official-stack generation, install `pip install -e .[official]` and run `python -m stable_signature_lab.official --model-id <base-model> --lora-path <merged-aqualora-lora> --prompt "a mountain lake" --fingerprint user-001`.
+To inspect supplied LoRA weights with Diffusers, install `pip install -e .[official]` and run `python -m stable_signature_lab.official --model-id <base-model> --lora-path <aqualora-lora> --prompt "a mountain lake" --claimed-fingerprint user-001`. The LoRA path is mandatory. The claimed fingerprint is metadata only, and the manifest records that extraction was not run.

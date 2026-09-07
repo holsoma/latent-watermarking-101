@@ -63,10 +63,31 @@ class LatentDecoder(nn.Module):
         )
         self.lora_down = nn.Conv2d(config.latent_channels, config.lora_rank, 1, bias=False)
         self.lora_up = nn.Conv2d(config.lora_rank, config.latent_channels, 1, bias=False)
+        self.message_scale = nn.Linear(config.message_length, config.lora_rank, bias=False)
+        self.message_mapper = nn.Linear(
+            config.message_length,
+            config.latent_channels * config.latent_size * config.latent_size,
+            bias=False,
+        )
+        self.config = config
         nn.init.zeros_(self.lora_up.weight)
 
-    def forward(self, latent: torch.Tensor) -> torch.Tensor:
-        adapted = latent + 0.15 * self.lora_up(self.lora_down(latent))
+    def forward(self, latent: torch.Tensor, fingerprint: torch.Tensor | None = None) -> torch.Tensor:
+        update = self.lora_down(latent)
+        if fingerprint is not None:
+            if fingerprint.ndim == 1:
+                fingerprint = fingerprint.unsqueeze(0)
+            if fingerprint.shape != (latent.shape[0], self.message_scale.in_features):
+                if fingerprint.shape[0] == 1 and latent.shape[0] > 1:
+                    fingerprint = fingerprint.expand(latent.shape[0], -1)
+                else:
+                    raise ValueError("fingerprint shape must match batch and message length")
+            scale = torch.tanh(self.message_scale(fingerprint.mul(2).sub(1))).unsqueeze(-1).unsqueeze(-1)
+            update = update * scale
+            message_residual = torch.tanh(self.message_mapper(fingerprint.mul(2).sub(1))).view_as(latent)
+        else:
+            message_residual = torch.zeros_like(latent)
+        adapted = latent + 0.5 * (self.lora_up(update) + message_residual)
         return self.net(adapted)
 
 
@@ -77,8 +98,8 @@ class SignatureModel(nn.Module):
         self.extractor = FixedExtractor(config)
         self.decoder = LatentDecoder(config)
 
-    def decode(self, latent):
-        return self.decoder(latent)
+    def decode(self, latent, fingerprint=None):
+        return self.decoder(latent, fingerprint)
 
     def logits(self, image):
         return self.extractor(image)
@@ -92,3 +113,7 @@ def bits_to_tensor(bits: str, device=None) -> torch.Tensor:
 
 def logits_to_bits(logits: torch.Tensor) -> str:
     return "".join("1" if value >= 0 else "0" for value in logits.detach().flatten().tolist())
+
+
+AquaLoRAConfig = StableSignatureConfig
+AquaLoRAModel = SignatureModel

@@ -14,6 +14,6 @@ python -m paper_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outpu
 python -m paper_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png
 ```
 
-For a paper-stack run, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake" --message registered-key`.
+To render the adapter latent with a real Diffusers model, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake" --message registered-key`. This remains a mechanism-adapter run because it does not load the paper's pinned inversion pipeline or run its detector.
 
 No embedder or detector is trained. The local adapter reports a continuous Fourier score, named attacks and a manifest with `steps: 0`; it does not establish the paper's Stable Diffusion, scheduler, inversion or false-positive results.

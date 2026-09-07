@@ -38,10 +38,9 @@ def main() -> None:
     image = load_image(args.image, model.config.image_size, device)
     target = message_tensor(args.message, device)
     with torch.no_grad():
-        encoded, _, _ = model.encode(image, target)
         results = []
         for name in [item.strip() for item in args.attacks.split(",") if item.strip()]:
-            logits = model.decode_message(attack(encoded, name))
+            logits = model.decode_message(attack(image, name))
             predicted = (torch.sigmoid(logits) >= 0.5).float()
             ber = float(torch.mean(torch.abs(predicted - target)).item())
             results.append({"attack": name, "bit_error_rate": ber, "exact_message": ber == 0.0})

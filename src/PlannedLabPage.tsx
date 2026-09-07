@@ -1,5 +1,6 @@
 import type { Paper } from "./content";
 import type { PaperLab } from "./labs";
+import { PaperCodeMap } from "./PaperCodeMap";
 
 export function PlannedLabPage({ paper, next, lab }: { paper: Paper; next: Paper; lab?: PaperLab }) {
   return (
@@ -33,8 +34,14 @@ export function PlannedLabPage({ paper, next, lab }: { paper: Paper; next: Paper
         </div>
       </section>
 
+      <section className="article-section" id="paper-to-code">
+        <p className="section-number">03</p><h2>Paper to code map</h2>
+        <p>Record the method claim, source implementation path, local module, and known deviation before coding.</p>
+        {lab?.codeMap?.length ? <PaperCodeMap rows={lab.codeMap} /> : <div className="code-map-empty"><p>No local code map exists yet. Start with the primary paper and public implementation above.</p></div>}
+      </section>
+
       <section className="article-section" id="evidence-contract">
-        <p className="section-number">03</p><h2>Evidence contract</h2>
+        <p className="section-number">04</p><h2>Evidence contract</h2>
         <div className="code-map">
           <div className="code-map-row evidence-row"><div><span>Claim</span><strong>What the method improves</strong></div><div><span>Required result</span><p>Matched baseline, attack, payload, operating point, and fidelity measurement.</p></div></div>
           <div className="code-map-row evidence-row"><div><span>Generalisation</span><strong>Where it should transfer</strong></div><div><span>Required result</span><p>Held-out prompts or images, attack compositions, and an explicitly named model or decoder.</p></div></div>

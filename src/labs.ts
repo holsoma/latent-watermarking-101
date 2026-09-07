@@ -54,7 +54,7 @@ const adapterLab = (slug: string, packageName: string, upstreamUrl: string, upst
   slug,
   status: "Runnable locally",
   runtime: "Python 3.11 or 3.12 · PyTorch · CPU or CUDA",
-  training: "The default run is a deterministic local adapter. Install Diffusers and provide model weights for the paper-scale backend.",
+  training: "The default run is a deterministic mechanism adapter. Diffusers entry points remain adapters until the paper's checkpoint and detector pass end-to-end verification.",
   upstream: [{ label: "Official implementation", url: upstreamUrl, note: upstreamNote }],
   commands: [
     { label: "Run demo", command: `cd /c/amos/research/latent-watermarking-101/implementations/${slug}\npython -m venv .venv\nsource .venv/Scripts/activate\npython -m pip install -e .\nexport PYTHONPATH=src\npython -m ${packageName}_lab.train --config configs/demo.toml`, output: "manifest.json written", purpose: "Run the smallest meaningful experiment.", interpretation: "Read the manifest and inspect the generated images before interpreting robustness." },

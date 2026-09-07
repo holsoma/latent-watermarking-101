@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 import sys
@@ -10,6 +11,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDED_DIRS = {"_template", "shared"}
 REQUIRED_ROOT = ("README.md", "pyproject.toml")
+LEVEL_B_LABS = {"tree-rings", "gaussian-shading", "seal", "lawa", "aqualora"}
 
 
 def check_lab(name: str) -> list[str]:
@@ -40,7 +42,7 @@ def check_lab(name: str) -> list[str]:
     return errors
 
 
-def check_manifest(path: Path) -> list[str]:
+def check_manifest(path: Path, *, strict_output_slug: bool = False) -> list[str]:
     if not path.is_file():
         return []
     errors: list[str] = []
@@ -53,9 +55,73 @@ def check_manifest(path: Path) -> list[str]:
             errors.append(f"{path}: missing manifest field {field}")
     if data.get("schema_version") != "1.0":
         errors.append(f"{path}: schema_version must be 1.0")
-    for artifact in data.get("artifacts", []):
+    relative = path.relative_to(ROOT)
+    lab_name = relative.parts[0]
+    if strict_output_slug and data.get("paper_slug") != lab_name:
+        errors.append(f"{path}: paper_slug must match lab directory {lab_name!r}")
+    status = data.get("status")
+    if status not in {"completed", "failed"}:
+        errors.append(f"{path}: status must be completed or failed")
+    steps = data.get("steps")
+    if not isinstance(steps, int) or isinstance(steps, bool) or steps < 0:
+        errors.append(f"{path}: steps must be a non-negative integer")
+    bit_error_rate = data.get("bit_error_rate")
+    if bit_error_rate is not None and (
+        not isinstance(bit_error_rate, (int, float))
+        or isinstance(bit_error_rate, bool)
+        or not 0 <= bit_error_rate <= 1
+    ):
+        errors.append(f"{path}: bit_error_rate must be null or between 0 and 1")
+    fidelity = data.get("implementation_fidelity")
+    verification = data.get("verification_status")
+    if fidelity is not None and fidelity not in {"mechanism-adapter", "official-stack"}:
+        errors.append(f"{path}: invalid implementation_fidelity")
+    if verification is not None and verification not in {"not-run", "passed", "failed"}:
+        errors.append(f"{path}: invalid verification_status")
+    if data.get("local_adapter") is False:
+        if fidelity != "official-stack":
+            errors.append(f"{path}: non-local runs must declare implementation_fidelity official-stack")
+        if verification != "passed":
+            errors.append(f"{path}: non-local runs must pass verification")
+    if verification == "passed" and data.get("recovered") is None and data.get("score") is None:
+        errors.append(f"{path}: passed verification requires recovered payload or score evidence")
+    if lab_name in LEVEL_B_LABS and status == "completed" and data.get("local_adapter") is True:
+        if fidelity is not None and fidelity != "mechanism-adapter":
+            errors.append(f"{path}: local Level B runs must be mechanism adapters")
+    artifacts = data.get("artifacts", [])
+    if not isinstance(artifacts, list) or any(not isinstance(item, str) for item in artifacts):
+        errors.append(f"{path}: artifacts must be a list of paths")
+        artifacts = []
+    for artifact in artifacts:
         if not (path.parent / artifact).exists():
             errors.append(f"{path}: missing recorded artefact {artifact}")
+    return errors
+
+
+def check_source_manifest_slugs(name: str) -> list[str]:
+    """Check literal paper_slug values in manifest-producing Python code."""
+    errors: list[str] = []
+    for path in (ROOT / name / "src").rglob("*.py"):
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except SyntaxError as error:
+            errors.append(f"{path}: invalid Python ({error})")
+            continue
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Dict):
+                continue
+            pairs = {
+                key.value: value.value
+                for key, value in zip(node.keys, node.values)
+                if isinstance(key, ast.Constant)
+                and isinstance(key.value, str)
+                and isinstance(value, ast.Constant)
+                and isinstance(value.value, str)
+            }
+            if "paper_slug" in pairs and pairs["paper_slug"] != name:
+                errors.append(
+                    f"{path}:{node.lineno}: paper_slug {pairs['paper_slug']!r} must match lab directory {name!r}"
+                )
     return errors
 
 
@@ -70,9 +136,17 @@ def lab_names() -> list[str]:
 
 def main() -> int:
     labs = lab_names()
-    errors = [error for lab in labs for error in check_lab(lab)]
+    strict_output_slugs = "--strict-output-slugs" in sys.argv[1:]
+    errors = [
+        error
+        for lab in labs
+        for error in (
+            *check_lab(lab),
+            *(check_source_manifest_slugs(lab) if lab in LEVEL_B_LABS else []),
+        )
+    ]
     for manifest in ROOT.glob("*/outputs/*/manifest.json"):
-        errors.extend(check_manifest(manifest))
+        errors.extend(check_manifest(manifest, strict_output_slug=strict_output_slugs))
     if errors:
         print("LAB CONTRACT FAILED")
         print("\n".join(f"- {error}" for error in errors))

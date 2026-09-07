@@ -48,18 +48,19 @@ def train(args):
     for parameter in base_decoder.parameters():
         parameter.requires_grad_(False)
     for name, parameter in model.decoder.named_parameters():
-        parameter.requires_grad_(name.startswith("lora_"))
-    optimiser = torch.optim.AdamW([model.decoder.lora_down.weight, model.decoder.lora_up.weight], lr=float(values.get("learning_rate", .003)))
+        parameter.requires_grad_(name.startswith("lora_") or name.startswith("message_"))
+    optimiser = torch.optim.AdamW([parameter for parameter in model.decoder.parameters() if parameter.requires_grad], lr=float(values.get("learning_rate", .003)))
     key = torch.randint(0, 2, (config.message_length,), generator=generator, device=device).float()
     target = key
     history = []
     for step in range(1, int(values.get("steps", 700)) + 1):
         latent = make_latents(config, int(values.get("batch_size", 8)), generator, device)
+        fingerprint = target.expand(latent.shape[0], -1)
         with torch.no_grad():
             base = base_decoder(latent)
-        marked = model.decode(latent)
+        marked = model.decode(latent, fingerprint)
         logits = model.logits(marked)
-        watermark_loss = F.binary_cross_entropy_with_logits(logits, target.expand_as(logits))
+        watermark_loss = F.binary_cross_entropy_with_logits(logits, fingerprint)
         image_loss = F.mse_loss(marked, base)
         loss = float(values.get("watermark_loss_weight", 1.0)) * watermark_loss + float(values.get("image_loss_weight", .35)) * image_loss
         optimiser.zero_grad(set_to_none=True)
@@ -72,7 +73,7 @@ def train(args):
     fixed_latent = make_latents(config, 1, generator, device)
     with torch.no_grad():
         base_image = base_decoder(fixed_latent)
-        marked_image = model.decode(fixed_latent)
+        marked_image = model.decode(fixed_latent, target.unsqueeze(0))
         recovered = logits_to_bits(model.logits(marked_image))
     key_text = logits_to_bits(target.mul(2).sub(1))
     errors = sum(a != b for a, b in zip(key_text, recovered))
@@ -81,7 +82,8 @@ def train(args):
     save_image((marked_image - base_image) * 8, output / "residual_amplified.png")
     checkpoint = output / "checkpoint.pt"
     torch.save({"config": config.to_dict(), "decoder": model.decoder.state_dict(), "key": key_text, "history": history}, checkpoint)
-    manifest = {"schema_version": "1.0", "paper_slug": "aqualora", "method": "aqualora", "run_kind": "watermark-lora-finetune", "status": "completed", "local_adapter": True, "device": str(device), "seed": int(values.get("seed", 23)), "steps": int(values.get("steps", 700)), "key": key_text, "recovered": recovered, "bit_error_rate": errors / config.message_length, "artifacts": ["checkpoint.pt", "base_decoder.png", "marked_decoder.png", "residual_amplified.png", "manifest.json"], "history": history, "checkpoint": str(checkpoint), "note": "The local adapter trains rank-limited latent adapters; the paper merges watermark LoRA modules into a Stable Diffusion U-Net with prior preservation."}
+    ber = errors / config.message_length
+    manifest = {"schema_version": "1.0", "paper_slug": "aqualora", "method": "aqualora", "run_kind": "watermark-lora-finetune", "status": "completed", "local_adapter": True, "implementation_fidelity": "mechanism-adapter", "verification_status": "passed" if ber == 0 else "failed", "device": str(device), "seed": int(values.get("seed", 23)), "steps": int(values.get("steps", 700)), "message": key_text, "key": key_text, "recovered": recovered, "bit_error_rate": ber, "artifacts": ["checkpoint.pt", "base_decoder.png", "marked_decoder.png", "residual_amplified.png", "manifest.json"], "history": history, "checkpoint": str(checkpoint), "note": "The local adapter trains rank-limited latent adapters; the paper merges watermark LoRA modules into a Stable Diffusion U-Net with prior preservation."}
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps(manifest, indent=2))
 

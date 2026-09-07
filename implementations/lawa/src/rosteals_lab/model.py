@@ -19,7 +19,7 @@ class RoSteALSConfig:
 class FrozenAutoencoder(nn.Module):
     """A deterministic low-resolution autoencoder for the local lab.
 
-    RoSteALS uses a pretrained VQ-f4 autoencoder. This compact adapter keeps
+    LaWa uses a pretrained KL-f8 autoencoder and a modified decoder. This compact adapter keeps
     that boundary explicit while avoiding a 500 MB checkpoint for the first
     experiment: the latent is an average-pooled image and decoding is fixed
     interpolation. No autoencoder parameters are trained.

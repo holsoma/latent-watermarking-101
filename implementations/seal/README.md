@@ -1,6 +1,6 @@
 # SEAL implementation lab
 
-This lab follows SEAL's database-free path: a coarse semantic representation derives the expected key, the key is written into initial-noise Fourier coefficients, and verification recomputes the key from the received image. The default run is a deterministic reversible adapter for CPU tests. The module also exposes an optional Diffusers loader for an actual Stable Diffusion pipeline when model weights and the `diffusers` package are available.
+This lab demonstrates SEAL's database-free boundary: cheap visual statistics are mapped through deterministic SimHash, the resulting key controls an initial-noise Fourier pattern, and verification recomputes the key from the received image. The visual statistics are a local proxy. They are not SEAL's BLIP-2 captioning and sentence-embedding models.
 
 Official implementation: https://github.com/Kasraarabi/SEAL
 
@@ -16,4 +16,4 @@ python -m paper_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image out
 
 No embedder or detector is trained. The local adapter reports a continuous Fourier score, named attacks and a manifest with `steps: 0`; it does not establish the paper's Stable Diffusion, scheduler, inversion or false-positive results.
 
-For an official-stack generation, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake" --semantic-key 2122122333`.
+To render a proxy-key latent with Diffusers, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake" --proxy-key 01010101`. This command remains a mechanism adapter and records that semantic derivation and inversion were not run.

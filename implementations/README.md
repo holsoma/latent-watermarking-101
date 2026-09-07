@@ -26,4 +26,6 @@ cd /c/amos/research/latent-watermarking-101
 python implementations/shared/check_structure.py
 ```
 
+Mechanism adapters should record `implementation_fidelity: mechanism-adapter`. Only a run that uses the paper's model or checkpoint and passes its end-to-end detector may record `implementation_fidelity: official-stack`, `local_adapter: false` and `verification_status: passed`. A real renderer combined with local marking code is still a mechanism adapter.
+
 The current labs use this structure while retaining their different research boundaries: HiDDeN trains an encoder and decoder, RoSteALS trains a latent offset path around a frozen autoencoder, Stable Signature fine-tunes a decoder against a fixed key, ZoDiac optimises one latent per image, Tree-Rings marks Fourier rings in initial noise, Gaussian Shading maps payload bits to a Gaussian latent, SEAL derives its key from coarse image semantics, LaWa combines coarse-to-fine latent modules, and AquaLoRA trains rank-limited weight updates.

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Paper } from "./content";
 import type { PaperLab } from "./labs";
+import { PaperCodeMap } from "./PaperCodeMap";
 
 function LabCommand({ label, command, output, purpose, interpretation }: PaperLab["commands"][number]) {
   const [copied, setCopied] = useState(false);
@@ -91,18 +92,10 @@ export function HiddenLabPage({ paper, lab }: { paper: Paper; lab: PaperLab }) {
         </ol>
       </section>
 
-      <section className="article-section" id="code-map">
-        <p className="section-number">06</p><h2>Paper to code</h2>
+      <section className="article-section" id="paper-to-code">
+        <p className="section-number">06</p><h2>Paper to code map</h2>
         <p>The upstream links are evidence sources, not an assertion that either repository is a perfect reproduction. The local implementation keeps each stage inspectable and testable.</p>
-        <div className="code-map">
-          {lab.codeMap.map((row) => <div className="code-map-row" key={row.concept}>
-            <div><span>Concept</span><strong>{row.concept}</strong></div>
-            <div><span>Paper</span><p>{row.paper}</p></div>
-            <div><span>Upstream path</span><a className="code-path" href={row.upstreamUrl} target="_blank" rel="noreferrer">{row.upstream} ↗</a></div>
-            <div><span>Local path</span><code>{row.local}</code></div>
-            <div><span>Reading note</span><p>{row.note}</p></div>
-          </div>)}
-        </div>
+        <PaperCodeMap rows={lab.codeMap} />
       </section>
 
       <section className="article-section" id="upstream">

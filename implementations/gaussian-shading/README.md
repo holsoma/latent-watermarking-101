@@ -14,6 +14,6 @@ python -m paper_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outpu
 python -m paper_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png
 ```
 
-For a paper-stack run, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake"`. The official path uses the 4×64×64 latent and replication factors from the paper implementation.
+To render the 4×64×64 adapter latent with Diffusers, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake"`. The command saves the watermark and randomisation key in `watermark-state.pt`. It remains unverified until the generated image has passed DDIM inversion and extraction.
 
-This is an educational adapter, not a claim of the paper's exact scheduler, inversion, payload partition or attack results. The manifest records the recovered message and bit error rate for every run.
+This is an educational adapter, not a claim of the paper's exact scheduler, inversion or attack results. Local reversible runs record the recovered message and bit error rate. Diffusers generation records `verification_status: not-run` instead of inventing a recovery result.

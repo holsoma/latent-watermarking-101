@@ -42,9 +42,20 @@ class OfficialGaussianShading:
         self.ch_factor=ch_factor; self.hw_factor=hw_factor; self.seed=seed
         self.mark_shape=(4//ch_factor,64//hw_factor,64//hw_factor)
 
-    def sample(self, bits):
+    def sample(self, bits=None):
         generator=torch.Generator().manual_seed(self.seed)
-        watermark=torch.randint(0,2,self.mark_shape,generator=generator)
+        count=self.mark_shape[0]*self.mark_shape[1]*self.mark_shape[2]
+        if bits is None:
+            watermark=torch.randint(0,2,self.mark_shape,generator=generator)
+        elif isinstance(bits,str):
+            if len(bits)!=count or any(bit not in "01" for bit in bits):
+                raise ValueError(f"message must contain exactly {count} binary digits")
+            watermark=torch.tensor([int(bit) for bit in bits],dtype=torch.int64).reshape(self.mark_shape)
+        else:
+            watermark=torch.as_tensor(bits,dtype=torch.int64).reshape(-1)
+            if watermark.numel()!=count or not torch.all((watermark==0)|(watermark==1)):
+                raise ValueError(f"message must contain exactly {count} binary values")
+            watermark=watermark.reshape(self.mark_shape)
         key=torch.randint(0,2,(4,64,64),generator=generator)
         target=(watermark.repeat_interleave(self.ch_factor,0).repeat_interleave(self.hw_factor,1).repeat_interleave(self.hw_factor,2)+key)%2
         uniform=torch.rand(target.shape,generator=generator).clamp(1e-5,1-1e-5)

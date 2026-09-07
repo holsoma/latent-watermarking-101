@@ -11,10 +11,12 @@
     "local_adapter": {"type": "boolean"},
     "per_image_optimisation": {"type": "boolean"},
     "device": {"type": "string"},
-    "seed": {"type": "integer"},
+    "seed": {"type": ["integer", "null"]},
     "steps": {"type": "integer", "minimum": 0},
     "bit_error_rate": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
-    "artifacts": {"type": "array", "items": {"type": "string"}}
+    "artifacts": {"type": "array", "items": {"type": "string"}},
+    "implementation_fidelity": {"enum": ["mechanism-adapter", "official-stack"]},
+    "verification_status": {"enum": ["not-run", "passed", "failed"]}
   },
   "additionalProperties": true
 }
