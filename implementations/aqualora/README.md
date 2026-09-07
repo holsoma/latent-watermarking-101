@@ -18,3 +18,5 @@ python -m stable_signature_lab.evaluate --checkpoint outputs/demo/checkpoint.pt 
 The official [AquaLoRA repository](https://github.com/Georgefwt/AquaLoRA) merges watermark LoRA updates into a customised Stable Diffusion U-Net. Use that repository for paper-faithful runs. This local lab is for understanding the fixed-key, rank-limited optimisation boundary.
 
 `outputs/demo/manifest.json` records the key, recovered bits, training loss history and clean bit error rate. Compare `base_decoder.png`, `marked_decoder.png` and `residual_amplified.png` before making any quality claim.
+
+For an official-stack generation, install `pip install -e .[official]` and run `python -m stable_signature_lab.official --model-id <base-model> --lora-path <merged-aqualora-lora> --prompt "a mountain lake" --fingerprint user-001`.
