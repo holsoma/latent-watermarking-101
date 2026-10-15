@@ -1,0 +1,710 @@
+{
+  "description": "Source paragraph locators are zero-based WordprocessingML paragraphs, including table cells. Routes identify rendered handbook content. Original documents are not published.",
+  "papers": [
+    {
+      "id": "paper-1",
+      "title": "1. High-Resolution Image Synthesis with Latent Diffusion Models",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 43-52",
+      "route": "#/papers/ldm",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 1"
+    },
+    {
+      "id": "paper-2",
+      "title": "2. Denoising Diffusion Implicit Models (DDIM)",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 53-62",
+      "route": "#/papers/ddim",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 2"
+    },
+    {
+      "id": "paper-3",
+      "title": "3. HiDDeN: Hiding Data With Deep Networks",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 63-73",
+      "route": "#/papers/hidden",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 3"
+    },
+    {
+      "id": "paper-4",
+      "title": "4. The Stable Signature: Rooting Watermarks in Latent Diffusion Models",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 74-83",
+      "route": "#/papers/stable-signature",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 4"
+    },
+    {
+      "id": "paper-5",
+      "title": "5. Tree-Ring Watermarks: Fingerprints for Diffusion Images that are Invisible and Robust",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 84-93",
+      "route": "#/papers/tree-rings",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 5"
+    },
+    {
+      "id": "paper-6",
+      "title": "6. RingID: Rethinking Tree-Ring Watermarking for Enhanced Multi-Key Identification",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 94-103",
+      "route": "#/papers/ringid",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 6"
+    },
+    {
+      "id": "paper-7",
+      "title": "7. Gaussian Shading: Provable Performance-Lossless Image Watermarking for Diffusion Models",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 104-113",
+      "route": "#/papers/gaussian-shading",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 7"
+    },
+    {
+      "id": "paper-8",
+      "title": "8. An Undetectable Watermark for Generative Image Models (PRC)",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 114-123",
+      "route": "#/papers/prc-watermark",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 8"
+    },
+    {
+      "id": "paper-9",
+      "title": "9. Hidden in the Noise: Two-Stage Robust Watermarking for Images (WIND)",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 124-134",
+      "route": "#/papers/wind",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 9"
+    },
+    {
+      "id": "paper-10",
+      "title": "10. ROBIN: Robust and Invisible Watermarks for Diffusion Models with Adversarial Optimization",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 135-144",
+      "route": "#/papers/robin",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 10"
+    },
+    {
+      "id": "paper-11",
+      "title": "11. Semantic Watermarking Reinvented: Enhancing Robustness and Generation Quality with Fourier Integrity",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 145-154",
+      "route": "#/papers/sfwmark",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 11"
+    },
+    {
+      "id": "paper-12",
+      "title": "12. GaussMarker: Robust Dual-Domain Watermark for Diffusion Models",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 155-164",
+      "route": "#/papers/gaussmarker",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 12"
+    },
+    {
+      "id": "paper-13",
+      "title": "13. Spherical Watermark: Encryption-Free, Lossless Watermarking for Diffusion Models",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 165-174",
+      "route": "#/papers/spherical-watermark",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 13"
+    },
+    {
+      "id": "paper-14",
+      "title": "14. Correlation-Aware and Gaussianity-Preserving Robust Latent Angular Watermarking (LAW / LAW-M)",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 175-186",
+      "route": "#/papers/law",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 14"
+    },
+    {
+      "id": "paper-15",
+      "title": "15. AquaLoRA: Toward White-box Protection for Customized Stable Diffusion Models via Watermark LoRA",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 187-197",
+      "route": "#/papers/aqualora",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 15"
+    },
+    {
+      "id": "paper-16",
+      "title": "16. Invisible Image Watermarks Are Provably Removable Using Generative AI",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 198-207",
+      "route": "#/papers/watermark-attacker",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 16"
+    },
+    {
+      "id": "paper-17",
+      "title": "17. WAVES: Benchmarking the Robustness of Image Watermarks",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 208-217",
+      "route": "#/papers/waves",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 17"
+    },
+    {
+      "id": "paper-18",
+      "title": "18. MarkDiffusion: An Open-Source Toolkit for Generative Watermarking of Latent Diffusion Models",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 218-228",
+      "route": "#/papers/markdiffusion",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 18"
+    },
+    {
+      "id": "paper-19",
+      "title": "19. Push It Away: Repulsive Non-Watermark Representation for Box-Free Model Watermarking",
+      "source": "ldw_paper_map.docx",
+      "locator": "paragraphs 229-237",
+      "route": "#/papers/push-it-away",
+      "updatedSummarySource": "LDW_Paper_Quick_Reference_Updated.docx",
+      "updatedSummaryLocator": "paper-by-paper entry 19"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "question-1",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 20 (zero-based, including table cells)",
+      "route": "#/revision?section=question-1"
+    },
+    {
+      "id": "question-2",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 23 (zero-based, including table cells)",
+      "route": "#/revision?section=question-2"
+    },
+    {
+      "id": "question-3",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 26 (zero-based, including table cells)",
+      "route": "#/revision?section=question-3"
+    },
+    {
+      "id": "question-4",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 29 (zero-based, including table cells)",
+      "route": "#/revision?section=question-4"
+    },
+    {
+      "id": "question-5",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 32 (zero-based, including table cells)",
+      "route": "#/revision?section=question-5"
+    },
+    {
+      "id": "question-6",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 35 (zero-based, including table cells)",
+      "route": "#/revision?section=question-6"
+    },
+    {
+      "id": "question-7",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 38 (zero-based, including table cells)",
+      "route": "#/revision?section=question-7"
+    },
+    {
+      "id": "question-8",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 42 (zero-based, including table cells)",
+      "route": "#/revision?section=question-8"
+    },
+    {
+      "id": "question-9",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 45 (zero-based, including table cells)",
+      "route": "#/revision?section=question-9"
+    },
+    {
+      "id": "question-10",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 48 (zero-based, including table cells)",
+      "route": "#/revision?section=question-10"
+    },
+    {
+      "id": "question-11",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 51 (zero-based, including table cells)",
+      "route": "#/revision?section=question-11"
+    },
+    {
+      "id": "question-12",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 54 (zero-based, including table cells)",
+      "route": "#/revision?section=question-12"
+    },
+    {
+      "id": "question-13",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 57 (zero-based, including table cells)",
+      "route": "#/revision?section=question-13"
+    },
+    {
+      "id": "question-14",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 60 (zero-based, including table cells)",
+      "route": "#/revision?section=question-14"
+    },
+    {
+      "id": "question-15",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 63 (zero-based, including table cells)",
+      "route": "#/revision?section=question-15"
+    },
+    {
+      "id": "question-16",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 83 (zero-based, including table cells)",
+      "route": "#/revision?section=question-16"
+    },
+    {
+      "id": "question-17",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 86 (zero-based, including table cells)",
+      "route": "#/revision?section=question-17"
+    },
+    {
+      "id": "question-18",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 89 (zero-based, including table cells)",
+      "route": "#/revision?section=question-18"
+    },
+    {
+      "id": "question-19",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 92 (zero-based, including table cells)",
+      "route": "#/revision?section=question-19"
+    },
+    {
+      "id": "question-20",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 95 (zero-based, including table cells)",
+      "route": "#/revision?section=question-20"
+    },
+    {
+      "id": "question-21",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 99 (zero-based, including table cells)",
+      "route": "#/revision?section=question-21"
+    },
+    {
+      "id": "question-22",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 102 (zero-based, including table cells)",
+      "route": "#/revision?section=question-22"
+    },
+    {
+      "id": "question-23",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 105 (zero-based, including table cells)",
+      "route": "#/revision?section=question-23"
+    },
+    {
+      "id": "question-24",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 108 (zero-based, including table cells)",
+      "route": "#/revision?section=question-24"
+    },
+    {
+      "id": "question-25",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 111 (zero-based, including table cells)",
+      "route": "#/revision?section=question-25"
+    },
+    {
+      "id": "question-26",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 114 (zero-based, including table cells)",
+      "route": "#/revision?section=question-26"
+    },
+    {
+      "id": "question-27",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 118 (zero-based, including table cells)",
+      "route": "#/revision?section=question-27"
+    },
+    {
+      "id": "question-28",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 121 (zero-based, including table cells)",
+      "route": "#/revision?section=question-28"
+    },
+    {
+      "id": "question-29",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 124 (zero-based, including table cells)",
+      "route": "#/revision?section=question-29"
+    },
+    {
+      "id": "question-30",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 127 (zero-based, including table cells)",
+      "route": "#/revision?section=question-30"
+    },
+    {
+      "id": "question-31",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 130 (zero-based, including table cells)",
+      "route": "#/revision?section=question-31"
+    },
+    {
+      "id": "question-32",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 133 (zero-based, including table cells)",
+      "route": "#/revision?section=question-32"
+    },
+    {
+      "id": "question-33",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 136 (zero-based, including table cells)",
+      "route": "#/revision?section=question-33"
+    },
+    {
+      "id": "question-34",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 140 (zero-based, including table cells)",
+      "route": "#/revision?section=question-34"
+    },
+    {
+      "id": "question-35",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 143 (zero-based, including table cells)",
+      "route": "#/revision?section=question-35"
+    },
+    {
+      "id": "question-36",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 146 (zero-based, including table cells)",
+      "route": "#/revision?section=question-36"
+    },
+    {
+      "id": "question-37",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 149 (zero-based, including table cells)",
+      "route": "#/revision?section=question-37"
+    },
+    {
+      "id": "question-38",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 152 (zero-based, including table cells)",
+      "route": "#/revision?section=question-38"
+    },
+    {
+      "id": "question-39",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 155 (zero-based, including table cells)",
+      "route": "#/revision?section=question-39"
+    },
+    {
+      "id": "question-40",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 158 (zero-based, including table cells)",
+      "route": "#/revision?section=question-40"
+    },
+    {
+      "id": "question-41",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 161 (zero-based, including table cells)",
+      "route": "#/revision?section=question-41"
+    },
+    {
+      "id": "question-42",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 165 (zero-based, including table cells)",
+      "route": "#/revision?section=question-42"
+    },
+    {
+      "id": "question-43",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 168 (zero-based, including table cells)",
+      "route": "#/revision?section=question-43"
+    },
+    {
+      "id": "question-44",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 171 (zero-based, including table cells)",
+      "route": "#/revision?section=question-44"
+    },
+    {
+      "id": "question-45",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 174 (zero-based, including table cells)",
+      "route": "#/revision?section=question-45"
+    },
+    {
+      "id": "question-46",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 177 (zero-based, including table cells)",
+      "route": "#/revision?section=question-46"
+    },
+    {
+      "id": "question-47",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 180 (zero-based, including table cells)",
+      "route": "#/revision?section=question-47"
+    },
+    {
+      "id": "question-48",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 184 (zero-based, including table cells)",
+      "route": "#/revision?section=question-48"
+    },
+    {
+      "id": "question-49",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 187 (zero-based, including table cells)",
+      "route": "#/revision?section=question-49"
+    },
+    {
+      "id": "question-50",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 190 (zero-based, including table cells)",
+      "route": "#/revision?section=question-50"
+    },
+    {
+      "id": "question-51",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 193 (zero-based, including table cells)",
+      "route": "#/revision?section=question-51"
+    },
+    {
+      "id": "question-52",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 196 (zero-based, including table cells)",
+      "route": "#/revision?section=question-52"
+    },
+    {
+      "id": "question-53",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 200 (zero-based, including table cells)",
+      "route": "#/revision?section=question-53"
+    },
+    {
+      "id": "question-54",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 203 (zero-based, including table cells)",
+      "route": "#/revision?section=question-54"
+    },
+    {
+      "id": "question-55",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 206 (zero-based, including table cells)",
+      "route": "#/revision?section=question-55"
+    },
+    {
+      "id": "question-56",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 209 (zero-based, including table cells)",
+      "route": "#/revision?section=question-56"
+    },
+    {
+      "id": "question-57",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 212 (zero-based, including table cells)",
+      "route": "#/revision?section=question-57"
+    },
+    {
+      "id": "question-58",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 215 (zero-based, including table cells)",
+      "route": "#/revision?section=question-58"
+    },
+    {
+      "id": "question-59",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 219 (zero-based, including table cells)",
+      "route": "#/revision?section=question-59"
+    },
+    {
+      "id": "question-60",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 222 (zero-based, including table cells)",
+      "route": "#/revision?section=question-60"
+    },
+    {
+      "id": "question-61",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 225 (zero-based, including table cells)",
+      "route": "#/revision?section=question-61"
+    },
+    {
+      "id": "question-62",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 228 (zero-based, including table cells)",
+      "route": "#/revision?section=question-62"
+    },
+    {
+      "id": "question-63",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, paragraph 231 (zero-based, including table cells)",
+      "route": "#/revision?section=question-63"
+    }
+  ],
+  "mathematics": [
+    {
+      "id": "vae-sampling",
+      "source": "ldw_study_guide.docx",
+      "locator": "paragraphs 67-69",
+      "route": "#/mathematics?section=vae-sampling"
+    },
+    {
+      "id": "diffusion-noising",
+      "source": "ldw_study_guide.docx",
+      "locator": "paragraphs 70-72",
+      "route": "#/mathematics?section=diffusion-noising"
+    },
+    {
+      "id": "training-objectives",
+      "source": "ldw_study_guide.docx",
+      "locator": "paragraphs 73-75",
+      "route": "#/mathematics?section=training-objectives"
+    },
+    {
+      "id": "bit-error-rate",
+      "source": "ldw_study_guide.docx",
+      "locator": "paragraphs 76-78",
+      "route": "#/mathematics?section=bit-error-rate"
+    },
+    {
+      "id": "detector-threshold",
+      "source": "ldw_study_guide.docx",
+      "locator": "paragraphs 79-81",
+      "route": "#/mathematics?section=detector-threshold"
+    }
+  ],
+  "oral": [
+    {
+      "id": "oral-1",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 237 (zero-based)",
+      "route": "#/revision?section=oral-1"
+    },
+    {
+      "id": "oral-2",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 239 (zero-based)",
+      "route": "#/revision?section=oral-2"
+    },
+    {
+      "id": "oral-3",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 241 (zero-based)",
+      "route": "#/revision?section=oral-3"
+    },
+    {
+      "id": "oral-4",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 243 (zero-based)",
+      "route": "#/revision?section=oral-4"
+    },
+    {
+      "id": "oral-5",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 245 (zero-based)",
+      "route": "#/revision?section=oral-5"
+    },
+    {
+      "id": "oral-6",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 247 (zero-based)",
+      "route": "#/revision?section=oral-6"
+    },
+    {
+      "id": "oral-7",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 249 (zero-based)",
+      "route": "#/revision?section=oral-7"
+    },
+    {
+      "id": "oral-8",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 251 (zero-based)",
+      "route": "#/revision?section=oral-8"
+    },
+    {
+      "id": "oral-9",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 253 (zero-based)",
+      "route": "#/revision?section=oral-9"
+    },
+    {
+      "id": "oral-10",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 255 (zero-based)",
+      "route": "#/revision?section=oral-10"
+    },
+    {
+      "id": "oral-11",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 257 (zero-based)",
+      "route": "#/revision?section=oral-11"
+    },
+    {
+      "id": "oral-12",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 259 (zero-based)",
+      "route": "#/revision?section=oral-12"
+    },
+    {
+      "id": "oral-13",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 261 (zero-based)",
+      "route": "#/revision?section=oral-13"
+    },
+    {
+      "id": "oral-14",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 263 (zero-based)",
+      "route": "#/revision?section=oral-14"
+    },
+    {
+      "id": "oral-15",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 265 (zero-based)",
+      "route": "#/revision?section=oral-15"
+    },
+    {
+      "id": "oral-16",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 267 (zero-based)",
+      "route": "#/revision?section=oral-16"
+    },
+    {
+      "id": "oral-17",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 269 (zero-based)",
+      "route": "#/revision?section=oral-17"
+    },
+    {
+      "id": "oral-18",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 271 (zero-based)",
+      "route": "#/revision?section=oral-18"
+    },
+    {
+      "id": "oral-19",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 273 (zero-based)",
+      "route": "#/revision?section=oral-19"
+    },
+    {
+      "id": "oral-20",
+      "source": "ldw_study_guide.docx",
+      "locator": "ldw_study_guide.docx, table paragraph 275 (zero-based)",
+      "route": "#/revision?section=oral-20"
+    }
+  ]
+}

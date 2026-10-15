@@ -1,21 +1,23 @@
-# Text Encoder Controller implementation lab
+# object-watermark CPU teaching exercise
 
-This lab demonstrates learned control-token embeddings for image-level and object-level watermark requests. The local adapter represents token conditioning with trainable message embeddings.
+Classification: **prerequisite exercise**. Latent offset training prerequisite. Text-encoder control and object specificity are not implemented.
 
-## Git Bash
+Reference: [object-watermark](https://github.com/naresh-ub/object_watermark). A reference collection is not an official implementation claim.
 
-```bash
-cd /c/amos/research/latent-watermarking-101/implementations/object-watermark
-python -m venv .venv
-source .venv/Scripts/activate
-python -m pip install -e .
-export PYTHONPATH=src
-python -m rosteals_lab.train --config configs/demo.toml
-python -m rosteals_lab.embed --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/cover.png --message 0101010101010101 --output outputs/demo/encoded-custom.png
-python -m rosteals_lab.extract --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/encoded-custom.png
-python -m rosteals_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/encoded-custom.png --message 0101010101010101 --attacks identity,blur,crop,jpeg
+Use Python 3.11 or 3.12 with CPU PyTorch, NumPy and Pillow. From the repository root, install this package into an activated environment, then use the portable runner:
+
+```text
+python -m pip install -e implementations/object-watermark
+python implementations/shared/run_lab.py object-watermark create
+python implementations/shared/run_lab.py object-watermark detect
+python implementations/shared/run_lab.py object-watermark evaluate
+python implementations/shared/run_lab.py object-watermark controls
 ```
 
-The local run uses 16 bits. The official LaWa repository uses its own multi-scale modules, dataset and autoencoder configuration. To inspect that path, follow the setup instructions in the [official repository](https://github.com/vbdi/LaWa) before comparing results.
+The runner uses `configs/smoke.toml`, disables CUDA and isolates `src/rosteals_lab` in its own subprocess. No pretrained model is downloaded. Creation saves a checkpoint and PNG images under `outputs/handbook`. Detection reloads the saved image. Evaluation transforms that saved evidence without embedding another message. JPEG is actual compression and decompression; its quality is recorded in each result.
 
-The useful evidence is in `outputs/demo/manifest.json`: it records the seed, steps, payload, recovered payload and bit error rate. `cover.png`, `autoencoded.png`, `encoded.png` and `residual_amplified.png` show where the latent offset changes the image.
+Commands write their exact stdout and stderr to the same output directory. `manifest.json` lists generated artefacts. A command completing successfully does not mean that extraction succeeded. Small training runs often have substantial bit error, including on clean images.
+
+`../../docs/lab-verification.json` records the checked commands, runtime, outputs and assertions. Run `python implementations/shared/verify_all_labs.py object-watermark` from the root to regenerate this lab's report. The controls include applicable unit assertions, codec checks and method-specific checks; they do not estimate false-positive rates.
+
+A known key is detector input. A score is measured evidence. Extracted bits are computed from the received image. These quantities must not be conflated. No claim of paper reproduction, cryptographic security or dataset robustness follows from this exercise.

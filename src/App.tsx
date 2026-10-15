@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { glossary, papers as originalPapers, type Paper, type TrainingBoundary } from "./content";
-import { additionalPapers, additionalReading, studyContent, type PaperStudy } from "./studies";
+import { glossary, papers as originalPapers, type Paper } from "./content";
+import { additionalPapers, studyContent, type PaperStudy } from "./studies";
 import { getLab } from "./labs";
-import { HiddenLabPage } from "./HiddenLabPage";
+import { handbookEntries } from "./handbook";
+import { HandbookIndex, HandbookStudy, RevisionPage } from "./HandbookPages";
 import { PlannedLabPage } from "./PlannedLabPage";
 import { RunnableLabPage } from "./RunnableLabPage";
 
@@ -45,8 +46,9 @@ const navGroups: NavGroup[] = [
   {
     label: "Research",
     items: [
-      { label: "Paper labs", path: "/papers" },
+      { label: "Paper studies", path: "/papers" },
       { label: "Threats and gaps", path: "/research/gaps" },
+      { label: "Worked examples and revision", path: "/revision" },
       { label: "Glossary", path: "/glossary" },
     ],
   },
@@ -65,7 +67,13 @@ function useHashRoute() {
     return () => window.removeEventListener("hashchange", update);
   }, []);
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
+    const section = new URLSearchParams(route.split("?")[1]).get("section");
+    requestAnimationFrame(() => {
+      const target = section ? document.getElementById(section) : document.querySelector("main h1");
+      if (target instanceof HTMLElement) { target.tabIndex = -1; target.focus({ preventScroll: true }); }
+      if (section && target) target.scrollIntoView();
+      else window.scrollTo({ top: 0, behavior: "instant" });
+    });
   }, [route]);
   return route;
 }
@@ -82,7 +90,7 @@ function Link({
   onClick?: () => void;
 }) {
   return (
-    <a href={`#${to}`} className={className} onClick={onClick}>
+    <a href={`#${to}`} className={className} aria-current={className.includes("active") ? "page" : undefined} onClick={onClick}>
       {children}
     </a>
   );
@@ -137,27 +145,6 @@ function Equation({ children }: { children: ReactNode }) {
   return <div className="equation">{children}</div>;
 }
 
-const mathTokens: Record<string, [string, string]> = {
-  Ew: ["E", "w"], Ewz: ["E", "w,z"],
-  Lmsg: ["L", "msg"], Limg: ["L", "img"], Lbits: ["L", "bits"], Lperceptual: ["L", "perceptual"], Lwm: ["L", "wm"],
-  Decθ: ["Dec", "θ"], Dec0: ["Dec", "0"], θDec: ["θ", "Dec"], θu: ["θ", "u"], θ0: ["θ", "0"],
-  fu: ["f", "u"], xu: ["x", "u"], xw: ["x", "w"], zT: ["z", "T"], zHat: ["z", "hat"], zj: ["z", "j"], bj: ["b", "j"],
-  si: ["s", "i"], λimg: ["λ", "img"], λp: ["λ", "p"], λ2: ["λ", "2"],
-};
-
-function MathExpression({ value }: { value: string }) {
-  const tokenPattern = /(Ewz|Ew|Lmsg|Limg|Lbits|Lperceptual|Lwm|Decθ|Dec0|θDec|θu|θ0|fu|xu|xw|zT|zHat|zj|bj|si|λimg|λp|λ2)/g;
-  return (
-    <span className="math-expression">
-      {value.split(tokenPattern).map((part, index) => {
-        const token = mathTokens[part];
-        if (!token) return <span key={`${part}-${index}`}>{part}</span>;
-        return <span className="math-token" key={`${part}-${index}`}><span>{token[0]}</span><sub>{token[1]}</sub></span>;
-      })}
-    </span>
-  );
-}
-
 function Article({
   eyebrow,
   title,
@@ -180,6 +167,7 @@ function Article({
         {meta && <p className="article-meta">{meta}</p>}
       </header>
       {children}
+      {window.location.hash.includes("/foundations/") && <aside className="worked-example"><h2>Put this into practice</h2><p>Work through the numerical examples, then test your explanation against the conceptual questions.</p><Link to="/revision">Open worked examples and revision →</Link></aside>}
     </article>
   );
 }
@@ -222,16 +210,6 @@ function Pipeline({
   );
 }
 
-function BoundaryBadge({ value }: { value: TrainingBoundary }) {
-  const tone =
-    value === "No method-specific training"
-      ? "green"
-      : value === "Per-image optimisation"
-        ? "orange"
-        : "purple";
-  return <span className={`boundary-badge ${tone}`}>{value}</span>;
-}
-
 function Table({
   headings,
   rows,
@@ -267,7 +245,7 @@ function HomePage() {
     >
       <div className="home-actions">
         <Link to="/foundations/watermarking" className="button primary">Begin the guide</Link>
-        <Link to="/papers" className="button secondary">Open the paper labs</Link>
+        <Link to="/papers" className="button secondary">Open the paper studies</Link>
       </div>
 
       <div className="home-chapters" aria-label="Core chapters">
@@ -656,7 +634,7 @@ function DenoiseLab() {
   useCanvasSize(
     canvasRef,
     (context, width, height) => {
-      const alphaBar = Math.max(0.001, progress / 100);
+      const alphaBar = (progress / 100);
       const sigmaBar = Math.sqrt(1 - alphaBar);
       const image = context.createImageData(simulation.width, simulation.height);
       for (let index = 0; index < simulation.reference.length; index += 1) {
@@ -675,21 +653,21 @@ function DenoiseLab() {
     },
     [progress, simulation],
   );
-  const stage = progress < 15 ? "t = 100 · iid Gaussian noise" : progress < 45 ? "t = 70 · weak structure" : progress < 80 ? "t = 35 · denoising" : "t = 0 · reconstructed image";
-  const sigma = Math.sqrt(1 - Math.max(0.001, progress / 100));
+  const stage = `Signal fraction = ${(progress / 100).toFixed(2)}`;
+  const sigma = Math.sqrt(1 - (progress / 100));
   return (
     <div className="lab denoise-lab">
-      <div className="lab-head"><span>Real diffusion equation</span><b>{stage}</b></div>
+      <div className="lab-head"><span>Forward noising equation</span><b>{stage}</b></div>
       <canvas ref={canvasRef} aria-label={`Pixel-level diffusion simulation at ${progress} per cent reconstruction`} />
       <div className="lab-stats">
         <div><small>signal weight √ᾱ</small><b>{Math.sqrt(progress / 100).toFixed(2)}</b></div>
         <div><small>noise weight σ</small><b>{sigma.toFixed(2)}</b></div>
       </div>
       <label>
-        <span>Reverse denoising step</span><output>{progress}%</output>
+        <span>Signal fraction</span><output>{progress}%</output>
         <input type="range" min="0" max="100" value={progress} onChange={(event) => setProgress(Number(event.target.value))} />
       </label>
-      <p><strong>Learning pointer:</strong> this uses a fixed iid Gaussian field and the real forward equation <em>x<sub>t</sub> = √ᾱ x<sub>0</sub> + σ ε</em>. The clean scene is the known target, so the slider acts as an oracle denoiser. Stable Diffusion learns this denoising direction with a U-Net or diffusion transformer in VAE latent space.</p>
+      <p><strong>Learning pointer:</strong> this uses a fixed iid Gaussian field and the real forward equation <em>x<sub>t</sub> = √ᾱ x<sub>0</sub> + σ ε</em>. The clean scene is known throughout. Moving the slider changes the signal fraction; it does not execute a learned reverse model or a particular time schedule. Stable Diffusion learns this denoising direction with a U-Net or diffusion transformer in VAE latent space.</p>
     </div>
   );
 }
@@ -850,8 +828,10 @@ function FrequencyPage() {
 
 function ThresholdLab() {
   const [threshold, setThreshold] = useState(68);
-  const falseAccept = Math.max(0.01, 12 * Math.exp(-threshold / 16));
-  const detection = Math.max(0, Math.min(100, 99 - Math.max(0, threshold - 48) * 0.78));
+  const unmarkedScores = [12, 18, 22, 27, 31, 37, 42, 48, 55, 63];
+  const markedScores = [38, 49, 57, 64, 69, 74, 81, 86, 91, 97];
+  const falseAccept = unmarkedScores.filter(s => s >= threshold).length * 10;
+  const detection = markedScores.filter(s => s >= threshold).length * 10;
   return (
     <div className="lab threshold-lab">
       <div className="lab-head"><span>Decision threshold</span><b>operating point</b></div>
@@ -865,10 +845,10 @@ function ThresholdLab() {
         <input type="range" min="20" max="92" value={threshold} onChange={(event) => setThreshold(Number(event.target.value))} />
       </label>
       <div className="lab-stats">
-        <div><small>illustrative false accept</small><b>{falseAccept.toFixed(2)}%</b></div>
-        <div><small>illustrative detection</small><b>{detection.toFixed(1)}%</b></div>
+        <div><small>unmarked samples accepted</small><b>{falseAccept.toFixed(2)}%</b></div>
+        <div><small>marked samples accepted</small><b>{detection.toFixed(1)}%</b></div>
       </div>
-      <p><strong>Learning pointer:</strong> these values are illustrative, not paper results. Raising a threshold generally reduces false positives and also rejects more damaged watermarks. A method has no single accuracy independent of its threshold.</p>
+      <p><strong>Learning pointer:</strong> computed counts from ten synthetic scores per class, accepting scores at or above the threshold. Unmarked: 12, 18, 22, 27, 31, 37, 42, 48, 55, 63. Marked: 38, 49, 57, 64, 69, 74, 81, 86, 91, 97. The graphic shows the groups schematically. This small example cannot establish a real false-positive rate.</p>
     </div>
   );
 }
@@ -952,68 +932,12 @@ function EvaluationPage() {
   );
 }
 
-function PapersPage() {
-  const [boundary, setBoundary] = useState<"All" | TrainingBoundary>("All");
-  const filtered = papers.filter((paper) => boundary === "All" || paper.boundary === boundary);
-  return (
-    <Article
-      eyebrow="Implementation labs"
-      title="Inspect the method, then run the path yourself."
-      lead="Each paper gets a reproducible implementation surface: upstream code, local modules, commands, experiments, and the limits of what the result can show."
-      meta="HiDDeN, RoSteALS, Stable Signature and ZoDiac now have runnable local labs. Each page separates the compact adapter from the official upstream reproduction path."
-    >
-      <div className="filter-bar" aria-label="Filter papers by training boundary">
-        {(["All", "No method-specific training", "Auxiliary training", "Base model fine-tuning", "Conditioning fine-tuning", "Per-image optimisation"] as const).map((value) => (
-          <button key={value} className={boundary === value ? "active" : ""} onClick={() => setBoundary(value)}>{value}</button>
-        ))}
-      </div>
-      {studyCategories.map((category) => {
-        const group = filtered.filter((paper) => studyContent[paper.slug]?.category === category);
-        if (!group.length) return null;
-        return (
-          <Section id={category.toLowerCase().replaceAll(" ", "-")} title={category} key={category}>
-            <div className="study-index">
-              {group.map((paper) => (
-                <Link to={`/papers/${paper.slug}`} className="study-row" key={paper.slug}>
-                  <div className="study-row-meta">
-                    <span>{paper.venue} · {paper.year}</span>
-                    <BoundaryBadge value={paper.boundary} />
-                  </div>
-                  <div>
-                    <h3>{paper.shortTitle}</h3>
-                    <p>{getLab(paper.slug)?.status ?? "Implementation planned"} · {paper.oneLine}</p>
-                  </div>
-                  <b>{getLab(paper.slug) ? "Open implementation lab →" : "Open study plan →"}</b>
-                </Link>
-              ))}
-            </div>
-          </Section>
-        );
-      })}
-      <Section id="further-reading" title="Further reading that completes specific concepts">
-        <p>These works are not given full studies yet, but each answers a precise question missing from the main reading path.</p>
-        <div className="further-reading">
-          {additionalReading.map((item) => (
-            <a href={item.url} target="_blank" rel="noreferrer" key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.note}</p>
-              <b>Open primary source ↗</b>
-            </a>
-          ))}
-        </div>
-      </Section>
-      <NextPage path="/research/gaps" label="Next: threats and gaps" />
-    </Article>
-  );
-}
-
 function PaperPage({ paper }: { paper: Paper }) {
   const currentIndex = papers.findIndex((item) => item.slug === paper.slug);
   const next = papers[(currentIndex + 1) % papers.length];
   const study = studyContent[paper.slug];
   if (!study) return <NotFoundPage />;
   const lab = getLab(paper.slug);
-  if (paper.slug === "hidden" && lab) return <HiddenLabPage paper={paper} lab={lab} />;
   if (lab?.status === "Runnable locally") return <RunnableLabPage paper={paper} lab={lab} next={next} />;
   return <PlannedLabPage paper={paper} next={next} lab={lab} />;
 }
@@ -1148,7 +1072,12 @@ function NextPage({ path, label }: { path: string; label: string }) {
 }
 
 function App() {
-  const route = useHashRoute();
+  const fullRoute = useHashRoute();
+  const route = fullRoute.split("?")[0];
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const sidebar = useRef<HTMLElement>(null);
+  const main = useRef<HTMLElement>(null);
+  const [contents, setContents] = useState<{id:string;title:string}[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const page = useMemo(() => {
     if (route === "/") return <HomePage />;
@@ -1158,13 +1087,19 @@ function App() {
     if (route === "/foundations/diffusion") return <DiffusionPage />;
     if (route === "/foundations/frequency") return <FrequencyPage />;
     if (route === "/foundations/evaluation") return <EvaluationPage />;
-    if (route === "/papers") return <PapersPage />;
+    if (route === "/papers") return <HandbookIndex />;
+    if (route === "/revision" || route === "/mathematics") return <RevisionPage />;
     if (route === "/research/gaps") return <GapsPage />;
     if (route === "/research/gaps2") return <Gaps2Page />;
     if (route === "/glossary") return <GlossaryPage />;
     if (route.startsWith("/papers/")) {
-      const paper = paperBySlug.get(route.slice("/papers/".length));
-      return paper ? <PaperPage paper={paper} /> : <NotFoundPage />;
+      const parts = route.split("/");
+      if (parts.length === 4 && parts[3] === "lab") {
+        const paper = paperBySlug.get(parts[2]);
+        return paper ? <PaperPage paper={paper} /> : <NotFoundPage />;
+      }
+      const entry = handbookEntries.find(e => e.slug === parts[2]);
+      return entry && parts.length === 3 ? <HandbookStudy entry={entry} /> : <NotFoundPage />;
     }
     return <NotFoundPage />;
   }, [route]);
@@ -1174,15 +1109,38 @@ function App() {
     document.title = route === "/" ? "Latent Watermarking 101" : `${route.split("/").filter(Boolean).at(-1)?.replaceAll("-", " ")} | Latent Watermarking 101`;
   }, [route]);
 
+  useEffect(() => {
+    const sections = Array.from(main.current?.querySelectorAll('section[id]') ?? []);
+    setContents(sections.map(s => ({ id: s.id, title: s.querySelector('h2')?.textContent?.replace(/ #$/, '') ?? '' })).filter(s => s.title));
+  }, [route]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    sidebar.current?.querySelector<HTMLElement>('button, a')?.focus();
+    const handle = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setMenuOpen(false); menuButton.current?.focus(); }
+      if (event.key === 'Tab') {
+        const nodes = Array.from(sidebar.current?.querySelectorAll<HTMLElement>('a, button') ?? []);
+        const first = nodes[0], last = nodes[nodes.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    document.addEventListener('keydown', handle);
+    return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', handle); };
+  }, [menuOpen]);
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); main.current?.focus(); }}>Skip to content</a>
       <header className="site-header">
         <Link to="/" className="brand"><span>LW</span><b>Latent Watermarking 101</b></Link>
-        <p>Technical field guide</p>
-        <button className="menu-button" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>Contents</button>
+        <p>Research handbook</p>
+        <button ref={menuButton} aria-controls="chapter-navigation" className="menu-button" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>Contents</button>
         <a href="https://github.com/holsoma/latent-watermarking-101" target="_blank" rel="noreferrer" className="github-link">GitHub ↗</a>
       </header>
-      <aside className={`sidebar ${menuOpen ? "open" : ""}`} aria-label="Guide chapters">
+      <aside ref={sidebar} id="chapter-navigation" className={`sidebar ${menuOpen ? "open" : ""}`} aria-label="Guide chapters" role={menuOpen ? "dialog" : undefined} aria-modal={menuOpen ? true : undefined}>
+        <button className="drawer-close" onClick={() => {setMenuOpen(false); menuButton.current?.focus();}}>Close contents</button>
         {navGroups.map((group) => (
           <nav key={group.label}>
             <p>{group.label}</p>
@@ -1192,17 +1150,18 @@ function App() {
           </nav>
         ))}
         <nav>
-          <p>Paper labs</p>
-          {papers.map((paper) => (
+          <p>Paper studies</p>
+          {handbookEntries.map((paper) => (
             <Link key={paper.slug} to={`/papers/${paper.slug}`} className={route === `/papers/${paper.slug}` ? "active" : ""} onClick={() => setMenuOpen(false)}>{paper.shortTitle}</Link>
           ))}
         </nav>
       </aside>
-      {menuOpen && <button className="menu-scrim" aria-label="Close contents" onClick={() => setMenuOpen(false)} />}
-      <main>{page}</main>
+      {menuOpen && <button className="menu-scrim" aria-label="Close contents" onClick={() => {setMenuOpen(false); menuButton.current?.focus();}} />}
+      <main ref={main} id="main-content" tabIndex={-1} inert={menuOpen ? true : undefined}>{page}</main>
+      {!!contents.length && <nav className="local-contents" aria-label="On this page"><p>On this page</p>{contents.map(s => <a key={s.id} href={`#${route}?section=${s.id}`}>{s.title}</a>)}</nav>}
       <footer>
         <p>Latent Watermarking 101 · A public, source-backed learning project</p>
-        <p>Last reviewed July 2026 · <a href="https://github.com/holsoma/latent-watermarking-101">Contribute on GitHub</a></p>
+        <p><a href="https://github.com/holsoma/latent-watermarking-101">Contribute on GitHub</a></p>
       </footer>
     </div>
   );

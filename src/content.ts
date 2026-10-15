@@ -657,7 +657,7 @@ export const papers: Paper[] = [
     contributions: [
       "States computational undetectability as a cryptographic goal.",
       "Provides robustness and payload recovery through error-correcting structure.",
-      "Reports experiments up to 512 bits under removal attacks and larger payloads without attack.",
+      "Separates binary detection from message recovery; the released implementation and its configured code determine which task is actually tested.",
     ],
     limitations: [
       "Security guarantees depend on explicit computational and oracle assumptions.",

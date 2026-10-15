@@ -74,7 +74,7 @@ def check_manifest(path: Path, *, strict_output_slug: bool = False) -> list[str]
         errors.append(f"{path}: bit_error_rate must be null or between 0 and 1")
     fidelity = data.get("implementation_fidelity")
     verification = data.get("verification_status")
-    if fidelity is not None and fidelity not in {"mechanism-adapter", "official-stack"}:
+    if fidelity is not None and fidelity not in {"prerequisite-exercise", "mechanism-adapter", "official-stack"}:
         errors.append(f"{path}: invalid implementation_fidelity")
     if verification is not None and verification not in {"not-run", "passed", "failed"}:
         errors.append(f"{path}: invalid verification_status")
@@ -86,7 +86,7 @@ def check_manifest(path: Path, *, strict_output_slug: bool = False) -> list[str]
     if verification == "passed" and data.get("recovered") is None and data.get("score") is None:
         errors.append(f"{path}: passed verification requires recovered payload or score evidence")
     if lab_name in LEVEL_B_LABS and status == "completed" and data.get("local_adapter") is True:
-        if fidelity is not None and fidelity != "mechanism-adapter":
+        if fidelity is not None and fidelity not in {"prerequisite-exercise", "mechanism-adapter"}:
             errors.append(f"{path}: local Level B runs must be mechanism adapters")
     artifacts = data.get("artifacts", [])
     if not isinstance(artifacts, list) or any(not isinstance(item, str) for item in artifacts):

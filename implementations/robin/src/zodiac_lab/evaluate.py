@@ -25,7 +25,7 @@ def main():
     args = parser.parse_args(); renderer, detector, payload = load_checkpoint(args.checkpoint); tensor = load_image(args.image, payload["config"]["image"]); rows=[]
     for name in args.attacks.split(","):
         with torch.no_grad(): recovered = logits_to_bits(detector(attack(tensor, name.strip())))
-        key = payload["message"]; errors = sum(a != b for a,b in zip(key, recovered)); rows.append({"attack":name.strip(), "recovered":recovered, "bit_error_rate":errors/len(key), "exact":errors == 0})
+        key = payload["message"]; errors = sum(a != b for a,b in zip(key, recovered)); rows.append({"attack":name.strip(), "jpeg_quality":55 if name.strip()=="jpeg" else None, "recovered":recovered, "bit_error_rate":errors/len(key), "exact":errors == 0})
     print(json.dumps(rows, indent=2))
 
 

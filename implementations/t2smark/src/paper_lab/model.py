@@ -17,15 +17,22 @@ def _groups(config):
 
 def shade_noise(noise,config,message):
     if len(message)!=config.payload_bits: raise ValueError(f"message must be {config.payload_bits} bits")
-    flat=noise.flatten(); groups=_groups(config); target=bits_tensor(message,noise.device); result=flat.abs()
+    flat=noise.flatten(); groups=_groups(config); target=bits_tensor(message,noise.device); result=flat.clone()
     threshold=torch.quantile(flat.abs(),1-config.tail_fraction)
     for index,group in enumerate(groups):
         selected=group[flat[group].abs()>=threshold]
-        result[selected]=result[selected]*target[index]
+        result[selected]=result[selected].abs()*target[index]
     return result.reshape_as(noise)
 
 def decode_noise(noise,config):
-    groups=_groups(config); flat=noise.flatten(); return (flat[groups].mean(dim=1)>=0).to(torch.int64)
+    groups=_groups(config); flat=noise.flatten()
+    threshold=torch.quantile(flat.abs(),1-config.tail_fraction)
+    values=[]
+    for group in groups:
+        selected=group[flat[group].abs()>=threshold]
+        # No tail samples is an erasure. The compact binary interface returns 0.
+        values.append(int(flat[selected].mean()>=0) if selected.numel() else 0)
+    return torch.tensor(values,device=noise.device)
 
 def decode_message(noise,config): return "".join(str(int(v)) for v in decode_noise(noise,config).tolist())
 

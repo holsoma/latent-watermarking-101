@@ -1,0 +1,69 @@
+{
+  "slug": "zodiac",
+  "run_at": "2026-10-15T06:47:40.491673+00:00",
+  "python": "3.11.0",
+  "classification": "prerequisite-exercise",
+  "config": {
+    "image": 64,
+    "latent_channels": 8,
+    "latent_size": 8,
+    "message_length": 16,
+    "steps": 3,
+    "learning_rate": 0.05,
+    "image_loss_weight": 3.0,
+    "watermark_loss_weight": 1.0,
+    "frequency_penalty": 0.02,
+    "seed": 31,
+    "output_dir": "outputs/handbook"
+  },
+  "supplied_config": {
+    "image": 64,
+    "latent_channels": 8,
+    "latent_size": 8,
+    "message_length": 16,
+    "steps": 3,
+    "learning_rate": 0.05,
+    "image_loss_weight": 3.0,
+    "watermark_loss_weight": 1.0,
+    "frequency_penalty": 0.02,
+    "seed": 31,
+    "output_dir": "outputs/smoke"
+  },
+  "effective_run": {
+    "steps": 3,
+    "device": "cpu",
+    "output_dir": "outputs/handbook",
+    "message": "1011001110001111",
+    "cli_overrides": {
+      "output_dir": "outputs/handbook"
+    }
+  },
+  "commands": [
+    "python implementations/shared/run_lab.py zodiac create",
+    "python implementations/shared/run_lab.py zodiac detect",
+    "python implementations/shared/run_lab.py zodiac evaluate",
+    "python implementations/shared/run_lab.py zodiac controls"
+  ],
+  "saved_image_detection": {
+    "message": "1011001110001111",
+    "recovered": "0001110011101111",
+    "bit_error_rate": 0.5,
+    "exact": false
+  },
+  "bit_error_rate": 0.5,
+  "artifacts": [
+    {
+      "file": "inversion.png",
+      "sha256": "85fbd8bae72782ee0aeb7ae5db7abc0cbf82d166dc083cafc97768a0950cd6c0"
+    },
+    {
+      "file": "watermarked.png",
+      "sha256": "0a6c9effe95875725bcb0e30dbf6c5c9973f8b8625331f64a5a72b805feb4bf9"
+    },
+    {
+      "file": "residual_amplified.png",
+      "sha256": "564b451d0775fa8a0d19a8d36d5a3db495d7791688427dda1dd17874fd4a4eb5"
+    }
+  ],
+  "limitations": "Single bounded CPU fixture. Command success is not message recovery, paper reproduction or calibrated detection."
+}

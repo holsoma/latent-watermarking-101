@@ -1,146 +1,66 @@
 # Latent Watermarking 101
 
-A source-backed technical guide to image watermarking, latent diffusion watermarking and the security claims surrounding generative provenance.
+A research handbook for applied AI students studying image watermarking, latent diffusion, detection and experimental claims.
 
-[Read the guide](https://holsoma.github.io/latent-watermarking-101/) · [Report an issue](https://github.com/holsoma/latent-watermarking-101/issues)
+[Published guide](https://holsoma.github.io/latent-watermarking-101/) · [Repository](https://github.com/holsoma/latent-watermarking-101)
 
-## Purpose
+## Reading the handbook
 
-Research on generative image watermarking sits across signal processing, neural data hiding, diffusion modelling, coding theory, statistical detection and security. Papers often assume that readers already understand these areas, which makes it easy to remember method names without understanding what the method changes, what the detector observes or what its results prove.
+The handbook assumes Python, basic linear algebra, probability and neural networks. Foundations explain diffusion, inversion, frequency structure and evaluation. Paper studies connect the problem, embedding and recovery procedures, mathematical assumptions, evidence and limitations.
 
-This project builds those foundations in order and then studies the primary literature in depth.
+- **Paper studies:** 33 entries, searchable by their complete content and filterable by paper type, insertion location and training requirement.
+- **Worked revision:** 63 conceptual questions, 20 oral questions and mathematical examples, with expandable answers and section links.
+- **Implementation exercises:** 24 existing local Python exercises, separate from the technical studies. Each states its implemented boundary and CPU verification scope.
+- **Research gaps:** distinguish published evidence, experimental limitations and proposed investigations.
 
-The guide is designed to help a reader:
+Paper URLs remain `#/papers/<slug>`. Local exercises use `#/papers/<slug>/lab`. Section links use `?section=<id>` inside the hash route. The unlisted research proposal retains its existing URL and is excluded from the handbook index.
 
-- formalise embedding, attack and extraction as a communication path;
-- distinguish visible, invisible, blind, non-blind, zero-bit and multi-bit watermarking;
-- explain the VAE, text encoder, noise predictor and sampler in latent diffusion;
-- identify whether a method changes pixels, VAE latents, initial noise, an intermediate state, conditioning or model weights;
-- distinguish a fixed generator from a wholly training-free watermark system;
-- reason about spatial frequency, Fourier structure and geometric synchronisation;
-- interpret robustness at a stated attack strength and false-positive operating point;
-- separate detection, attribution, model ownership, integrity and unforgeability;
-- identify which assumptions a detector, theorem or experiment leaves untested.
+## Source policy
 
-## Reading structure
+Three supplied documents determine the required literature and teaching coverage: the paper map, updated quick reference and study guide. Their original DOCX files remain outside the repository. Reviewed explanations, source locators and coverage records are stored with the site.
 
-The website is organised as a technical book with persistent chapter navigation.
+Primary papers and author repositories support precise technical claims. Supplied summaries are identified as summaries. Preprints are not presented as accepted publications without evidence. A local exercise is not a reproduction of a paper's experimental results.
 
-| Section | Purpose |
-| --- | --- |
-| Start here | Build a map of the field and its embedding locations. |
-| How to read a paper | Reduce a paper to an information path, operating point and threat model. |
-| Image watermarking | Learn the embed, attack and extract pipeline, including residual analysis. |
-| Neural networks | Separate discriminative, generative, autoencoder, GAN and diffusion roles. |
-| Latent diffusion | Follow training, generation and inversion without collapsing the model components. |
-| Image frequency | Understand spatial frequency, Fourier transforms, alignment and semantic representation. |
-| Evaluation | Study fidelity, robustness, security, payload, calibration and computation together. |
-| Paper studies | Move from a field-level comparison into method-specific technical readings. |
-| Threats and gaps | Turn recurring evaluation weaknesses into focused research questions. |
-| Glossary | Look up recurring mathematical and security terms. |
+The coverage register is `docs/content-coverage.json`. Source and review records are under `docs/`. Quantitative claims must include their experimental conditions; robustness is not equivalent to unforgeability, bit accuracy is not exact-message recovery, and a frozen generator does not imply that every component is training-free.
 
-## Literature coverage
+## Run the website
 
-The paper studies are organised by the problem each lineage introduced.
-
-### Neural watermarking and latent bridges
-
-- **HiDDeN** introduces the learned encoder, distortion layer and message decoder.
-- **RoSteALS** separates image modelling from message embedding through a frozen autoencoder latent.
-- **Stable Signature** fine-tunes a latent decoder to satisfy a fixed image watermark extractor.
-- **ZoDiac** uses a pre-trained diffusion latent to watermark an existing cover image through per-image optimisation.
-
-### Initial-noise and inversion methods
-
-- **Tree-Rings** establishes Fourier-pattern watermarking in the starting Gaussian latent.
-- **RingID** audits Tree-Rings and extends it towards multi-key identification.
-- **Gaussian Shading** maps payload bits into a target Gaussian distribution.
-- **T2SMark** divides Gaussian sampling between robust tails and diversity-preserving central regions.
-- **Gaussian Shannon** treats generation and inversion as a coded communication channel.
-- **PRC Watermark** adds pseudorandom coding and a computational-undetectability objective.
-- **ROBIN** writes a strong mark at an intermediate diffusion state and optimises conditioning to hide its visible effect.
-
-### Learned and model-integrated methods
-
-- **Latent Watermark**, **LaWa**, **GaussMarker** and **SERUM** place learned components at different points in the latent or verification path.
-- **WOUAF** treats user attribution as fingerprint-conditioned weight modulation.
-- **AquaLoRA** places watermark behaviour inside low-rank U-Net updates.
-- **SleeperMark** studies model ownership evidence that must survive downstream fine-tuning.
-- **Your Text Encoder Can Be An Object-Level Watermarking Controller** uses learned conditioning tokens for local control.
-
-### Semantics, integrity and security
-
-- **SEAL** binds expected evidence to semantic content.
-- **SFWMark** makes Hermitian symmetry and centre-aware Fourier placement explicit.
-- **TAG-WM** separates ownership payload recovery from tamper localisation.
-- **Gaussian Shading++** adds seed transport, soft decoding and public-key verification.
-- **Black-Box Forgery Attacks on Semantic Watermarks** shows why robust detection is not equivalent to unforgeable attribution.
-
-Each study begins with a high-level argument, then follows the information path and develops the method-specific details. Shared summary fields remain available for orientation, but they are not used as a substitute for technical explanation.
-
-## Evidence policy
-
-Technical content is based on public primary papers, official proceedings pages and author-provided implementations.
-
-The guide follows these rules:
-
-- distinguish the paper's claim from this project's interpretation;
-- state when only the base generator is fixed but an auxiliary component is trained;
-- identify preprints as preprints;
-- avoid isolated performance values without their attack, payload and operating point;
-- separate bit accuracy from exact-message recovery;
-- treat a theorem as conditional on its adversary, oracle and randomness assumptions;
-- include attack papers when they change how a watermark claim should be interpreted;
-- do not reproduce private manuscripts.
-
-## Related projects
-
-- [MarkDiffusion](https://github.com/THU-BPM/MarkDiffusion) provides shared implementations, visualisation and evaluation for generative watermarking.
-- [Awesome GenAI Watermarking](https://github.com/and-mill/Awesome-GenAI-Watermarking) maintains a broad bibliography across generative modalities.
-- [Secure Diffusion Watermarking Survey and Implementation](https://github.com/tongyu0924/Secure-Diffusion-Watermarking-Survey-and-Implementation) collects diffusion watermarking papers and implementations.
-- [Hugging Face Diffusers](https://github.com/huggingface/diffusers) provides maintained diffusion pipelines and schedulers.
-- [CompVis Latent Diffusion](https://github.com/CompVis/latent-diffusion) is the reference implementation associated with the latent diffusion paper.
-- [Dive into Deep Learning](https://github.com/d2l-ai/d2l-en) demonstrates how prose, mathematics and executable material can form one learning resource.
-
-The chapter-based teaching format was also informed by [Arjun Virk's ML guide](https://www.arjunvirk.com/writing/ml-guide).
-
-## Run locally
-
-Requirements: Node.js 20.19 or newer, or Node.js 22.12 or newer.
+Use a supported Node.js release meeting Vite's requirements (Node 22.12 or newer is recommended).
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Build and type-check:
+The site uses React, TypeScript and Vite, with self-hosted IBM Plex fonts and KaTeX equations. It remains a static GitHub Pages site under `/latent-watermarking-101/`.
 
 ```bash
 npm test
+npm run test:content
+npm run test:ui
 ```
 
-The site uses React, TypeScript and Vite. Hash routes allow every chapter and paper study to open directly on GitHub Pages.
+`npm test` runs content and interface tests, then the production build. The tests check source coverage, study rendering, citations, filters, hash navigation, section focus, mobile drawer controls and clipboard feedback.
 
-## Implementation labs
+## Run a CPU exercise
 
-Paper studies are being converted into runnable implementation labs. HiDDeN, RoSteALS, Stable Signature, ZoDiac, Tree-Rings, Gaussian Shading, SEAL, LaWa and AquaLoRA now have local labs under `implementations/`. Each contains a readable PyTorch path, Git Bash commands, saved outputs, evaluation scripts and tests. The paper pages provide the generation flow, visible output artefacts, ideation and methodology, design decisions, and a paper-to-code map.
+Use Python 3.11 or 3.12 with the selected lab's declared dependencies. Start from the repository root:
 
-The labs are intentionally separate from the static site. GitHub Pages documents the experiment and displays committed sample images; Python performs training and inference locally. Compact adapters test the information path. They are not replacements for the official repositories, model weights or paper-scale data, and every page states those limits before presenting a result.
+```bash
+python implementations/shared/run_lab.py tree-rings create
+python implementations/shared/run_lab.py tree-rings detect
+python implementations/shared/run_lab.py tree-rings evaluate
+python implementations/shared/run_lab.py tree-rings controls
+```
+
+Replace `tree-rings` with the desired lab slug. The shared runner selects the correct module and image filename, runs each lab in a separate process and stores results under that lab's ignored `outputs/handbook/` directory. This avoids collisions between labs that reuse Python package names.
+
+The bounded configuration checks execution and specific behaviour. Recovery may fail after a short run. Passing a command does not establish a published robustness result or a calibrated false-positive rate. The per-lab measured verification record is `docs/lab-verification.json`.
+
+No diffusion-model download, GPU run or paper-scale dataset is required by the handbook checks. Consult the primary implementation for a full reproduction.
 
 ## Contributing
 
-Contributions should improve factual accuracy, explanation, accessibility or public source coverage.
+Explain what changes, what remains fixed, what verification observes and what the evidence establishes. Define notation before use, include worked reasoning, and cite the exact supporting source. Use UK English and clear prose. Run the appropriate website and lab tests when changing their behaviour.
 
-When changing technical content:
-
-- link the primary paper or official implementation;
-- explain where information is embedded and what verification observes;
-- state all trained and optimised components;
-- provide the model, attack, payload and operating point for reported results;
-- identify whether an experiment is closed-set or open-set;
-- label conceptual simulations as conceptual;
-- avoid claims that exceed the stated threat model.
-
-## Scope
-
-This repository is a learning resource, not an implementation of the covered watermarking methods. Refer to each linked paper and repository for its licence and citation requirements.
+The Pages workflow deploys from `main`. The handbook overhaul branch is for review and does not deploy automatically.

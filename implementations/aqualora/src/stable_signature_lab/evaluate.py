@@ -38,7 +38,7 @@ def run(args):
             recovered = __import__("stable_signature_lab.model", fromlist=["logits_to_bits"]).logits_to_bits(model.logits(attacked))
         key = payload["key"]
         errors = sum(a != b for a, b in zip(key, recovered))
-        rows.append({"attack": name.strip(), "recovered": recovered, "bit_error_rate": errors / len(key), "exact": errors == 0})
+        rows.append({"attack": name.strip(), "jpeg_quality": 55 if name.strip()=="jpeg" else None, "recovered": recovered, "bit_error_rate": errors / len(key), "exact": errors == 0})
     print(json.dumps(rows, indent=2))
 
 

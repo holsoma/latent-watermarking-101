@@ -1,0 +1,86 @@
+{
+  "slug": "rosteals",
+  "run_at": "2026-10-15T06:45:23.466873+00:00",
+  "python": "3.11.0",
+  "classification": "prerequisite-exercise",
+  "config": {
+    "model": {
+      "image_size": 64,
+      "latent_channels": 3,
+      "latent_size": 16,
+      "message_length": 16,
+      "hidden_channels": 24
+    },
+    "training": {
+      "steps": 3,
+      "batch_size": 2,
+      "learning_rate": 0.002,
+      "image_loss_weight": 0.5,
+      "message_loss_weight": 1.0,
+      "offset_weight": 0.005,
+      "seed": 11
+    },
+    "output": {
+      "directory": "outputs/handbook"
+    }
+  },
+  "supplied_config": {
+    "model": {
+      "image_size": 64,
+      "latent_channels": 3,
+      "latent_size": 16,
+      "message_length": 16,
+      "hidden_channels": 24
+    },
+    "training": {
+      "steps": 3,
+      "batch_size": 2,
+      "learning_rate": 0.002,
+      "image_loss_weight": 0.5,
+      "message_loss_weight": 1.0,
+      "offset_weight": 0.005,
+      "seed": 11
+    },
+    "output": {
+      "directory": "outputs/smoke"
+    }
+  },
+  "effective_run": {
+    "steps": 3,
+    "device": "cpu",
+    "output_dir": "outputs/handbook",
+    "message": "1010101010101010",
+    "cli_overrides": {
+      "output_dir": "outputs/handbook"
+    }
+  },
+  "commands": [
+    "python implementations/shared/run_lab.py rosteals create",
+    "python implementations/shared/run_lab.py rosteals detect",
+    "python implementations/shared/run_lab.py rosteals evaluate",
+    "python implementations/shared/run_lab.py rosteals controls"
+  ],
+  "saved_image_detection": {
+    "recovered": "1010100010110110"
+  },
+  "bit_error_rate": 0.25,
+  "artifacts": [
+    {
+      "file": "cover.png",
+      "sha256": "1784d85f62744848c2b9b5fc47e0568509a9c0c61eb6efd42514c233b9c67baf"
+    },
+    {
+      "file": "autoencoded.png",
+      "sha256": "c0bb322f07a5612be9c6a6503903e185195e9a0f8cace4ced841f1e185f9fda6"
+    },
+    {
+      "file": "encoded.png",
+      "sha256": "1e6708f64d621029a6c22bab966ffe3047268f9eeac94f560534ab2fc2d43ee4"
+    },
+    {
+      "file": "residual_amplified.png",
+      "sha256": "3b5e7d653dd44277a74d760f90e304ea8d41c53fda3b9f6cd9b6690f29ce87bb"
+    }
+  ],
+  "limitations": "Single bounded CPU fixture. Command success is not message recovery, paper reproduction or calibrated detection."
+}

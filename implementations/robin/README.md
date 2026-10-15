@@ -1,20 +1,23 @@
-# ROBIN implementation lab
+# robin CPU teaching exercise
 
-This compact lab isolates ROBIN's defining boundary: a strong intermediate-state mark is hidden by optimising conditioning. The local renderer is a small proxy and does not establish prompt-alignment results.
+Classification: **prerequisite exercise**. Only additive conditioning is optimised. The sampled latent and renderer remain fixed. This is not a diffusion text-conditioning implementation.
 
-## Git Bash
+Reference: [robin](https://github.com/Hannah1102/ROBIN). A reference collection is not an official implementation claim.
 
-```bash
-cd /c/amos/research/latent-watermarking-101/implementations/robin
-python -m venv .venv
-source .venv/Scripts/activate
-python -m pip install -e .
-export PYTHONPATH=src
-python -m zodiac_lab.optimise --config configs/demo.toml --message 0101010101010101
-python -m zodiac_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png
-python -m zodiac_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png --attacks identity,blur,crop,jpeg
+Use Python 3.11 or 3.12 with CPU PyTorch, NumPy and Pillow. From the repository root, install this package into an activated environment, then use the portable runner:
+
+```text
+python -m pip install -e implementations/robin
+python implementations/shared/run_lab.py robin create
+python implementations/shared/run_lab.py robin detect
+python implementations/shared/run_lab.py robin evaluate
+python implementations/shared/run_lab.py robin controls
 ```
 
-The official [ZoDiac repository](https://github.com/zhanglijun95/ZoDiac) is notebook-oriented and uses Stable Diffusion inversion, trainable latents and attack modules. Use its environment and `Example.ipynb` for the paper-faithful path. The local renderer does not model prompts, schedulers or Stable Diffusion inversion error.
+The runner uses `configs/smoke.toml`, disables CUDA and isolates `src/zodiac_lab` in its own subprocess. No pretrained model is downloaded. Creation saves a checkpoint and PNG images under `outputs/handbook`. Detection reloads the saved image. Evaluation transforms that saved evidence without embedding another message. JPEG is actual compression and decompression; its quality is recorded in each result.
 
-`outputs/demo/manifest.json` records the target message, optimisation history and clean recovery. Inspect `inversion.png`, `watermarked.png` and `residual_amplified.png` together: a clean detector result alone does not show whether the image changed acceptably.
+Commands write their exact stdout and stderr to the same output directory. `manifest.json` lists generated artefacts. A command completing successfully does not mean that extraction succeeded. Small training runs often have substantial bit error, including on clean images.
+
+`../../docs/lab-verification.json` records the checked commands, runtime, outputs and assertions. Run `python implementations/shared/verify_all_labs.py robin` from the root to regenerate this lab's report. The controls include applicable unit assertions, codec checks and method-specific checks; they do not estimate false-positive rates.
+
+A known key is detector input. A score is measured evidence. Extracted bits are computed from the received image. These quantities must not be conflated. No claim of paper reproduction, cryptographic security or dataset robustness follows from this exercise.

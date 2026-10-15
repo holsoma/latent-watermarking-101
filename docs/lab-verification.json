@@ -1,0 +1,923 @@
+{
+  "schema_version": 1,
+  "meaning_of_passed": "Commands and behavioural assertions completed; does not mean the watermark recovered successfully.",
+  "labs": {
+    "aqualora": {
+      "slug": "aqualora",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:42:33.242701+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py aqualora create",
+          "exit_code": 0,
+          "seconds": 6.61,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"paper_slug\": \"aqualora\",\n  \"method\": \"aqualora\",\n  \"run_kind\": \"rank-limited-latent-update-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"verification_status\": \"not-run\",\n  \"device\": \"cpu\",\n  \"seed\": 23,\n  \"steps\": 3,\n  \"message\": \"100100110110110110101110010110011111101101101100\",\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001011000101001000\",\n  \"bit_error_rate\": 0.6666666666666666,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base_decoder.png\",\n    \"marked_decoder.png\",\n    \"residual_amplified.png\",\n    \"manifest.json\"\n  ],\n  \"history\": [\n    {\n      \"step\": 1,\n      \"loss\": 0.7422809600830078,\n      \"watermark_loss\": 0.7422809600830078,\n      \"image_loss\": 7.723724593233783e-08\n    },\n    {\n      \"step\": 2,\n      \"loss\": 0.7423006892204285,\n      \"watermark_loss\": 0.7423006892204285,\n      \"image_loss\": 7.948921165734646e-08\n    },\n    {\n      \"step\": 3,\n      \"loss\": 0.7423494458198547,\n      \"watermark_loss\": 0.7423494458198547,\n      \"image_loss\": 8.067664936106667e-08\n    }\n  ],\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"note\": \"The local adapter trains rank-limited latent adapters; the paper merges watermark LoRA modules into a Stable Diffusion U-Net with prior preservation.\"\n}\n{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001011000101001000\",\n  \"agreements\": 16,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9933583592188775\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"paper_slug\": \"aqualora\",\n    \"method\": \"aqualora\",\n    \"run_kind\": \"rank-limited-latent-update-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"device\": \"cpu\",\n    \"seed\": 23,\n    \"steps\": 3,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base_decoder.png\",\n      \"marked_decoder.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.7422809600830078,\n        \"watermark_loss\": 0.7422809600830078,\n        \"image_loss\": 7.723724593233783e-08\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.7423006892204285,\n        \"watermark_loss\": 0.7423006892204285,\n        \"image_loss\": 7.948921165734646e-08\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.7423494458198547,\n        \"watermark_loss\": 0.7423494458198547,\n        \"image_loss\": 8.067664936106667e-08\n      }\n    ],\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"note\": \"The local adapter trains rank-limited latent adapters; the paper merges watermark LoRA modules into a Stable Diffusion U-Net with prior preservation.\",\n    \"training_observations_before_save\": {\n      \"message\": \"100100110110110110101110010110011111101101101100\",\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001101001001011000101001000\",\n      \"bit_error_rate\": 0.6666666666666666,\n      \"verification_status\": \"not-run\"\n    },\n    \"saved_image_detection\": {\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001101001001011000101001000\",\n      \"agreements\": 16,\n      \"bits\": 48,\n      \"null_tail_probability\": 0.9933583592188775\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"100100110110110110101110010110011111101101101100\",\n    \"recovered\": \"001001001001001001001001101001001011000101001000\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py aqualora create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py aqualora detect",
+          "exit_code": 0,
+          "seconds": 2.3,
+          "stdout": "{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001011000101001000\",\n  \"agreements\": 16,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9933583592188775\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py aqualora evaluate",
+          "exit_code": 0,
+          "seconds": 2.39,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001101001001011000101001000\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001001001101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001011000101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 55,\n    \"recovered\": \"001001001001001001001001001001001011000101001000\",\n    \"bit_error_rate\": 0.6458333333333334,\n    \"exact\": false\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py aqualora controls",
+          "exit_code": 0,
+          "seconds": 2.3,
+          "stdout": "{\n  \"slug\": \"aqualora\",\n  \"checks\": [\n    \"test_model.py:test_extractor_shape\",\n    \"test_model.py:test_zero_initialised_lora_preserves_base_output\",\n    \"test_model.py:test_lora_weights_can_change_decoder_output\",\n    \"test_model.py:test_fingerprint_scales_lora_update\",\n    \"test_stats.py:test_binomial_tail_bounds\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"100100110110110110101110010110011111101101101100\",\n    \"saved_image_bits\": \"001001001001001001001001101001001011000101001000\",\n    \"saved_image_ber\": 0.6666666666666666,\n    \"wrong_target_ber\": 0.3333333333333333,\n    \"unmarked_bits\": \"001001001001001001001001101001001011000101001000\",\n    \"corrupted_bits\": \"110110110110110110110110010110110100111010110111\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 14,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed",
+      "controls_updated_at": "2026-10-15T06:48:48.153705+00:00"
+    },
+    "gaussian-shading": {
+      "slug": "gaussian-shading",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:42:46.915510+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading create",
+          "exit_code": 0,
+          "seconds": 4.78,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"paper_slug\": \"gaussian-shading\",\n  \"run_kind\": \"initial-noise-gaussian-shading\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"verification_status\": \"not-run\",\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 2,\n  \"steps\": 0,\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"gaussian-shading\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"paper_slug\": \"gaussian-shading\",\n    \"run_kind\": \"initial-noise-gaussian-shading\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 2,\n    \"steps\": 0,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0,\n      \"verification_status\": \"not-run\"\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"gaussian-shading\",\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0,\n      \"exact\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010\",\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py gaussian-shading create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading detect",
+          "exit_code": 0,
+          "seconds": 2.66,
+          "stdout": "{\n  \"paper_slug\": \"gaussian-shading\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading evaluate",
+          "exit_code": 0,
+          "seconds": 2.36,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"negative-control\",\n    \"recovered\": \"0101\",\n    \"bit_error_rate\": 1.0\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading controls",
+          "exit_code": 0,
+          "seconds": 2.3,
+          "stdout": "{\n  \"slug\": \"gaussian-shading\",\n  \"checks\": [\n    \"test_smoke.py:test_round_trip\",\n    \"test_smoke.py:test_shape_preserved\",\n    \"test_smoke.py:test_official_replication_round_trip\",\n    \"test_smoke.py:test_official_payload_controls_watermark\",\n    \"test_smoke.py:test_official_payload_length_is_checked\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"latent recovery matches inserted bits\",\n    \"corruption changes recovered bits\",\n    \"unmarked control is not supplied payload\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image bits match detector command\",\n    \"manifest payload observation matches saved image\"\n  ],\n  \"observations\": {\n    \"target\": \"1010\",\n    \"saved_image_bits\": \"1010\",\n    \"wrong_target\": \"0101\",\n    \"wrong_target_ber\": 1.0,\n    \"unmarked_bits\": \"0010\",\n    \"corrupted_bits\": \"0101\"\n  },\n  \"passed\": 19,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed",
+      "controls_updated_at": "2026-10-15T06:48:50.454667+00:00"
+    },
+    "gaussian-shading-plus-plus": {
+      "slug": "gaussian-shading-plus-plus",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:42:59.076517+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading-plus-plus create",
+          "exit_code": 0,
+          "seconds": 4.61,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"gaussian-shading-plus-plus\",\n  \"run_kind\": \"repeated-sign-mapping-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 2,\n  \"steps\": 0,\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"gaussian-shading-plus-plus\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"gaussian-shading-plus-plus\",\n    \"run_kind\": \"repeated-sign-mapping-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 2,\n    \"steps\": 0,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"gaussian-shading-plus-plus\",\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0,\n      \"exact\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010\",\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py gaussian-shading-plus-plus create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading-plus-plus detect",
+          "exit_code": 0,
+          "seconds": 2.56,
+          "stdout": "{\n  \"paper_slug\": \"gaussian-shading-plus-plus\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading-plus-plus evaluate",
+          "exit_code": 0,
+          "seconds": 4.14,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shading-plus-plus controls",
+          "exit_code": 0,
+          "seconds": 2.36,
+          "stdout": "{\n  \"slug\": \"gaussian-shading-plus-plus\",\n  \"checks\": [\n    \"test_smoke.py:test_round_trip\",\n    \"test_smoke.py:test_shape_preserved\",\n    \"test_smoke.py:test_soft_decoder_returns_probabilities\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"latent recovery matches inserted bits\",\n    \"corruption changes recovered bits\",\n    \"unmarked control is not supplied payload\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image bits match detector command\",\n    \"manifest payload observation matches saved image\"\n  ],\n  \"observations\": {\n    \"target\": \"1010\",\n    \"saved_image_bits\": \"1010\",\n    \"wrong_target\": \"0101\",\n    \"wrong_target_ber\": 1.0,\n    \"unmarked_bits\": \"0010\",\n    \"corrupted_bits\": \"0101\"\n  },\n  \"passed\": 17,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed",
+      "controls_updated_at": "2026-10-15T06:48:52.760148+00:00"
+    },
+    "gaussian-shannon": {
+      "slug": "gaussian-shannon",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:43:12.891973+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shannon create",
+          "exit_code": 0,
+          "seconds": 5.58,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"gaussian-shannon\",\n  \"run_kind\": \"repeated-sign-mapping-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 2,\n  \"steps\": 0,\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"gaussian-shannon\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"gaussian-shannon\",\n    \"run_kind\": \"repeated-sign-mapping-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 2,\n    \"steps\": 0,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"gaussian-shannon\",\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0,\n      \"exact\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010\",\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py gaussian-shannon create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shannon detect",
+          "exit_code": 0,
+          "seconds": 2.5,
+          "stdout": "{\n  \"paper_slug\": \"gaussian-shannon\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shannon evaluate",
+          "exit_code": 0,
+          "seconds": 2.39,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussian-shannon controls",
+          "exit_code": 0,
+          "seconds": 2.3,
+          "stdout": "{\n  \"slug\": \"gaussian-shannon\",\n  \"checks\": [\n    \"test_smoke.py:test_round_trip\",\n    \"test_smoke.py:test_shape_preserved\",\n    \"test_smoke.py:test_majority_and_word_error\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"latent recovery matches inserted bits\",\n    \"corruption changes recovered bits\",\n    \"unmarked control is not supplied payload\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image bits match detector command\",\n    \"manifest payload observation matches saved image\"\n  ],\n  \"observations\": {\n    \"target\": \"1010\",\n    \"saved_image_bits\": \"1010\",\n    \"wrong_target\": \"0101\",\n    \"wrong_target_ber\": 1.0,\n    \"unmarked_bits\": \"0010\",\n    \"corrupted_bits\": \"0101\"\n  },\n  \"passed\": 17,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed",
+      "controls_updated_at": "2026-10-15T06:48:55.119842+00:00"
+    },
+    "gaussmarker": {
+      "slug": "gaussmarker",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:43:25.765098+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py gaussmarker create",
+          "exit_code": 0,
+          "seconds": 4.62,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"gaussmarker\",\n  \"run_kind\": \"fourier-prerequisite-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"smoke\",\n  \"known_key\": \"smoke\",\n  \"recovered\": null,\n  \"score\": 0.2927851974964142,\n  \"bit_error_rate\": null,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"gaussmarker\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"gaussmarker\",\n    \"run_kind\": \"fourier-prerequisite-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"known_key\": \"smoke\",\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"smoke\",\n      \"recovered\": null,\n      \"bit_error_rate\": null,\n      \"score\": 0.2927851974964142\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"gaussmarker\",\n      \"message\": \"smoke\",\n      \"score\": 0.29317954182624817,\n      \"threshold\": 0.05,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"recovered\": null,\n    \"score\": 0.29317954182624817,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py gaussmarker create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussmarker detect",
+          "exit_code": 0,
+          "seconds": 2.48,
+          "stdout": "{\n  \"paper_slug\": \"gaussmarker\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussmarker evaluate",
+          "exit_code": 0,
+          "seconds": 2.72,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"score\": 0.29317954182624817\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"score\": 0.2880564033985138\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"score\": 0.26636916399002075\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"score\": 0.2905575633049011\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py gaussmarker controls",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "{\n  \"slug\": \"gaussmarker\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"test_smoke.py:test_dual_score_is_finite\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"smoke\",\n    \"saved_image_score\": 0.29317954182624817,\n    \"wrong_key_score\": -0.08109232038259506,\n    \"unmarked_score\": 0.04848712310194969,\n    \"corrupted_score\": -0.29317954182624817\n  },\n  \"passed\": 16,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed",
+      "controls_updated_at": "2026-10-15T06:48:57.407469+00:00"
+    },
+    "hidden": {
+      "slug": "hidden",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:43:37.900606+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py hidden create",
+          "exit_code": 0,
+          "seconds": 11.26,
+          "stdout": "{\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\handbook\\\\manifest.json\",\n  \"device\": \"cpu\",\n  \"steps\": 12\n}\nencoded image written to outputs/handbook/encoded.png\n01101101\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"hidden\",\n    \"paper\": \"hidden\",\n    \"run_kind\": \"smoke\",\n    \"kind\": \"smoke\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"data_directory\": null,\n    \"demo_message\": null,\n    \"config\": {\n      \"model\": {\n        \"image_size\": 64,\n        \"message_length\": 8,\n        \"encoder_channels\": 32,\n        \"encoder_blocks\": 4,\n        \"decoder_channels\": 32,\n        \"decoder_blocks\": 4,\n        \"discriminator_channels\": 32,\n        \"discriminator_blocks\": 3\n      },\n      \"training\": {\n        \"steps\": 12,\n        \"batch_size\": 4,\n        \"learning_rate\": 0.001,\n        \"image_loss_weight\": 1.0,\n        \"adversarial_loss_weight\": 0.001,\n        \"message_loss_weight\": 1.0,\n        \"seed\": 7\n      },\n      \"output\": {\n        \"directory\": \"outputs/smoke\"\n      }\n    },\n    \"history\": [\n      {\n        \"step\": 1,\n        \"channel\": \"identity\",\n        \"loss\": 1.3024425506591797,\n        \"message_loss\": 0.7169548869132996,\n        \"image_mse\": 0.5846794247627258,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 2,\n        \"channel\": \"dropout\",\n        \"loss\": 1.181180715560913,\n        \"message_loss\": 0.6982829570770264,\n        \"image_mse\": 0.482099324464798,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 3,\n        \"channel\": \"blur\",\n        \"loss\": 1.070464015007019,\n        \"message_loss\": 0.6647453308105469,\n        \"image_mse\": 0.4049288034439087,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 4,\n        \"channel\": \"crop\",\n        \"loss\": 1.0397475957870483,\n        \"message_loss\": 0.6790217757225037,\n        \"image_mse\": 0.3599446713924408,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 5,\n        \"channel\": \"jpeg\",\n        \"loss\": 1.0532219409942627,\n        \"message_loss\": 0.7450032234191895,\n        \"image_mse\": 0.30744606256484985,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 6,\n        \"channel\": \"identity\",\n        \"loss\": 0.9895942807197571,\n        \"message_loss\": 0.7121444344520569,\n        \"image_mse\": 0.27668508887290955,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 7,\n        \"channel\": \"dropout\",\n        \"loss\": 0.9444411993026733,\n        \"message_loss\": 0.6911647915840149,\n        \"image_mse\": 0.25251972675323486,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 8,\n        \"channel\": \"blur\",\n        \"loss\": 0.9274194240570068,\n        \"message_loss\": 0.6945797801017761,\n        \"image_mse\": 0.23209071159362793,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 9,\n        \"channel\": \"crop\",\n        \"loss\": 0.9383567571640015,\n        \"message_loss\": 0.7204071879386902,\n        \"image_mse\": 0.21720834076404572,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 10,\n        \"channel\": \"jpeg\",\n        \"loss\": 0.8781517744064331,\n        \"message_loss\": 0.6763502955436707,\n        \"image_mse\": 0.20106835663318634,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 11,\n        \"channel\": \"identity\",\n        \"loss\": 0.8796186447143555,\n        \"message_loss\": 0.6909885406494141,\n        \"image_mse\": 0.18790346384048462,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 12,\n        \"channel\": \"dropout\",\n        \"loss\": 0.7867769598960876,\n        \"message_loss\": 0.6121289134025574,\n        \"image_mse\": 0.17392824590206146,\n        \"device\": \"cpu\"\n      }\n    ],\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"device\": \"cpu\",\n    \"steps\": 12,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"cover.png\",\n      \"manifest.json\",\n      \"encoded.png\"\n    ],\n    \"note\": \"Synthetic smoke run. Not a paper reproduction.\",\n    \"training_observations_before_save\": {\n      \"bit_error_rate\": null\n    },\n    \"saved_image_detection\": {\n      \"recovered\": \"01101101\"\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"10101010\",\n    \"recovered\": \"01101101\",\n    \"bit_error_rate\": 0.625,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py hidden create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py hidden detect",
+          "exit_code": 0,
+          "seconds": 2.33,
+          "stdout": "01101101\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py hidden evaluate",
+          "exit_code": 0,
+          "seconds": 2.34,
+          "stdout": "{\n  \"message\": \"10101010\",\n  \"results\": [\n    {\n      \"attack\": \"identity\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.625,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"jpeg\",\n      \"jpeg_quality\": 75,\n      \"bit_error_rate\": 0.625,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"crop\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.625,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"blur\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.625,\n      \"exact_message\": false\n    }\n  ]\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py hidden controls",
+          "exit_code": 0,
+          "seconds": 2.34,
+          "stdout": "{\n  \"slug\": \"hidden\",\n  \"checks\": [\n    \"test_model.py:test_encoder_decoder_shapes\",\n    \"test_model.py:test_all_channels_preserve_shape\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"10101010\",\n    \"saved_image_bits\": \"01101101\",\n    \"saved_image_ber\": 0.625,\n    \"wrong_target_ber\": 0.375,\n    \"unmarked_bits\": \"01101101\",\n    \"corrupted_bits\": \"01101101\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 15,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "latent-watermark": {
+      "slug": "latent-watermark",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:43:56.182004+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py latent-watermark create",
+          "exit_code": 0,
+          "seconds": 9.31,
+          "stdout": "{\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\handbook\\\\manifest.json\",\n  \"device\": \"cpu\",\n  \"steps\": 3,\n  \"test_message\": \"0111111000001011\",\n  \"test_recovered\": \"1010100010110100\",\n  \"bit_error_rate\": 0.75\n}\nencoded image written to outputs/handbook/encoded.png\n1010100010110100\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"latent-watermark\",\n    \"paper\": \"latent-watermark\",\n    \"run_kind\": \"latent-offset-training-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"config\": {\n      \"model\": {\n        \"image_size\": 64,\n        \"latent_channels\": 3,\n        \"latent_size\": 16,\n        \"message_length\": 16,\n        \"hidden_channels\": 24\n      },\n      \"training\": {\n        \"steps\": 3,\n        \"batch_size\": 2,\n        \"learning_rate\": 0.002,\n        \"image_loss_weight\": 0.5,\n        \"message_loss_weight\": 1.0,\n        \"offset_weight\": 0.005,\n        \"seed\": 11\n      },\n      \"output\": {\n        \"directory\": \"outputs/smoke\"\n      }\n    },\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"device\": \"cpu\",\n    \"steps\": 3,\n    \"message_length\": 16,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"cover.png\",\n      \"autoencoded.png\",\n      \"encoded.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"image_mse_vs_autoencoder\": 0.00024249166017398238,\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.6931740641593933,\n        \"message_loss\": 0.6931129693984985,\n        \"image_mse\": 0.00012092845281586051,\n        \"offset_rms\": 0.011590033769607544,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.6866970062255859,\n        \"message_loss\": 0.6866264939308167,\n        \"image_mse\": 0.00013950244465377182,\n        \"offset_rms\": 0.012503922916948795,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.6887789368629456,\n        \"message_loss\": 0.6887122988700867,\n        \"image_mse\": 0.0001318865834036842,\n        \"offset_rms\": 0.01200185902416706,\n        \"device\": \"cpu\"\n      }\n    ],\n    \"note\": \"Frozen analytic autoencoder plus coarse-to-fine watermark modules. Replace it with the official autoencoder and MIRFlickr training recipe for paper-matched work.\",\n    \"training_observations_before_save\": {\n      \"test_message\": \"0111111000001011\",\n      \"test_recovered\": \"1010100010110100\",\n      \"bit_error_rate\": 0.75\n    },\n    \"saved_image_detection\": {\n      \"recovered\": \"1010100010110100\"\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010101010101010\",\n    \"recovered\": \"1010100010110100\",\n    \"bit_error_rate\": 0.3125,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py latent-watermark create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py latent-watermark detect",
+          "exit_code": 0,
+          "seconds": 2.81,
+          "stdout": "1010100010110100\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py latent-watermark evaluate",
+          "exit_code": 0,
+          "seconds": 2.41,
+          "stdout": "{\n  \"message\": \"1010101010101010\",\n  \"results\": [\n    {\n      \"attack\": \"identity\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"blur\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"crop\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"jpeg\",\n      \"jpeg_quality\": 75,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    }\n  ]\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py latent-watermark controls",
+          "exit_code": 0,
+          "seconds": 2.36,
+          "stdout": "{\n  \"slug\": \"latent-watermark\",\n  \"checks\": [\n    \"test_model.py:test_latent_offset_and_outputs_have_expected_shapes\",\n    \"test_model.py:test_progressive_weights_ramp\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"1010101010101010\",\n    \"saved_image_bits\": \"1010100010110100\",\n    \"saved_image_ber\": 0.3125,\n    \"wrong_target_ber\": 0.6875,\n    \"unmarked_bits\": \"1010100010110100\",\n    \"corrupted_bits\": \"0110011011101001\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 15,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "lawa": {
+      "slug": "lawa",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:44:13.069612+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py lawa create",
+          "exit_code": 0,
+          "seconds": 8.8,
+          "stdout": "{\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\handbook\\\\manifest.json\",\n  \"device\": \"cpu\",\n  \"steps\": 3,\n  \"test_message\": \"0111111000001011\",\n  \"test_recovered\": \"1010100010110100\",\n  \"bit_error_rate\": 0.75\n}\nencoded image written to outputs/handbook/encoded.png\n1010100010110100\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"paper_slug\": \"lawa\",\n    \"paper\": \"lawa\",\n    \"run_kind\": \"coarse-to-fine-latent-training\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"config\": {\n      \"model\": {\n        \"image_size\": 64,\n        \"latent_channels\": 3,\n        \"latent_size\": 16,\n        \"message_length\": 16,\n        \"hidden_channels\": 24\n      },\n      \"training\": {\n        \"steps\": 3,\n        \"batch_size\": 2,\n        \"learning_rate\": 0.002,\n        \"image_loss_weight\": 0.5,\n        \"message_loss_weight\": 1.0,\n        \"offset_weight\": 0.005,\n        \"seed\": 11\n      },\n      \"output\": {\n        \"directory\": \"outputs/smoke\"\n      }\n    },\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"device\": \"cpu\",\n    \"steps\": 3,\n    \"message_length\": 16,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"cover.png\",\n      \"autoencoded.png\",\n      \"encoded.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"image_mse_vs_autoencoder\": 0.00024249166017398238,\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.6931740641593933,\n        \"message_loss\": 0.6931129693984985,\n        \"image_mse\": 0.00012092845281586051,\n        \"offset_rms\": 0.011590033769607544,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.6866970062255859,\n        \"message_loss\": 0.6866264939308167,\n        \"image_mse\": 0.00013950244465377182,\n        \"offset_rms\": 0.012503922916948795,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.6887789368629456,\n        \"message_loss\": 0.6887122988700867,\n        \"image_mse\": 0.0001318865834036842,\n        \"offset_rms\": 0.01200185902416706,\n        \"device\": \"cpu\"\n      }\n    ],\n    \"note\": \"Frozen analytic autoencoder plus coarse-to-fine watermark modules. Replace it with the official autoencoder and MIRFlickr training recipe for paper-matched work.\",\n    \"training_observations_before_save\": {\n      \"message\": \"0111111000001011\",\n      \"recovered\": \"1010100010110100\",\n      \"test_message\": \"0111111000001011\",\n      \"test_recovered\": \"1010100010110100\",\n      \"bit_error_rate\": 0.75,\n      \"verification_status\": \"not-run\"\n    },\n    \"saved_image_detection\": {\n      \"recovered\": \"1010100010110100\"\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010101010101010\",\n    \"recovered\": \"1010100010110100\",\n    \"bit_error_rate\": 0.3125,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py lawa create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py lawa detect",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "1010100010110100\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py lawa evaluate",
+          "exit_code": 0,
+          "seconds": 2.25,
+          "stdout": "{\n  \"message\": \"1010101010101010\",\n  \"results\": [\n    {\n      \"attack\": \"identity\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"blur\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"crop\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"jpeg\",\n      \"jpeg_quality\": 75,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    }\n  ]\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py lawa controls",
+          "exit_code": 0,
+          "seconds": 2.39,
+          "stdout": "{\n  \"slug\": \"lawa\",\n  \"checks\": [\n    \"test_model.py:test_latent_offset_and_outputs_have_expected_shapes\",\n    \"test_model.py:test_message_changes_coarse_to_fine_offset\",\n    \"test_model.py:test_message_decoder_closes_local_path\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"1010101010101010\",\n    \"saved_image_bits\": \"1010100010110100\",\n    \"saved_image_ber\": 0.3125,\n    \"wrong_target_ber\": 0.6875,\n    \"unmarked_bits\": \"1010100010110100\",\n    \"corrupted_bits\": \"0110011011101001\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 16,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "object-watermark": {
+      "slug": "object-watermark",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:44:28.824635+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py object-watermark create",
+          "exit_code": 0,
+          "seconds": 8.83,
+          "stdout": "{\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\handbook\\\\manifest.json\",\n  \"device\": \"cpu\",\n  \"steps\": 3,\n  \"test_message\": \"0111111000001011\",\n  \"test_recovered\": \"1010100010110100\",\n  \"bit_error_rate\": 0.75\n}\nencoded image written to outputs/handbook/encoded.png\n1010100010110100\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"object-watermark\",\n    \"paper\": \"object-watermark\",\n    \"run_kind\": \"latent-offset-training-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"config\": {\n      \"model\": {\n        \"image_size\": 64,\n        \"latent_channels\": 3,\n        \"latent_size\": 16,\n        \"message_length\": 16,\n        \"hidden_channels\": 24\n      },\n      \"training\": {\n        \"steps\": 3,\n        \"batch_size\": 2,\n        \"learning_rate\": 0.002,\n        \"image_loss_weight\": 0.5,\n        \"message_loss_weight\": 1.0,\n        \"offset_weight\": 0.005,\n        \"seed\": 11\n      },\n      \"output\": {\n        \"directory\": \"outputs/smoke\"\n      }\n    },\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"device\": \"cpu\",\n    \"steps\": 3,\n    \"message_length\": 16,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"cover.png\",\n      \"autoencoded.png\",\n      \"encoded.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"image_mse_vs_autoencoder\": 0.00024249166017398238,\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.6931740641593933,\n        \"message_loss\": 0.6931129693984985,\n        \"image_mse\": 0.00012092845281586051,\n        \"offset_rms\": 0.011590033769607544,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.6866970062255859,\n        \"message_loss\": 0.6866264939308167,\n        \"image_mse\": 0.00013950244465377182,\n        \"offset_rms\": 0.012503922916948795,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.6887789368629456,\n        \"message_loss\": 0.6887122988700867,\n        \"image_mse\": 0.0001318865834036842,\n        \"offset_rms\": 0.01200185902416706,\n        \"device\": \"cpu\"\n      }\n    ],\n    \"note\": \"Frozen analytic autoencoder plus coarse-to-fine watermark modules. Replace it with the official autoencoder and MIRFlickr training recipe for paper-matched work.\",\n    \"training_observations_before_save\": {\n      \"test_message\": \"0111111000001011\",\n      \"test_recovered\": \"1010100010110100\",\n      \"bit_error_rate\": 0.75\n    },\n    \"saved_image_detection\": {\n      \"recovered\": \"1010100010110100\"\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010101010101010\",\n    \"recovered\": \"1010100010110100\",\n    \"bit_error_rate\": 0.3125,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py object-watermark create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py object-watermark detect",
+          "exit_code": 0,
+          "seconds": 3.34,
+          "stdout": "1010100010110100\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py object-watermark evaluate",
+          "exit_code": 0,
+          "seconds": 2.47,
+          "stdout": "{\n  \"message\": \"1010101010101010\",\n  \"results\": [\n    {\n      \"attack\": \"identity\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"blur\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"crop\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"jpeg\",\n      \"jpeg_quality\": 75,\n      \"bit_error_rate\": 0.3125,\n      \"exact_message\": false\n    }\n  ]\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py object-watermark controls",
+          "exit_code": 0,
+          "seconds": 2.53,
+          "stdout": "{\n  \"slug\": \"object-watermark\",\n  \"checks\": [\n    \"test_model.py:test_latent_offset_and_outputs_have_expected_shapes\",\n    \"test_model.py:test_control_token_is_trainable\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"1010101010101010\",\n    \"saved_image_bits\": \"1010100010110100\",\n    \"saved_image_ber\": 0.3125,\n    \"wrong_target_ber\": 0.6875,\n    \"unmarked_bits\": \"1010100010110100\",\n    \"corrupted_bits\": \"0110011011101001\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 15,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "prc-watermark": {
+      "slug": "prc-watermark",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:44:45.990830+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py prc-watermark create",
+          "exit_code": 0,
+          "seconds": 4.61,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"prc-watermark\",\n  \"run_kind\": \"seeded-repetition-code-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 2,\n  \"steps\": 0,\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"prc-watermark\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"prc-watermark\",\n    \"run_kind\": \"seeded-repetition-code-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 2,\n    \"steps\": 0,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"prc-watermark\",\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0,\n      \"exact\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010\",\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py prc-watermark create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py prc-watermark detect",
+          "exit_code": 0,
+          "seconds": 2.39,
+          "stdout": "{\n  \"paper_slug\": \"prc-watermark\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py prc-watermark evaluate",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py prc-watermark controls",
+          "exit_code": 0,
+          "seconds": 2.39,
+          "stdout": "{\n  \"slug\": \"prc-watermark\",\n  \"checks\": [\n    \"test_smoke.py:test_round_trip\",\n    \"test_smoke.py:test_shape_preserved\",\n    \"test_smoke.py:test_pseudorandom_code_round_trip\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"latent recovery matches inserted bits\",\n    \"corruption changes recovered bits\",\n    \"unmarked control is not supplied payload\",\n    \"repetition decoder corrects one chip\",\n    \"two chip errors can corrupt one bit\",\n    \"wrong seed changes decoding\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image bits match detector command\",\n    \"manifest payload observation matches saved image\"\n  ],\n  \"observations\": {\n    \"target\": \"1010\",\n    \"saved_image_bits\": \"1010\",\n    \"wrong_target\": \"0101\",\n    \"wrong_target_ber\": 1.0,\n    \"unmarked_bits\": \"0000\",\n    \"corrupted_bits\": \"0101\"\n  },\n  \"passed\": 20,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "ringid": {
+      "slug": "ringid",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:44:57.693017+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py ringid create",
+          "exit_code": 0,
+          "seconds": 4.75,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"ringid\",\n  \"run_kind\": \"multi-key-identification\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"smoke\",\n  \"known_key\": \"smoke\",\n  \"recovered\": null,\n  \"score\": 0.2927851974964142,\n  \"bit_error_rate\": null,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"ringid\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"ringid\",\n    \"run_kind\": \"multi-key-identification\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"known_key\": \"smoke\",\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"smoke\",\n      \"recovered\": null,\n      \"bit_error_rate\": null,\n      \"score\": 0.2927851974964142\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"ringid\",\n      \"message\": \"smoke\",\n      \"score\": 0.29317954182624817,\n      \"threshold\": 0.05,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"recovered\": null,\n    \"score\": 0.29317954182624817,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py ringid create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py ringid detect",
+          "exit_code": 0,
+          "seconds": 2.41,
+          "stdout": "{\n  \"paper_slug\": \"ringid\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py ringid evaluate",
+          "exit_code": 0,
+          "seconds": 2.33,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"score\": 0.29317954182624817\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"score\": 0.2880564033985138\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"score\": 0.26636916399002075\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"score\": 0.2905575633049011\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py ringid controls",
+          "exit_code": 0,
+          "seconds": 2.34,
+          "stdout": "{\n  \"slug\": \"ringid\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"test_smoke.py:test_key_bank_is_ranked\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"smoke\",\n    \"saved_image_score\": 0.29317954182624817,\n    \"wrong_key_score\": -0.08109232038259506,\n    \"unmarked_score\": 0.04848712310194969,\n    \"corrupted_score\": -0.29317954182624817\n  },\n  \"passed\": 16,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "robin": {
+      "slug": "robin",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:45:09.525409+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py robin create",
+          "exit_code": 0,
+          "seconds": 6.67,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"robin\",\n  \"method\": \"robin\",\n  \"run_kind\": \"fixed-state-additive-conditioning-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": true,\n  \"device\": \"cpu\",\n  \"seed\": 31,\n  \"steps\": 3,\n  \"message\": \"1011001110001111\",\n  \"recovered\": \"0011111110101110\",\n  \"bit_error_rate\": 0.3125,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"inversion.png\",\n    \"watermarked.png\",\n    \"residual_amplified.png\",\n    \"manifest.json\"\n  ],\n  \"latent_unchanged\": true,\n  \"renderer_unchanged\": true,\n  \"conditioning_norm\": 3.3057854175567627,\n  \"history\": [\n    {\n      \"step\": 1,\n      \"loss\": 1.0004147291183472,\n      \"watermark_loss\": 1.0004147291183472,\n      \"image_loss\": 0.0\n    },\n    {\n      \"step\": 2,\n      \"loss\": 0.9990252256393433,\n      \"watermark_loss\": 0.9989753365516663,\n      \"image_loss\": 6.839375288336669e-09\n    },\n    {\n      \"step\": 3,\n      \"loss\": 0.9977376461029053,\n      \"watermark_loss\": 0.9975431561470032,\n      \"image_loss\": 2.673212229353794e-08\n    }\n  ],\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\"\n}\n{\n  \"message\": \"1011001110001111\",\n  \"recovered\": \"0001111110101110\",\n  \"bit_error_rate\": 0.375,\n  \"exact\": false\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"robin\",\n    \"method\": \"robin\",\n    \"run_kind\": \"fixed-state-additive-conditioning-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": true,\n    \"device\": \"cpu\",\n    \"seed\": 31,\n    \"steps\": 3,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"inversion.png\",\n      \"watermarked.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"latent_unchanged\": true,\n    \"renderer_unchanged\": true,\n    \"conditioning_norm\": 3.3057854175567627,\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 1.0004147291183472,\n        \"watermark_loss\": 1.0004147291183472,\n        \"image_loss\": 0.0\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.9990252256393433,\n        \"watermark_loss\": 0.9989753365516663,\n        \"image_loss\": 6.839375288336669e-09\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.9977376461029053,\n        \"watermark_loss\": 0.9975431561470032,\n        \"image_loss\": 2.673212229353794e-08\n      }\n    ],\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"training_observations_before_save\": {\n      \"message\": \"1011001110001111\",\n      \"recovered\": \"0011111110101110\",\n      \"bit_error_rate\": 0.3125\n    },\n    \"saved_image_detection\": {\n      \"message\": \"1011001110001111\",\n      \"recovered\": \"0001111110101110\",\n      \"bit_error_rate\": 0.375,\n      \"exact\": false\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1011001110001111\",\n    \"recovered\": \"0001111110101110\",\n    \"bit_error_rate\": 0.375,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py robin create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py robin detect",
+          "exit_code": 0,
+          "seconds": 2.41,
+          "stdout": "{\n  \"message\": \"1011001110001111\",\n  \"recovered\": \"0001111110101110\",\n  \"bit_error_rate\": 0.375,\n  \"exact\": false\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py robin evaluate",
+          "exit_code": 0,
+          "seconds": 2.47,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"0001111110101110\",\n    \"bit_error_rate\": 0.375,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"0001111011110001\",\n    \"bit_error_rate\": 0.6875,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"0011100010011000\",\n    \"bit_error_rate\": 0.5,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 55,\n    \"recovered\": \"0011110001110000\",\n    \"bit_error_rate\": 0.8125,\n    \"exact\": false\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py robin controls",
+          "exit_code": 0,
+          "seconds": 2.41,
+          "stdout": "{\n  \"slug\": \"robin\",\n  \"checks\": [\n    \"test_model.py:test_renderer_detector_shapes\",\n    \"test_model.py:test_conditioning_proxy_and_drift\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"sampled latent is frozen\",\n    \"renderer parameters are frozen\",\n    \"conditioning receives optimisation updates\",\n    \"checkpoint reload preserves frozen renderer\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"1011001110001111\",\n    \"saved_image_bits\": \"0001111110101110\",\n    \"saved_image_ber\": 0.375,\n    \"wrong_target_ber\": 0.625,\n    \"unmarked_bits\": \"0001011010100110\",\n    \"corrupted_bits\": \"1110000001010001\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 15,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "rosteals": {
+      "slug": "rosteals",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:45:23.466873+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py rosteals create",
+          "exit_code": 0,
+          "seconds": 8.8,
+          "stdout": "{\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"manifest\": \"outputs\\\\handbook\\\\manifest.json\",\n  \"device\": \"cpu\",\n  \"steps\": 3,\n  \"test_message\": \"0111111000001011\",\n  \"test_recovered\": \"1010100010110110\",\n  \"bit_error_rate\": 0.6875\n}\nencoded image written to outputs/handbook/encoded.png\n1010100010110110\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"rosteals\",\n    \"paper\": \"rosteals\",\n    \"run_kind\": \"tiny-set-random-message\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"config\": {\n      \"model\": {\n        \"image_size\": 64,\n        \"latent_channels\": 3,\n        \"latent_size\": 16,\n        \"message_length\": 16,\n        \"hidden_channels\": 24\n      },\n      \"training\": {\n        \"steps\": 3,\n        \"batch_size\": 2,\n        \"learning_rate\": 0.002,\n        \"image_loss_weight\": 0.5,\n        \"message_loss_weight\": 1.0,\n        \"offset_weight\": 0.005,\n        \"seed\": 11\n      },\n      \"output\": {\n        \"directory\": \"outputs/smoke\"\n      }\n    },\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"device\": \"cpu\",\n    \"steps\": 3,\n    \"message_length\": 16,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"cover.png\",\n      \"autoencoded.png\",\n      \"encoded.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"image_mse_vs_autoencoder\": 0.0003243735118303448,\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.6941993236541748,\n        \"message_loss\": 0.6940915584564209,\n        \"image_mse\": 0.00021088538051117212,\n        \"offset_rms\": 0.021528929471969604,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.6875677108764648,\n        \"message_loss\": 0.6874078512191772,\n        \"image_mse\": 0.00031275535002350807,\n        \"offset_rms\": 0.026238709688186646,\n        \"device\": \"cpu\"\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.688547670841217,\n        \"message_loss\": 0.6884331703186035,\n        \"image_mse\": 0.0002244206116301939,\n        \"offset_rms\": 0.021270548924803734,\n        \"device\": \"cpu\"\n      }\n    ],\n    \"note\": \"Frozen analytic autoencoder adapter for a local mechanism demo. Replace it with the official VQ-f4 checkpoint for paper-matched work.\",\n    \"training_observations_before_save\": {\n      \"test_message\": \"0111111000001011\",\n      \"test_recovered\": \"1010100010110110\",\n      \"bit_error_rate\": 0.6875\n    },\n    \"saved_image_detection\": {\n      \"recovered\": \"1010100010110110\"\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010101010101010\",\n    \"recovered\": \"1010100010110110\",\n    \"bit_error_rate\": 0.25,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py rosteals create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py rosteals detect",
+          "exit_code": 0,
+          "seconds": 2.23,
+          "stdout": "1010100010110110\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py rosteals evaluate",
+          "exit_code": 0,
+          "seconds": 2.48,
+          "stdout": "{\n  \"message\": \"1010101010101010\",\n  \"results\": [\n    {\n      \"attack\": \"identity\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.25,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"blur\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.25,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"crop\",\n      \"jpeg_quality\": null,\n      \"bit_error_rate\": 0.25,\n      \"exact_message\": false\n    },\n    {\n      \"attack\": \"jpeg\",\n      \"jpeg_quality\": 75,\n      \"bit_error_rate\": 0.25,\n      \"exact_message\": false\n    }\n  ]\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py rosteals controls",
+          "exit_code": 0,
+          "seconds": 2.34,
+          "stdout": "{\n  \"slug\": \"rosteals\",\n  \"checks\": [\n    \"test_model.py:test_latent_offset_and_outputs_have_expected_shapes\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"1010101010101010\",\n    \"saved_image_bits\": \"1010100010110110\",\n    \"saved_image_ber\": 0.25,\n    \"wrong_target_ber\": 0.75,\n    \"unmarked_bits\": \"1010100010110110\",\n    \"corrupted_bits\": \"0100111110101001\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 14,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "seal": {
+      "slug": "seal",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:45:39.341585+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py seal create",
+          "exit_code": 0,
+          "seconds": 4.73,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"paper_slug\": \"seal\",\n  \"run_kind\": \"visual-proxy-simhash-noise-mark\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"verification_status\": \"not-run\",\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"10010000000010001111001010100110\",\n  \"recovered\": \"10010000001010001111001010100110\",\n  \"semantic_key_match\": false,\n  \"score\": 0.2699216604232788,\n  \"negative_control_score\": -0.2699216604232788,\n  \"score_margin\": 0.5398433208465576,\n  \"bit_error_rate\": 0.03125,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ],\n  \"note\": \"The local key uses visual statistics and SimHash, not SEAL's BLIP-2 caption and sentence embedding models.\"\n}\n{\n  \"paper_slug\": \"seal\",\n  \"embedded_key\": \"10010000000010001111001010100110\",\n  \"derived_key\": \"10010000001010001111001010100110\",\n  \"semantic_key_match\": false,\n  \"semantic_key_error_rate\": 0.03125,\n  \"score\": 0.2682107985019684,\n  \"negative_control_score\": -0.2682107985019684,\n  \"score_margin\": 0.5364215970039368,\n  \"threshold\": 0.0,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"paper_slug\": \"seal\",\n    \"run_kind\": \"visual-proxy-simhash-noise-mark\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"semantic_key_match\": false,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"note\": \"The local key uses visual statistics and SimHash, not SEAL's BLIP-2 caption and sentence embedding models.\",\n    \"training_observations_before_save\": {\n      \"message\": \"10010000000010001111001010100110\",\n      \"recovered\": \"10010000001010001111001010100110\",\n      \"bit_error_rate\": 0.03125,\n      \"score\": 0.2699216604232788,\n      \"negative_control_score\": -0.2699216604232788,\n      \"score_margin\": 0.5398433208465576,\n      \"verification_status\": \"not-run\"\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"seal\",\n      \"embedded_key\": \"10010000000010001111001010100110\",\n      \"derived_key\": \"10010000001010001111001010100110\",\n      \"semantic_key_match\": false,\n      \"semantic_key_error_rate\": 0.03125,\n      \"score\": 0.2682107985019684,\n      \"negative_control_score\": -0.2682107985019684,\n      \"score_margin\": 0.5364215970039368,\n      \"threshold\": 0.0,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"known_key\": \"10010000000010001111001010100110\",\n    \"recovered\": null,\n    \"score\": 0.2682107985019684,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py seal create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py seal detect",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "{\n  \"paper_slug\": \"seal\",\n  \"embedded_key\": \"10010000000010001111001010100110\",\n  \"derived_key\": \"10010000001010001111001010100110\",\n  \"semantic_key_match\": false,\n  \"semantic_key_error_rate\": 0.03125,\n  \"score\": 0.2682107985019684,\n  \"negative_control_score\": -0.2682107985019684,\n  \"score_margin\": 0.5364215970039368,\n  \"threshold\": 0.0,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py seal evaluate",
+          "exit_code": 0,
+          "seconds": 2.33,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"derived_key\": \"10010000001010001111001010100110\",\n    \"semantic_key_error_rate\": 0.03125,\n    \"score\": 0.2682107985019684,\n    \"negative_control_score\": -0.2682107985019684,\n    \"score_margin\": 0.5364215970039368\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"derived_key\": \"10010000001010001111001010100110\",\n    \"semantic_key_error_rate\": 0.03125,\n    \"score\": 0.267143189907074,\n    \"negative_control_score\": -0.267143189907074,\n    \"score_margin\": 0.534286379814148\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"derived_key\": \"11011000000010001111101010100110\",\n    \"semantic_key_error_rate\": 0.09375,\n    \"score\": 0.19753825664520264,\n    \"negative_control_score\": -0.19753825664520264,\n    \"score_margin\": 0.3950765132904053\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"derived_key\": \"10010000001010001111001010110110\",\n    \"semantic_key_error_rate\": 0.0625,\n    \"score\": 0.31095895171165466,\n    \"negative_control_score\": -0.31095895171165466,\n    \"score_margin\": 0.6219179034233093\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py seal controls",
+          "exit_code": 0,
+          "seconds": 2.33,
+          "stdout": "{\n  \"slug\": \"seal\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"test_smoke.py:test_semantic_key_is_stable\",\n    \"test_smoke.py:test_simhash_key_is_sensitive_to_embedding_direction\",\n    \"test_smoke.py:test_marked_noise_prefers_registered_key\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"10010000001010001111001010100110\",\n    \"saved_image_score\": 0.2682107985019684,\n    \"wrong_key_score\": 0.03777553141117096,\n    \"unmarked_score\": 0.03425469622015953,\n    \"corrupted_score\": -0.2682107985019684\n  },\n  \"passed\": 18,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "semantic-forgery": {
+      "slug": "semantic-forgery",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:45:51.053114+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py semantic-forgery create",
+          "exit_code": 0,
+          "seconds": 4.59,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"semantic-forgery\",\n  \"run_kind\": \"fourier-prerequisite-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"smoke\",\n  \"known_key\": \"smoke\",\n  \"recovered\": null,\n  \"score\": 0.2927851974964142,\n  \"bit_error_rate\": null,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"semantic-forgery\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"semantic-forgery\",\n    \"run_kind\": \"fourier-prerequisite-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"known_key\": \"smoke\",\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"smoke\",\n      \"recovered\": null,\n      \"bit_error_rate\": null,\n      \"score\": 0.2927851974964142\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"semantic-forgery\",\n      \"message\": \"smoke\",\n      \"score\": 0.29317954182624817,\n      \"threshold\": 0.05,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"recovered\": null,\n    \"score\": 0.29317954182624817,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py semantic-forgery create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py semantic-forgery detect",
+          "exit_code": 0,
+          "seconds": 2.36,
+          "stdout": "{\n  \"paper_slug\": \"semantic-forgery\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py semantic-forgery evaluate",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"score\": 0.29317954182624817\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"score\": 0.2880564033985138\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"score\": 0.26636916399002075\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"score\": 0.2905575633049011\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py semantic-forgery controls",
+          "exit_code": 0,
+          "seconds": 2.28,
+          "stdout": "{\n  \"slug\": \"semantic-forgery\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"smoke\",\n    \"saved_image_score\": 0.29317954182624817,\n    \"wrong_key_score\": -0.08109232038259506,\n    \"unmarked_score\": 0.04848712310194969,\n    \"corrupted_score\": -0.29317954182624817\n  },\n  \"passed\": 15,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "serum": {
+      "slug": "serum",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:48:25.610528+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py serum create",
+          "exit_code": 0,
+          "seconds": 4.38,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"serum\",\n  \"run_kind\": \"fourier-prerequisite-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"smoke\",\n  \"known_key\": \"smoke\",\n  \"recovered\": null,\n  \"score\": 0.2927851974964142,\n  \"bit_error_rate\": null,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"serum\",\n  \"message\": \"smoke\",\n  \"score\": 0.21400214731693268,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"serum\",\n    \"run_kind\": \"fourier-prerequisite-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"known_key\": \"smoke\",\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"smoke\",\n      \"recovered\": null,\n      \"bit_error_rate\": null,\n      \"score\": 0.2927851974964142\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"serum\",\n      \"message\": \"smoke\",\n      \"score\": 0.21400214731693268,\n      \"threshold\": 0.05,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"recovered\": null,\n    \"score\": 0.21400214731693268,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py serum create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py serum detect",
+          "exit_code": 0,
+          "seconds": 2.3,
+          "stdout": "{\n  \"paper_slug\": \"serum\",\n  \"message\": \"smoke\",\n  \"score\": 0.21400214731693268,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py serum evaluate",
+          "exit_code": 0,
+          "seconds": 2.33,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"score\": 0.21400214731693268\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"score\": 0.20839659869670868\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"score\": 0.17255902290344238\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"score\": 0.21294960379600525\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py serum controls",
+          "exit_code": 0,
+          "seconds": 2.27,
+          "stdout": "{\n  \"slug\": \"serum\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"test_smoke.py:test_image_detector_is_finite\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"smoke\",\n    \"saved_image_score\": 0.21400214731693268,\n    \"wrong_key_score\": -0.05919227749109268,\n    \"unmarked_score\": 0.03412093222141266,\n    \"corrupted_score\": -0.21400214731693268\n  },\n  \"passed\": 16,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "sfwmark": {
+      "slug": "sfwmark",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:46:14.158163+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py sfwmark create",
+          "exit_code": 0,
+          "seconds": 5.08,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"sfwmark\",\n  \"run_kind\": \"fourier-prerequisite-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"smoke\",\n  \"known_key\": \"smoke\",\n  \"recovered\": null,\n  \"score\": 0.12545721232891083,\n  \"bit_error_rate\": null,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"sfwmark\",\n  \"message\": \"smoke\",\n  \"score\": 0.12538528442382812,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"sfwmark\",\n    \"run_kind\": \"fourier-prerequisite-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"known_key\": \"smoke\",\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"smoke\",\n      \"recovered\": null,\n      \"bit_error_rate\": null,\n      \"score\": 0.12545721232891083\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"sfwmark\",\n      \"message\": \"smoke\",\n      \"score\": 0.12538528442382812,\n      \"threshold\": 0.05,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"recovered\": null,\n    \"score\": 0.12538528442382812,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py sfwmark create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py sfwmark detect",
+          "exit_code": 0,
+          "seconds": 2.25,
+          "stdout": "{\n  \"paper_slug\": \"sfwmark\",\n  \"message\": \"smoke\",\n  \"score\": 0.12538528442382812,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py sfwmark evaluate",
+          "exit_code": 0,
+          "seconds": 2.28,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"score\": 0.12538528442382812\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"score\": 0.12147129327058792\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"score\": 0.10025722533464432\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"score\": 0.12328918278217316\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py sfwmark controls",
+          "exit_code": 0,
+          "seconds": 2.26,
+          "stdout": "{\n  \"slug\": \"sfwmark\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"test_smoke.py:test_fourier_key_is_hermitian\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"smoke\",\n    \"saved_image_score\": 0.12538528442382812,\n    \"wrong_key_score\": -0.1022631824016571,\n    \"unmarked_score\": -0.01099459920078516,\n    \"corrupted_score\": -0.12538528442382812\n  },\n  \"passed\": 16,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "sleepermark": {
+      "slug": "sleepermark",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:46:26.033828+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py sleepermark create",
+          "exit_code": 0,
+          "seconds": 6.41,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"sleepermark\",\n  \"method\": \"sleepermark\",\n  \"run_kind\": \"decoder-finetuning-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"device\": \"cpu\",\n  \"seed\": 23,\n  \"steps\": 3,\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001111000101001000\",\n  \"bit_error_rate\": 0.6458333333333334,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base_decoder.png\",\n    \"marked_decoder.png\",\n    \"residual_amplified.png\",\n    \"manifest.json\"\n  ],\n  \"history\": [\n    {\n      \"step\": 1,\n      \"loss\": 0.7423087954521179,\n      \"watermark_loss\": 0.7423087954521179,\n      \"image_loss\": 0.0\n    },\n    {\n      \"step\": 2,\n      \"loss\": 0.7423502802848816,\n      \"watermark_loss\": 0.7423502802848816,\n      \"image_loss\": 2.524892052163316e-14\n    },\n    {\n      \"step\": 3,\n      \"loss\": 0.7424244284629822,\n      \"watermark_loss\": 0.7424244284629822,\n      \"image_loss\": 6.754855328512319e-14\n    }\n  ],\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"note\": \"The local adapter trains rank-limited latent adapters and should be followed by simulated downstream fine-tuning.\"\n}\n{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001011000101001000\",\n  \"agreements\": 16,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9933583592188775\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"sleepermark\",\n    \"method\": \"sleepermark\",\n    \"run_kind\": \"decoder-finetuning-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"device\": \"cpu\",\n    \"seed\": 23,\n    \"steps\": 3,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base_decoder.png\",\n      \"marked_decoder.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.7423087954521179,\n        \"watermark_loss\": 0.7423087954521179,\n        \"image_loss\": 0.0\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.7423502802848816,\n        \"watermark_loss\": 0.7423502802848816,\n        \"image_loss\": 2.524892052163316e-14\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.7424244284629822,\n        \"watermark_loss\": 0.7424244284629822,\n        \"image_loss\": 6.754855328512319e-14\n      }\n    ],\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"note\": \"The local adapter trains rank-limited latent adapters and should be followed by simulated downstream fine-tuning.\",\n    \"training_observations_before_save\": {\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001101001001111000101001000\",\n      \"bit_error_rate\": 0.6458333333333334\n    },\n    \"saved_image_detection\": {\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001101001001011000101001000\",\n      \"agreements\": 16,\n      \"bits\": 48,\n      \"null_tail_probability\": 0.9933583592188775\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"100100110110110110101110010110011111101101101100\",\n    \"recovered\": \"001001001001001001001001101001001011000101001000\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py sleepermark create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py sleepermark detect",
+          "exit_code": 0,
+          "seconds": 2.23,
+          "stdout": "{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001011000101001000\",\n  \"agreements\": 16,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9933583592188775\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py sleepermark evaluate",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001101001001011000101001000\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001001001101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001011000101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 55,\n    \"recovered\": \"001001001001001001001001001001001011000101001000\",\n    \"bit_error_rate\": 0.6458333333333334,\n    \"exact\": false\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py sleepermark controls",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "{\n  \"slug\": \"sleepermark\",\n  \"checks\": [\n    \"test_model.py:test_extractor_shape\",\n    \"test_model.py:test_retention_score\",\n    \"test_stats.py:test_binomial_tail_bounds\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"100100110110110110101110010110011111101101101100\",\n    \"saved_image_bits\": \"001001001001001001001001101001001011000101001000\",\n    \"saved_image_ber\": 0.6666666666666666,\n    \"wrong_target_ber\": 0.3333333333333333,\n    \"unmarked_bits\": \"001001001001001001001001101001001011000101001000\",\n    \"corrupted_bits\": \"110110110110110110110110010110110100111010110111\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 12,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "stable-signature": {
+      "slug": "stable-signature",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:46:39.305388+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py stable-signature create",
+          "exit_code": 0,
+          "seconds": 6.36,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"stable-signature\",\n  \"method\": \"stable-signature\",\n  \"run_kind\": \"fixed-key-decoder-finetune\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"device\": \"cpu\",\n  \"seed\": 23,\n  \"steps\": 3,\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001001001001111000101001000\",\n  \"bit_error_rate\": 0.625,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base_decoder.png\",\n    \"marked_decoder.png\",\n    \"residual_amplified.png\",\n    \"manifest.json\"\n  ],\n  \"history\": [\n    {\n      \"step\": 1,\n      \"loss\": 0.7423087954521179,\n      \"watermark_loss\": 0.7423087954521179,\n      \"image_loss\": 0.0\n    },\n    {\n      \"step\": 2,\n      \"loss\": 0.7386838793754578,\n      \"watermark_loss\": 0.7386782169342041,\n      \"image_loss\": 1.6169555237866007e-05\n    },\n    {\n      \"step\": 3,\n      \"loss\": 0.7351864576339722,\n      \"watermark_loss\": 0.7351644039154053,\n      \"image_loss\": 6.30366921541281e-05\n    }\n  ],\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\"\n}\n{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001111000101001000\",\n  \"agreements\": 17,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9853475266397353\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"stable-signature\",\n    \"method\": \"stable-signature\",\n    \"run_kind\": \"fixed-key-decoder-finetune\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"device\": \"cpu\",\n    \"seed\": 23,\n    \"steps\": 3,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base_decoder.png\",\n      \"marked_decoder.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.7423087954521179,\n        \"watermark_loss\": 0.7423087954521179,\n        \"image_loss\": 0.0\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.7386838793754578,\n        \"watermark_loss\": 0.7386782169342041,\n        \"image_loss\": 1.6169555237866007e-05\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.7351864576339722,\n        \"watermark_loss\": 0.7351644039154053,\n        \"image_loss\": 6.30366921541281e-05\n      }\n    ],\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"training_observations_before_save\": {\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001001001001111000101001000\",\n      \"bit_error_rate\": 0.625\n    },\n    \"saved_image_detection\": {\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001101001001111000101001000\",\n      \"agreements\": 17,\n      \"bits\": 48,\n      \"null_tail_probability\": 0.9853475266397353\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"100100110110110110101110010110011111101101101100\",\n    \"recovered\": \"001001001001001001001001101001001111000101001000\",\n    \"bit_error_rate\": 0.6458333333333334,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py stable-signature create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py stable-signature detect",
+          "exit_code": 0,
+          "seconds": 2.81,
+          "stdout": "{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001111000101001000\",\n  \"agreements\": 17,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9853475266397353\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py stable-signature evaluate",
+          "exit_code": 0,
+          "seconds": 2.25,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001101001001111000101001000\",\n    \"bit_error_rate\": 0.6458333333333334,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001001001101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001011000101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 55,\n    \"recovered\": \"001001001001001001001001001001001011000101001000\",\n    \"bit_error_rate\": 0.6458333333333334,\n    \"exact\": false\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py stable-signature controls",
+          "exit_code": 0,
+          "seconds": 2.33,
+          "stdout": "{\n  \"slug\": \"stable-signature\",\n  \"checks\": [\n    \"test_model.py:test_extractor_shape\",\n    \"test_stats.py:test_binomial_tail_bounds\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"100100110110110110101110010110011111101101101100\",\n    \"saved_image_bits\": \"001001001001001001001001101001001111000101001000\",\n    \"saved_image_ber\": 0.6458333333333334,\n    \"wrong_target_ber\": 0.3541666666666667,\n    \"unmarked_bits\": \"001001001001001001001001101001001011000101001000\",\n    \"corrupted_bits\": \"110110110110110110110110010110110000111010110111\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 11,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "t2smark": {
+      "slug": "t2smark",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:46:53.053607+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py t2smark create",
+          "exit_code": 0,
+          "seconds": 4.44,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"t2smark\",\n  \"run_kind\": \"tail-and-central-gaussian-sampling\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 2,\n  \"steps\": 0,\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"t2smark\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"t2smark\",\n    \"run_kind\": \"tail-and-central-gaussian-sampling\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 2,\n    \"steps\": 0,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"t2smark\",\n      \"message\": \"1010\",\n      \"recovered\": \"1010\",\n      \"bit_error_rate\": 0.0,\n      \"exact\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1010\",\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py t2smark create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py t2smark detect",
+          "exit_code": 0,
+          "seconds": 2.28,
+          "stdout": "{\n  \"paper_slug\": \"t2smark\",\n  \"message\": \"1010\",\n  \"recovered\": \"1010\",\n  \"bit_error_rate\": 0.0,\n  \"exact\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py t2smark evaluate",
+          "exit_code": 0,
+          "seconds": 2.36,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"recovered\": \"1010\",\n    \"bit_error_rate\": 0.0\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py t2smark controls",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "{\n  \"slug\": \"t2smark\",\n  \"checks\": [\n    \"test_smoke.py:test_round_trip\",\n    \"test_smoke.py:test_shape_preserved\",\n    \"test_smoke.py:test_tail_fraction_leaves_some_central_values\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"latent recovery matches inserted bits\",\n    \"corruption changes recovered bits\",\n    \"unmarked control is not supplied payload\",\n    \"central samples remain exactly unchanged\",\n    \"tail magnitudes remain unchanged\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image bits match detector command\",\n    \"manifest payload observation matches saved image\"\n  ],\n  \"observations\": {\n    \"target\": \"1010\",\n    \"saved_image_bits\": \"1010\",\n    \"wrong_target\": \"0101\",\n    \"wrong_target_ber\": 1.0,\n    \"unmarked_bits\": \"0110\",\n    \"corrupted_bits\": \"0101\"\n  },\n  \"passed\": 19,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "tag-wm": {
+      "slug": "tag-wm",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:47:04.441442+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py tag-wm create",
+          "exit_code": 0,
+          "seconds": 4.47,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"tag-wm\",\n  \"run_kind\": \"fourier-prerequisite-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"smoke\",\n  \"known_key\": \"smoke\",\n  \"recovered\": null,\n  \"score\": 0.2927851974964142,\n  \"bit_error_rate\": null,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"tag-wm\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"tag-wm\",\n    \"run_kind\": \"fourier-prerequisite-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"known_key\": \"smoke\",\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"smoke\",\n      \"recovered\": null,\n      \"bit_error_rate\": null,\n      \"score\": 0.2927851974964142\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"tag-wm\",\n      \"message\": \"smoke\",\n      \"score\": 0.29317954182624817,\n      \"threshold\": 0.05,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"recovered\": null,\n    \"score\": 0.29317954182624817,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py tag-wm create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py tag-wm detect",
+          "exit_code": 0,
+          "seconds": 2.22,
+          "stdout": "{\n  \"paper_slug\": \"tag-wm\",\n  \"message\": \"smoke\",\n  \"score\": 0.29317954182624817,\n  \"threshold\": 0.05,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py tag-wm evaluate",
+          "exit_code": 0,
+          "seconds": 2.23,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"score\": 0.29317954182624817\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"score\": 0.2880564033985138\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"score\": 0.26636916399002075\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"score\": 0.2905575633049011\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py tag-wm controls",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "{\n  \"slug\": \"tag-wm\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"test_smoke.py:test_tamper_map_shape\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"smoke\",\n    \"saved_image_score\": 0.29317954182624817,\n    \"wrong_key_score\": -0.08109232038259506,\n    \"unmarked_score\": 0.04848712310194969,\n    \"corrupted_score\": -0.29317954182624817\n  },\n  \"passed\": 16,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "tree-rings": {
+      "slug": "tree-rings",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:47:15.676475+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py tree-rings create",
+          "exit_code": 0,
+          "seconds": 4.81,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"paper_slug\": \"tree-rings\",\n  \"run_kind\": \"initial-noise-fourier-mark\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"verification_status\": \"not-run\",\n  \"per_image_optimisation\": false,\n  \"device\": \"cpu\",\n  \"seed\": 1,\n  \"steps\": 0,\n  \"message\": \"smoke\",\n  \"known_key\": \"smoke\",\n  \"recovered\": null,\n  \"score\": 0.5409938097000122,\n  \"negative_control_score\": -0.36999818682670593,\n  \"score_margin\": 0.9109919965267181,\n  \"bit_error_rate\": null,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base.png\",\n    \"watermarked.png\",\n    \"residual.png\",\n    \"manifest.json\"\n  ]\n}\n{\n  \"paper_slug\": \"tree-rings\",\n  \"message\": \"smoke\",\n  \"score\": 0.5412020087242126,\n  \"negative_control_score\": -0.36795324087142944,\n  \"score_margin\": 0.9091552495956421,\n  \"threshold\": 0.0,\n  \"detected\": true\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"paper_slug\": \"tree-rings\",\n    \"run_kind\": \"initial-noise-fourier-mark\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"per_image_optimisation\": false,\n    \"device\": \"cpu\",\n    \"seed\": 1,\n    \"steps\": 0,\n    \"known_key\": \"smoke\",\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base.png\",\n      \"watermarked.png\",\n      \"residual.png\",\n      \"manifest.json\"\n    ],\n    \"training_observations_before_save\": {\n      \"message\": \"smoke\",\n      \"recovered\": null,\n      \"bit_error_rate\": null,\n      \"score\": 0.5409938097000122,\n      \"negative_control_score\": -0.36999818682670593,\n      \"score_margin\": 0.9109919965267181,\n      \"verification_status\": \"not-run\"\n    },\n    \"saved_image_detection\": {\n      \"paper_slug\": \"tree-rings\",\n      \"message\": \"smoke\",\n      \"score\": 0.5412020087242126,\n      \"negative_control_score\": -0.36795324087142944,\n      \"score_margin\": 0.9091552495956421,\n      \"threshold\": 0.0,\n      \"detected\": true\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"recovered\": null,\n    \"score\": 0.5412020087242126,\n    \"bit_error_rate\": null,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py tree-rings create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py tree-rings detect",
+          "exit_code": 0,
+          "seconds": 2.27,
+          "stdout": "{\n  \"paper_slug\": \"tree-rings\",\n  \"message\": \"smoke\",\n  \"score\": 0.5412020087242126,\n  \"negative_control_score\": -0.36795324087142944,\n  \"score_margin\": 0.9091552495956421,\n  \"threshold\": 0.0,\n  \"detected\": true\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py tree-rings evaluate",
+          "exit_code": 0,
+          "seconds": 2.34,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"score\": 0.5412020087242126,\n    \"negative_control_score\": -0.36795324087142944,\n    \"score_margin\": 0.9091552495956421\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"score\": 0.5385618209838867,\n    \"negative_control_score\": -0.3798746168613434,\n    \"score_margin\": 0.9184364378452301\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"score\": 0.3300878405570984,\n    \"negative_control_score\": -0.5250441431999207,\n    \"score_margin\": 0.855131983757019\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 75,\n    \"score\": 0.5413169264793396,\n    \"negative_control_score\": -0.3451305031776428,\n    \"score_margin\": 0.8864474296569824\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py tree-rings controls",
+          "exit_code": 0,
+          "seconds": 2.27,
+          "stdout": "{\n  \"slug\": \"tree-rings\",\n  \"checks\": [\n    \"test_smoke.py:test_key_is_deterministic\",\n    \"test_smoke.py:test_mark_increases_key_score\",\n    \"test_smoke.py:test_official_ring_mask_is_nonempty\",\n    \"test_smoke.py:test_channel_mask_respects_w_channel\",\n    \"test_smoke.py:test_full_strength_replaces_selected_coefficients\",\n    \"test_smoke.py:test_registered_key_beats_wrong_key\",\n    \"JPEG rejects invalid quality -1\",\n    \"JPEG rejects invalid quality 101\",\n    \"JPEG rejects invalid quality True\",\n    \"JPEG rejects invalid quality 1.5\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"registered score differs from wrong-key score\",\n    \"marking changes observed score\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image score matches detector command\",\n    \"manifest score matches saved image\"\n  ],\n  \"observations\": {\n    \"known_key\": \"smoke\",\n    \"saved_image_score\": 0.5412020087242126,\n    \"wrong_key_score\": -0.36795324087142944,\n    \"unmarked_score\": -0.19542883336544037,\n    \"corrupted_score\": -0.5412020087242126\n  },\n  \"passed\": 19,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "wouaf": {
+      "slug": "wouaf",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:47:27.380470+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py wouaf create",
+          "exit_code": 0,
+          "seconds": 6.28,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"wouaf\",\n  \"method\": \"wouaf\",\n  \"run_kind\": \"rank-limited-latent-update-exercise\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"device\": \"cpu\",\n  \"seed\": 23,\n  \"steps\": 3,\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001111000101001000\",\n  \"bit_error_rate\": 0.6458333333333334,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"base_decoder.png\",\n    \"marked_decoder.png\",\n    \"residual_amplified.png\",\n    \"manifest.json\"\n  ],\n  \"history\": [\n    {\n      \"step\": 1,\n      \"loss\": 0.7423087954521179,\n      \"watermark_loss\": 0.7423087954521179,\n      \"image_loss\": 0.0\n    },\n    {\n      \"step\": 2,\n      \"loss\": 0.7423502802848816,\n      \"watermark_loss\": 0.7423502802848816,\n      \"image_loss\": 2.524892052163316e-14\n    },\n    {\n      \"step\": 3,\n      \"loss\": 0.7424244284629822,\n      \"watermark_loss\": 0.7424244284629822,\n      \"image_loss\": 6.754855328512319e-14\n    }\n  ],\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n  \"note\": \"The local adapter trains rank-limited latent adapters; the paper modulates generator weights with user fingerprints.\"\n}\n{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001011000101001000\",\n  \"agreements\": 16,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9933583592188775\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"wouaf\",\n    \"method\": \"wouaf\",\n    \"run_kind\": \"rank-limited-latent-update-exercise\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"device\": \"cpu\",\n    \"seed\": 23,\n    \"steps\": 3,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"base_decoder.png\",\n      \"marked_decoder.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 0.7423087954521179,\n        \"watermark_loss\": 0.7423087954521179,\n        \"image_loss\": 0.0\n      },\n      {\n        \"step\": 2,\n        \"loss\": 0.7423502802848816,\n        \"watermark_loss\": 0.7423502802848816,\n        \"image_loss\": 2.524892052163316e-14\n      },\n      {\n        \"step\": 3,\n        \"loss\": 0.7424244284629822,\n        \"watermark_loss\": 0.7424244284629822,\n        \"image_loss\": 6.754855328512319e-14\n      }\n    ],\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"note\": \"The local adapter trains rank-limited latent adapters; the paper modulates generator weights with user fingerprints.\",\n    \"training_observations_before_save\": {\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001101001001111000101001000\",\n      \"bit_error_rate\": 0.6458333333333334\n    },\n    \"saved_image_detection\": {\n      \"key\": \"100100110110110110101110010110011111101101101100\",\n      \"recovered\": \"001001001001001001001001101001001011000101001000\",\n      \"agreements\": 16,\n      \"bits\": 48,\n      \"null_tail_probability\": 0.9933583592188775\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"100100110110110110101110010110011111101101101100\",\n    \"recovered\": \"001001001001001001001001101001001011000101001000\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py wouaf create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py wouaf detect",
+          "exit_code": 0,
+          "seconds": 2.27,
+          "stdout": "{\n  \"key\": \"100100110110110110101110010110011111101101101100\",\n  \"recovered\": \"001001001001001001001001101001001011000101001000\",\n  \"agreements\": 16,\n  \"bits\": 48,\n  \"null_tail_probability\": 0.9933583592188775\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py wouaf evaluate",
+          "exit_code": 0,
+          "seconds": 2.27,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001101001001011000101001000\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001001001101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"001001001001001001001001001001001011000101001001\",\n    \"bit_error_rate\": 0.6666666666666666,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 55,\n    \"recovered\": \"001001001001001001001001001001001011000101001000\",\n    \"bit_error_rate\": 0.6458333333333334,\n    \"exact\": false\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py wouaf controls",
+          "exit_code": 0,
+          "seconds": 2.3,
+          "stdout": "{\n  \"slug\": \"wouaf\",\n  \"checks\": [\n    \"test_model.py:test_extractor_shape\",\n    \"test_model.py:test_fingerprint_modulator_shape\",\n    \"test_stats.py:test_binomial_tail_bounds\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"100100110110110110101110010110011111101101101100\",\n    \"saved_image_bits\": \"001001001001001001001001101001001011000101001000\",\n    \"saved_image_ber\": 0.6666666666666666,\n    \"wrong_target_ber\": 0.3333333333333333,\n    \"unmarked_bits\": \"001001001001001001001001101001001011000101001000\",\n    \"corrupted_bits\": \"110110110110110110110110010110110100111010110111\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 12,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    },
+    "zodiac": {
+      "slug": "zodiac",
+      "python": "3.11.0",
+      "run_at": "2026-10-15T06:47:40.491673+00:00",
+      "classification": "prerequisite-exercise",
+      "scope": "Bounded CPU execution and semantic checks. Recovery can fail. No diffusion model, statistical calibration or reproduction.",
+      "commands": [
+        {
+          "command": "python implementations/shared/run_lab.py zodiac create",
+          "exit_code": 0,
+          "seconds": 6.24,
+          "stdout": "{\n  \"schema_version\": \"1.0\",\n  \"lab_kind\": \"prerequisite-exercise\",\n  \"measurement_stage\": \"before PNG save/reload\",\n  \"implementation_fidelity\": \"prerequisite-exercise\",\n  \"paper_slug\": \"zodiac\",\n  \"method\": \"zodiac\",\n  \"run_kind\": \"per-image-latent-optimisation\",\n  \"status\": \"completed\",\n  \"local_adapter\": true,\n  \"per_image_optimisation\": true,\n  \"device\": \"cpu\",\n  \"seed\": 31,\n  \"steps\": 3,\n  \"message\": \"1011001110001111\",\n  \"recovered\": \"0011111011101110\",\n  \"bit_error_rate\": 0.4375,\n  \"artifacts\": [\n    \"checkpoint.pt\",\n    \"inversion.png\",\n    \"watermarked.png\",\n    \"residual_amplified.png\",\n    \"manifest.json\"\n  ],\n  \"history\": [\n    {\n      \"step\": 1,\n      \"loss\": 1.0216196775436401,\n      \"watermark_loss\": 1.0009022951126099,\n      \"image_loss\": 0.0\n    },\n    {\n      \"step\": 2,\n      \"loss\": 1.019413948059082,\n      \"watermark_loss\": 0.9999710917472839,\n      \"image_loss\": 6.4849099423724965e-09\n    },\n    {\n      \"step\": 3,\n      \"loss\": 1.0173100233078003,\n      \"watermark_loss\": 0.999047040939331,\n      \"image_loss\": 2.53625760393561e-08\n    }\n  ],\n  \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\"\n}\n{\n  \"message\": \"1011001110001111\",\n  \"recovered\": \"0001110011101111\",\n  \"bit_error_rate\": 0.5,\n  \"exact\": false\n}\n{\n  \"saved_image_manifest\": {\n    \"schema_version\": \"1.0\",\n    \"lab_kind\": \"prerequisite-exercise\",\n    \"measurement_stage\": \"saved PNG reloaded through detector\",\n    \"implementation_fidelity\": \"prerequisite-exercise\",\n    \"paper_slug\": \"zodiac\",\n    \"method\": \"zodiac\",\n    \"run_kind\": \"per-image-latent-optimisation\",\n    \"status\": \"completed\",\n    \"local_adapter\": true,\n    \"per_image_optimisation\": true,\n    \"device\": \"cpu\",\n    \"seed\": 31,\n    \"steps\": 3,\n    \"artifacts\": [\n      \"checkpoint.pt\",\n      \"inversion.png\",\n      \"watermarked.png\",\n      \"residual_amplified.png\",\n      \"manifest.json\"\n    ],\n    \"history\": [\n      {\n        \"step\": 1,\n        \"loss\": 1.0216196775436401,\n        \"watermark_loss\": 1.0009022951126099,\n        \"image_loss\": 0.0\n      },\n      {\n        \"step\": 2,\n        \"loss\": 1.019413948059082,\n        \"watermark_loss\": 0.9999710917472839,\n        \"image_loss\": 6.4849099423724965e-09\n      },\n      {\n        \"step\": 3,\n        \"loss\": 1.0173100233078003,\n        \"watermark_loss\": 0.999047040939331,\n        \"image_loss\": 2.53625760393561e-08\n      }\n    ],\n    \"checkpoint\": \"outputs\\\\handbook\\\\checkpoint.pt\",\n    \"training_observations_before_save\": {\n      \"message\": \"1011001110001111\",\n      \"recovered\": \"0011111011101110\",\n      \"bit_error_rate\": 0.4375\n    },\n    \"saved_image_detection\": {\n      \"message\": \"1011001110001111\",\n      \"recovered\": \"0001110011101111\",\n      \"bit_error_rate\": 0.5,\n      \"exact\": false\n    },\n    \"verification_status\": \"not-run\",\n    \"verification_note\": \"Recovery observations below are measured. No calibrated detection or paper verification is claimed.\",\n    \"message\": \"1011001110001111\",\n    \"recovered\": \"0001110011101111\",\n    \"bit_error_rate\": 0.5,\n    \"verification_scope\": \"bounded CPU exercise; no paper reproduction or false-positive calibration\",\n    \"command_entrypoint\": \"python implementations/shared/run_lab.py zodiac create\"\n  }\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py zodiac detect",
+          "exit_code": 0,
+          "seconds": 2.66,
+          "stdout": "{\n  \"message\": \"1011001110001111\",\n  \"recovered\": \"0001110011101111\",\n  \"bit_error_rate\": 0.5,\n  \"exact\": false\n}\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py zodiac evaluate",
+          "exit_code": 0,
+          "seconds": 2.31,
+          "stdout": "[\n  {\n    \"attack\": \"identity\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"0001110011101111\",\n    \"bit_error_rate\": 0.5,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"blur\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"0011111011110000\",\n    \"bit_error_rate\": 0.6875,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"crop\",\n    \"jpeg_quality\": null,\n    \"recovered\": \"0011101010011001\",\n    \"bit_error_rate\": 0.375,\n    \"exact\": false\n  },\n  {\n    \"attack\": \"jpeg\",\n    \"jpeg_quality\": 55,\n    \"recovered\": \"0011110001110000\",\n    \"bit_error_rate\": 0.8125,\n    \"exact\": false\n  }\n]\n",
+          "stderr": ""
+        },
+        {
+          "command": "python implementations/shared/run_lab.py zodiac controls",
+          "exit_code": 0,
+          "seconds": 2.28,
+          "stdout": "{\n  \"slug\": \"zodiac\",\n  \"checks\": [\n    \"test_model.py:test_renderer_detector_shapes\",\n    \"JPEG changes received pixel values\",\n    \"JPEG preserves shape and finite values\",\n    \"manifest identifies the actual lab\",\n    \"manifest classification matches teaching scope\",\n    \"every manifest artefact exists\",\n    \"saved-image decoding equals command output\",\n    \"manifest describes the saved payload and recovery\",\n    \"manifest bit error matches saved-image evidence\",\n    \"error metric arithmetic: opposite-target BER is complementary (not sensitivity evidence)\"\n  ],\n  \"observations\": {\n    \"target\": \"1011001110001111\",\n    \"saved_image_bits\": \"0001110011101111\",\n    \"saved_image_ber\": 0.5,\n    \"wrong_target_ber\": 0.5,\n    \"unmarked_bits\": \"0011011011101110\",\n    \"corrupted_bits\": \"1110001100010000\",\n    \"warning\": \"Unmarked or corrupted images can still decode to similar bits after tiny training. These measurements are not calibrated detection decisions.\"\n  },\n  \"passed\": 10,\n  \"scope\": \"CPU teaching behaviour only; not calibration or reproduction\"\n}\n",
+          "stderr": ""
+        }
+      ],
+      "status": "passed"
+    }
+  }
+}
