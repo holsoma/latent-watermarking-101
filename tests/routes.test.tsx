@@ -22,9 +22,9 @@ async function navigate(path: string) {
 beforeEach(() => window.history.replaceState(null, '', '/'));
 
 describe('paper routes expose the actual study', () => {
-  for (const entry of handbookEntries) it(`${entry.slug} renders every technical section`, () => {
+  for (const entry of handbookEntries) it(`${entry.slug} renders every technical section`, async () => {
     enter(`/papers/${entry.slug}`);
-    expect(screen.getByRole('heading', { level: 1, name: entry.shortTitle })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: entry.shortTitle }, { timeout: 5000 })).toBeInTheDocument();
     const article = document.querySelector('article')!;
     for (const section of entry.sections) {
       expect(article.querySelector(`[id="${section.id}"]`), `${entry.slug}/${section.id}`).not.toBeNull();
@@ -36,7 +36,7 @@ describe('paper routes expose the actual study', () => {
 
   it('renders accessible mathematics and resolves prerequisite section targets', async () => {
     enter('/papers/law');
-    await waitFor(() => expect(document.querySelector('math')).not.toBeNull());
+    await waitFor(() => expect(document.querySelector('math')).not.toBeNull(), { timeout: 5000 });
     expect(document.querySelector('.katex-error')).toBeNull();
     for (const entry of handbookEntries) for (const prerequisite of entry.prerequisites) {
       expect(prerequisite.to.startsWith('/')).toBe(true);
@@ -59,12 +59,24 @@ describe('paper routes expose the actual study', () => {
     await waitFor(() => expect(document.activeElement?.id).toBe(section.id));
   });
 
+  it('refreshes local contents after the lazy study opens and follows section links', async () => {
+    const entry = handbookEntries[0];
+    enter(`/papers/${entry.slug}`);
+    await screen.findByRole('heading', { level: 1, name: entry.shortTitle });
+    const contents = await screen.findByRole('navigation', { name: 'On this page' });
+    expect(within(contents).getByRole('link', { name: entry.sections[0].title })).toHaveAttribute('href', `#/papers/${entry.slug}?section=${entry.sections[0].id}`);
+    for (const section of entry.sections.slice(0, 2)) {
+      await navigate(`/papers/${entry.slug}?section=${section.id}`);
+      await waitFor(() => expect(document.activeElement?.id).toBe(section.id));
+    }
+  });
+
   it('responds to hash history changes without falling back to lab pages', async () => {
     enter('/papers');
     await navigate(`/papers/${handbookEntries[0].slug}`);
-    expect(screen.getByRole('heading', { level: 1, name: handbookEntries[0].shortTitle })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: handbookEntries[0].shortTitle })).toBeInTheDocument();
     await navigate('/papers');
-    expect(screen.getByRole('searchbox', { name: 'Search studies' })).toBeInTheDocument();
+    expect(await screen.findByRole('searchbox', { name: 'Search studies' })).toBeInTheDocument();
   });
 
   it('rejects an invalid route and preserves the unlisted proposal route', async () => {
@@ -102,6 +114,43 @@ describe('research index', () => {
 });
 
 describe('accessible reading controls', () => {
+  it('returns to an already selected section through either contents layout', async () => {
+    enter('/papers/law?section=equation');
+    await screen.findByRole('heading', { level: 1, name: 'LAW / LAW-M' }, { timeout: 5000 });
+    const section = document.getElementById('equation')!;
+    await waitFor(() => expect(section).toHaveFocus());
+    await waitFor(() => expect(document.querySelector('.local-contents a[href="#/papers/law?section=equation"]')).not.toBeNull());
+    const scroll = vi.spyOn(section, 'scrollIntoView');
+    for (const selector of ['.study-section-navigation', '.local-contents']) {
+      const heading = screen.getByRole('heading', { level: 1 });
+      heading.tabIndex = -1;
+      heading.focus();
+      expect(heading).toHaveFocus();
+      scroll.mockClear();
+      fireEvent.click(document.querySelector(`${selector} a[href="#/papers/law?section=equation"]`)!);
+      expect(section).toHaveFocus();
+      expect(scroll).toHaveBeenCalledOnce();
+    }
+  });
+  it('provides study section links for the compact contents disclosure', () => {
+    const entry = handbookEntries.find(study => study.slug === 'law')!;
+    render(<HandbookStudy entry={entry} />);
+    const links = document.querySelectorAll<HTMLAnchorElement>('.study-section-navigation a');
+    expect(links.length).toBe(entry.sections.length + 3);
+    for (const link of links) {
+      const id = new URLSearchParams(link.hash.split('?')[1]).get('section');
+      expect(id).not.toBeNull();
+      expect(document.getElementById(id!)).not.toBeNull();
+    }
+  });
+  it('clears a study contents list when a lazy glossary replaces the study', async () => {
+    enter('/papers/law');
+    await screen.findByRole('heading', { level: 1, name: 'LAW / LAW-M' }, { timeout: 5000 });
+    await waitFor(() => expect(screen.getByRole('navigation', { name: 'On this page' })).toBeInTheDocument());
+    await navigate('/glossary');
+    await screen.findByRole('heading', { level: 1, name: 'Glossary' }, { timeout: 5000 });
+    await waitFor(() => expect(screen.queryByRole('navigation', { name: 'On this page' })).toBeNull());
+  });
   it('opens the chapter drawer, traps boundary focus and restores focus on Escape', () => {
     enter('/papers');
     const trigger = screen.getByRole('button', { name: 'Contents', exact: true });
@@ -109,9 +158,9 @@ describe('accessible reading controls', () => {
     const dialog = screen.getByRole('dialog', { name: 'Guide chapters' });
     const close = within(dialog).getByRole('button', { name: 'Close contents' });
     expect(close).toHaveFocus();
-    const links = within(dialog).getAllByRole('link');
+    const boundaries = Array.from(dialog.querySelectorAll<HTMLElement>('a, button, summary')).filter(node => !node.closest('details:not([open])') || node.tagName === 'SUMMARY');
     fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
-    expect(links.at(-1)).toHaveFocus();
+    expect(boundaries.at(-1)).toHaveFocus();
     fireEvent.keyDown(document, { key: 'Tab' });
     expect(close).toHaveFocus();
     fireEvent.keyDown(document, { key: 'Escape' });
@@ -139,10 +188,15 @@ describe('accessible reading controls', () => {
 
 describe('lab display boundaries', () => {
   const originals = [...papers, ...additionalPapers];
-  it('uses a separate lab route', () => {
+  it('uses a separate lab route', async () => {
     enter('/papers/hidden/lab');
-    expect(screen.getByRole('heading', { name: 'Run the CPU exercise' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Run the CPU exercise' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Read the technical study/ })).toHaveAttribute('href', '#/papers/hidden');
+  });
+
+  it('rejects a lab route for a study without an exercise', () => {
+    enter('/papers/law/lab');
+    expect(screen.getByRole('heading', { name: 'Chapter not found.' })).toBeInTheDocument();
   });
 
   it('does not display an empty recorded-output gallery', () => {
@@ -165,4 +219,3 @@ describe('lab display boundaries', () => {
     expect(await screen.findByRole('button', { name: 'Copy failed: select the command' })).toBeInTheDocument();
   });
 });
-

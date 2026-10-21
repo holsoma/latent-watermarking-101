@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://holsoma.github.io/latent-watermarking-101/sitemap.xml

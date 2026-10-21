@@ -7,7 +7,7 @@ export type HandbookSection = {
   equation?: { expression: string; note: string; format?: 'latex' | 'plain' };
   bullets?: string[];
   sources: string[];
-  workedExample?: { title: string; steps: string[]; conclusion: string };
+  workedExample?: { title: string; steps: string[]; conclusion: string; visual?: 'angular-variance' };
 };
 export type HandbookEntry = {
   slug: string; title: string; shortTitle: string; kind: PaperKind;

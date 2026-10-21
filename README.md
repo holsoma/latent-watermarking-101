@@ -11,7 +11,6 @@ The handbook assumes Python, basic linear algebra, probability and neural networ
 - **Paper studies:** 33 entries, searchable by their complete content and filterable by paper type, insertion location and training requirement.
 - **Worked revision:** 63 conceptual questions, 20 oral questions and mathematical examples, with expandable answers and section links.
 - **Implementation exercises:** 24 existing local Python exercises, separate from the technical studies. Each states its implemented boundary and CPU verification scope.
-- **Research gaps:** distinguish published evidence, experimental limitations and proposed investigations.
 
 Paper URLs remain `#/papers/<slug>`. Local exercises use `#/papers/<slug>/lab`. Section links use `?section=<id>` inside the hash route. The unlisted research proposal retains its existing URL and is excluded from the handbook index.
 
@@ -64,3 +63,11 @@ No diffusion-model download, GPU run or paper-scale dataset is required by the h
 Explain what changes, what remains fixed, what verification observes and what the evidence establishes. Define notation before use, include worked reasoning, and cite the exact supporting source. Use UK English and clear prose. Run the appropriate website and lab tests when changing their behaviour.
 
 The Pages workflow deploys from `main`. The handbook overhaul branch is for review and does not deploy automatically.
+
+## Design and glossary
+
+The visual system and design decisions are in `DESIGN.md`. The glossary is maintained in `src/glossary.ts`: 98 terms across six topics, with examples, related terms and study links. It renders 24 terms per page while search, topic filters, alphabet jumps and deep links cover the whole reference. The Threats and gaps navigation item has been removed; historical research URLs remain available directly.
+
+For a compressed local production preview, run `npm run build` followed by `npm run preview:production`. Run `npm run qa:design` in a second terminal for repeatable production-browser checks. The browser checks need Chrome, Edge or Playwright Chromium. Reports are written to ignored `outputs/design-qa/`. Read `docs/design-qa.md` for measurement conditions and the hash router’s search-engine limits.
+
+Navigation metadata in `src/paperCatalog.generated.ts` is generated from the canonical `handbookEntries` before development, tests and builds. Edit the handbook records rather than that generated file. Full-text search continues to use the complete study records.

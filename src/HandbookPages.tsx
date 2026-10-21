@@ -3,27 +3,44 @@ import 'katex/dist/katex.min.css';
 import { handbookEntries } from './handbook';
 import { mathExamples, revisionQuestions, oralQuestions } from './revision';
 import type { HandbookEntry, HandbookSection, RevisionQuestion, SourceRef } from './handbookTypes';
+import { InsertionFlow } from './InsertionFlow';
+import { useRouteReadiness } from './useRouteReadiness';
+import { LocalVarianceFigure } from './LocalVarianceFigure';
+import { revisitSection } from './sectionNavigation';
 
 const MathFormula = lazy(() => import('./MathFormula'));
 
+export function HandbookRoute({ path }: { path: string }) {
+  useRouteReadiness(path);
+  if (path === '/papers') return <HandbookIndex />;
+  if (path === '/revision' || path === '/mathematics') return <RevisionPage />;
+  const entry = handbookEntries.find(study => path === `/papers/${study.slug}`);
+  return entry ? <HandbookStudy entry={entry} /> : null;
+}
+
 export function HandbookBlock({ section, path, sources = [] }: { section: HandbookSection; path: string; sources?: SourceRef[] }) {
   return <section className="article-section" id={section.id} tabIndex={-1}>
-    <h2><a className="section-link" href={`#${path}?section=${section.id}`}>{section.title}<span aria-hidden="true"> #</span></a></h2>
+    <h2><a className="section-link" onClick={revisitSection} href={`#${path}?section=${section.id}`}>{section.title}<span aria-hidden="true"> #</span></a></h2>
     {section.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
     {section.equation && <figure className="equation-block">
       {section.equation.format === 'latex' ? <Suspense fallback={<p className="equation" role="status">Loading equation…</p>}><MathFormula expression={section.equation.expression} /></Suspense> : <pre className="equation">{section.equation.expression}</pre>}
       <figcaption>{section.equation.note}</figcaption>
     </figure>}
     {section.bullets && <ul>{section.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>}
-    {section.workedExample && <aside className="worked-example"><h3>{section.workedExample.title}</h3><ol>{section.workedExample.steps.map((s, i) => <li key={i}>{s}</li>)}</ol><p><strong>What this establishes:</strong> {section.workedExample.conclusion}</p></aside>}
+    {section.workedExample && <aside className="worked-example"><h3>{section.workedExample.title}</h3>{section.workedExample.visual === 'angular-variance' && <LocalVarianceFigure />}<ol>{section.workedExample.steps.map((s, i) => <li key={i}>{s}</li>)}</ol><p><strong>What this establishes:</strong> {section.workedExample.conclusion}</p></aside>}
     {!!section.sources.length && <p className="source-notes">Sources: {section.sources.map((s, i) => <a key={s} href={`#${path}?section=source-${s}`}>{i > 0 ? ' · ' : ''}{sources.find(source => source.id === s)?.title ?? 'Study guide'}</a>)}</p>}
   </section>;
 }
 
 export function HandbookStudy({ entry }: { entry: HandbookEntry }) {
   const path = `/papers/${entry.slug}`;
+  const contents = [...entry.sections.map(section => ({ id: section.id, title: section.title })),
+    { id: 'self-check', title: 'Check your understanding' }, { id: 'sources', title: 'Sources and evidence' },
+    ...(entry.related.length ? [{ id: 'related', title: 'Compare with' }] : [])];
   return <article className="article handbook-study">
     <header className="article-header"><p className="eyebrow">{entry.kind} · {entry.year}</p><h1>{entry.shortTitle}</h1><p className="lead">{entry.summary}</p><p className="article-meta">{entry.title}<br />{entry.authors} · {entry.venue}</p></header>
+    <details className="study-section-navigation"><summary>On this page</summary><nav aria-label="Study sections">{contents.map(section => <a key={section.id} onClick={revisitSection} href={`#${path}?section=${section.id}`}>{section.title}</a>)}</nav></details>
+    {entry.kind === 'Watermark method' && <InsertionFlow insertion={entry.insertion} />}
     <dl className="study-facts"><div><dt>Insertion location</dt><dd>{entry.insertion}</dd></div><div><dt>Training requirement</dt><dd>{entry.training}</dd></div><div><dt>Method family</dt><dd>{entry.family}</dd></div></dl>
     <nav className="prerequisites" aria-label="Prerequisites"><strong>Before reading</strong>{entry.prerequisites.map(p => <a key={p.to} href={`#${p.to}`}>{p.label}</a>)}</nav>
     {entry.labSlug && <p className="lab-link"><a href={`#/papers/${entry.labSlug}/lab`}>Open the CPU teaching exercise →</a><br /><small>The exercise states what it implements and what it cannot establish.</small></p>}
@@ -40,12 +57,12 @@ export function HandbookIndex() {
   const [insertion, setInsertion] = useState('All');
   const [training, setTraining] = useState('All');
   const filtered = handbookEntries.filter(e => (kind === 'All' || e.kind === kind) && (insertion === 'All' || e.insertion === insertion) && (training === 'All' || e.training === training) && JSON.stringify(e).toLowerCase().includes(query.toLowerCase()));
-  return <article className="article"><header className="article-header"><p className="eyebrow">Literature reference</p><h1>Paper studies</h1><p className="lead">Read the mechanism, follow its evidence and identify where its claims stop. Search across the complete study text.</p></header>
+  return <article className="article"><header className="article-header"><p className="eyebrow">Literature reference</p><h1>Paper studies</h1><p className="lead">{handbookEntries.length} studies. Search mechanisms, compare assumptions and follow the evidence.</p></header>
     <div className="index-controls"><label className="search-box">Search studies<input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Try inversion, forgery or Gaussian…" /></label><div className="filter-grid">{([{label:'Paper type', value:kind, setter:setKind, options:handbookEntries.map(e => e.kind)}, {label:'Insertion location', value:insertion, setter:setInsertion, options:handbookEntries.map(e => e.insertion)}, {label:'Training requirement', value:training, setter:setTraining, options:handbookEntries.map(e => e.training)}]).map(f => <label key={f.label}>{f.label}<select value={f.value} onChange={e => f.setter(e.target.value)}>{['All', ...new Set(f.options)].map(o => <option key={o}>{o}</option>)}</select></label>)}</div></div>
     <p className="result-count" role="status">{filtered.length} of {handbookEntries.length} studies</p>
     <div className="study-index">{filtered.map(e => <a className="study-row" key={e.slug} href={`#/papers/${e.slug}`}><div className="study-row-meta"><span>{e.kind}</span><span>{e.year} · {e.venue}</span></div><h2>{e.shortTitle}<span aria-hidden="true"> ↗</span></h2><p>{e.summary}</p><small>{e.insertion} · {e.training}</small></a>)}</div>
     {!filtered.length && <div className="empty"><p>No studies match these filters.</p><button onClick={() => {setQuery(''); setKind('All'); setInsertion('All'); setTraining('All');}}>Clear all filters</button></div>}
-    <section className="article-section" id="comparison"><h2>Compare the method boundaries</h2><p>These describe operations, not a ranking of robustness. See each study for experimental conditions and limitations.</p><div className="table-wrap" tabIndex={0}><table><thead><tr><th>Study</th><th>Insertion</th><th>Training</th></tr></thead><tbody>{filtered.map(e => <tr key={e.slug}><th><a href={`#/papers/${e.slug}`}>{e.shortTitle}</a></th><td>{e.insertion}</td><td>{e.training}</td></tr>)}</tbody></table></div></section>
+    <section className="article-section" id="comparison"><h2>Compare the method boundaries</h2><p>These describe operations, not a ranking of robustness. See each study for experimental conditions and limitations.</p><div className="table-wrap comparison-table" tabIndex={0}><table><caption className="visually-hidden">Study insertion locations and training requirements</caption><thead><tr><th>Study</th><th>Insertion</th><th>Training</th></tr></thead><tbody>{filtered.map(e => <tr key={e.slug}><th><a href={`#/papers/${e.slug}`}>{e.shortTitle}</a></th><td data-label="Insertion">{e.insertion}</td><td data-label="Training">{e.training}</td></tr>)}</tbody></table></div></section>
   </article>;
 }
 

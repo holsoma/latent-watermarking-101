@@ -3,6 +3,8 @@ import { afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
 afterEach(() => cleanup());
+// Animation timing is checked in production-browser QA. Keep DOM contract tests deterministic.
+vi.mock('../src/usePageMotion', () => ({ usePageMotion: () => {} }));
 Object.defineProperty(window, 'scrollTo', { value: vi.fn(), writable: true });
 Object.defineProperty(Element.prototype, 'scrollIntoView', { value: vi.fn(), writable: true });
 Object.defineProperty(window, 'matchMedia', { writable: true, value: vi.fn().mockImplementation((query: string) => ({

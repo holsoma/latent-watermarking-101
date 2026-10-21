@@ -1,6 +1,6 @@
 # Handbook overhaul delivery
 
-Branch: `codex/handbook-overhaul`, created from the current local `main`. No merge or deployment was performed.
+Branch: `handbook-overhaul`, created from the current local `main`. No merge or deployment was performed.
 
 ## What changed
 

@@ -1,26 +1,13 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { glossary, papers as originalPapers, type Paper } from "./content";
-import { additionalPapers, studyContent, type PaperStudy } from "./studies";
-import { getLab } from "./labs";
-import { handbookEntries } from "./handbook";
-import { HandbookIndex, HandbookStudy, RevisionPage } from "./HandbookPages";
-import { PlannedLabPage } from "./PlannedLabPage";
-import { RunnableLabPage } from "./RunnableLabPage";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { HomePage } from "./HomePage";
+import { usePageMotion } from "./usePageMotion";
+import { applyMetadata } from "./siteMetadata";
+import { paperCatalog } from "./paperCatalog.generated";
+import { revisitSection } from './sectionNavigation';
 
-const studyCategories: PaperStudy["category"][] = [
-  "Foundations and bridges",
-  "Initial-noise and inversion",
-  "Learned and model-integrated",
-  "Semantics, integrity and security",
-];
-const papers = [...originalPapers, ...additionalPapers].sort((left, right) => {
-  const categoryDifference =
-    studyCategories.indexOf(studyContent[left.slug].category) -
-    studyCategories.indexOf(studyContent[right.slug].category);
-  if (categoryDifference !== 0) return categoryDifference;
-  return Number(left.year) - Number(right.year);
-});
-const paperBySlug = new Map(papers.map((paper) => [paper.slug, paper]));
+const GlossaryPage = lazy(() => import('./GlossaryPage').then(module => ({ default: module.GlossaryPage })));
+const HandbookRoute = lazy(() => import('./HandbookPages').then(module => ({ default: module.HandbookRoute })));
+const NewLabRoute = lazy(() => import('./NewLabRoute'));
 
 type NavItem = { label: string; path: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -47,7 +34,6 @@ const navGroups: NavGroup[] = [
     label: "Research",
     items: [
       { label: "Paper studies", path: "/papers" },
-      { label: "Threats and gaps", path: "/research/gaps" },
       { label: "Worked examples and revision", path: "/revision" },
       { label: "Glossary", path: "/glossary" },
     ],
@@ -235,94 +221,6 @@ function Table({
   );
 }
 
-function HomePage() {
-  return (
-    <Article
-      eyebrow="Open technical guide"
-      title="Latent watermarking, from pixels to provenance."
-      lead="A chapter-based introduction to image watermarking, latent diffusion, frequency-domain design, inversion, security and the research literature."
-      meta="Built for a careful first reading, then repeated use as a paper companion."
-    >
-      <div className="home-actions">
-        <Link to="/foundations/watermarking" className="button primary">Begin the guide</Link>
-        <Link to="/papers" className="button secondary">Open the paper studies</Link>
-      </div>
-
-      <div className="home-chapters" aria-label="Core chapters">
-        <Link to="/foundations/watermarking" className="home-chapter">
-          <div className="home-chapter-head"><span>01 · signal</span><b>→</b></div>
-          <h2>Image watermarking</h2>
-          <p>Start with the communication system: embed, attack, extract and decide.</p>
-          <ul><li>visible vs invisible</li><li>payload and fidelity</li><li>attack channels</li></ul>
-          <strong>Open foundation →</strong>
-        </Link>
-        <Link to="/foundations/diffusion" className="home-chapter">
-          <div className="home-chapter-head"><span>02 · generator</span><b>→</b></div>
-          <h2>Latent diffusion</h2>
-          <p>Follow a sample from iid Gaussian noise to a decoded image.</p>
-          <ul><li>VAE and latent space</li><li>denoising trajectory</li><li>inversion limits</li></ul>
-          <strong>Open foundation →</strong>
-        </Link>
-        <Link to="/foundations/frequency" className="home-chapter">
-          <div className="home-chapter-head"><span>03 · representation</span><b>→</b></div>
-          <h2>Image frequency</h2>
-          <p>See why spatial change, Fourier structure and alignment affect robustness.</p>
-          <ul><li>low and high frequency</li><li>DFT coordinates</li><li>ring patterns</li></ul>
-          <strong>Open foundation →</strong>
-        </Link>
-        <Link to="/foundations/evaluation" className="home-chapter">
-          <div className="home-chapter-head"><span>04 · evidence</span><b>→</b></div>
-          <h2>Evaluation</h2>
-          <p>Translate a detector score into a claim about a real deployment.</p>
-          <ul><li>fidelity and payload</li><li>calibration</li><li>threat models</li></ul>
-          <strong>Open foundation →</strong>
-        </Link>
-      </div>
-
-      <Section id="route" number="01" title="A three-pass reading route">
-        <div className="route-list">
-          <div><b>Pass 1</b><h3>Build the mechanism</h3><p>Learn what an embedder, attack channel and detector do. Then follow a latent diffusion sample from Gaussian noise to pixels.</p></div>
-          <div><b>Pass 2</b><h3>Learn the trade-offs</h3><p>Connect spatial frequency, inversion error and payload coding to fidelity, robustness, security and cost.</p></div>
-          <div><b>Pass 3</b><h3>Interrogate the papers</h3><p>Read each method as a claim under a threat model, not as a method name and a headline number.</p></div>
-        </div>
-      </Section>
-
-      <Section id="map" number="02" title="The field in one map">
-        <div className="field-map" aria-label="Map of latent watermarking method families">
-          <div className="map-source">
-            <span>Starting latent</span>
-            <strong>z<sub>T</sub> ∼ N(0, I)</strong>
-          </div>
-          <div className="map-branches">
-            <div><b>Pattern design</b><p>Fourier rings, channel patterns or angular regions.</p><small>Tree-Rings · RingID · SFWMark</small></div>
-            <div><b>Gaussian mapping</b><p>Map payload bits into samples while preserving a target distribution.</p><small>Gaussian Shading · T2SMark · PRC</small></div>
-            <div><b>Learned systems</b><p>Train injectors, restorers or image-space detectors around a fixed generator.</p><small>LaWa · GaussMarker · SERUM</small></div>
-            <div><b>Task-aware marks</b><p>Bind evidence to objects, semantics or local content integrity.</p><small>SEAL · TAG-WM · Text Encoder</small></div>
-          </div>
-          <div className="map-output">
-            <span>Generated image</span>
-            <strong>x<sub>w</sub></strong>
-          </div>
-        </div>
-        <Callout label="The central distinction">
-          A method can keep the base diffusion model fixed and still train an auxiliary decoder, restorer or classifier. This guide reserves <em>training-free</em> for systems with no watermark-specific learned parameters.
-        </Callout>
-      </Section>
-
-      <Section id="questions" number="03" title="Questions this guide teaches you to ask">
-        <ConceptGrid items={[
-          { title: "Where is information written?", text: "Finished pixels, autoencoder latent, initial Gaussian noise, an intermediate denoising state or the prompt representation." },
-          { title: "What makes it recoverable?", text: "Redundancy, Fourier structure, coding, a learned decoder, inversion geometry or a semantic binding." },
-          { title: "What is the null hypothesis?", text: "The distribution of evidence expected from unwatermarked generated images and unrelated real images." },
-          { title: "What does the attacker know?", text: "The algorithm, model, detector, public key, query interface, some marked samples or the full secret key." },
-          { title: "What is the real unit of success?", text: "A bit, a full message, a correct user identity, a valid signature, or a correctly localised tamper region." },
-          { title: "What does deployment cost?", text: "Training, extra denoising steps, per-image optimisation, inversion, key search, storage and threshold calibration." },
-        ]} />
-      </Section>
-      <NextPage path="/reading" label="Next: how to read a watermarking paper" />
-    </Article>
-  );
-}
 
 function ReadingPage() {
   return (
@@ -932,16 +830,6 @@ function EvaluationPage() {
   );
 }
 
-function PaperPage({ paper }: { paper: Paper }) {
-  const currentIndex = papers.findIndex((item) => item.slug === paper.slug);
-  const next = papers[(currentIndex + 1) % papers.length];
-  const study = studyContent[paper.slug];
-  if (!study) return <NotFoundPage />;
-  const lab = getLab(paper.slug);
-  if (lab?.status === "Runnable locally") return <RunnableLabPage paper={paper} lab={lab} next={next} />;
-  return <PlannedLabPage paper={paper} next={next} lab={lab} />;
-}
-
 function GapsPage() {
   return (
     <Article
@@ -1037,32 +925,11 @@ function Gaps2Page() {
   );
 }
 
-function GlossaryPage() {
-  const [query, setQuery] = useState("");
-  const terms = glossary.filter(([term, definition]) => `${term} ${definition}`.toLowerCase().includes(query.toLowerCase()));
-  return (
-    <Article
-      eyebrow="Reference"
-      title="Glossary"
-      lead="Short definitions for terms used throughout the guide. Search by mechanism, metric or security concept."
-    >
-      <label className="search-box">
-        <span>Search terms</span>
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Try inversion, capacity, open-set…" />
-      </label>
-      <dl className="glossary">
-        {terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}
-      </dl>
-      {!terms.length && <p className="empty">No matching term. Try a broader word.</p>}
-      <NextPage path="/" label="Return to start" />
-    </Article>
-  );
-}
 
 function NotFoundPage() {
   return (
-    <Article eyebrow="404" title="Chapter not found." lead="The route does not match a current chapter or paper study.">
-      <Link to="/" className="button primary">Return to start</Link>
+    <Article eyebrow="404 / Missing reference" title="Chapter not found." lead="This address does not match a chapter or study in the handbook. Find your place in the paper index, or return to the beginning.">
+      <div className="hero-actions"><Link to="/papers" className="button primary">Find a paper study ↗</Link><Link to="/" className="text-action">Return to start ↗</Link></div>
     </Article>
   );
 }
@@ -1079,6 +946,7 @@ function App() {
   const main = useRef<HTMLElement>(null);
   const [contents, setContents] = useState<{id:string;title:string}[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  usePageMotion(main, route);
   const page = useMemo(() => {
     if (route === "/") return <HomePage />;
     if (route === "/reading") return <ReadingPage />;
@@ -1087,31 +955,37 @@ function App() {
     if (route === "/foundations/diffusion") return <DiffusionPage />;
     if (route === "/foundations/frequency") return <FrequencyPage />;
     if (route === "/foundations/evaluation") return <EvaluationPage />;
-    if (route === "/papers") return <HandbookIndex />;
-    if (route === "/revision" || route === "/mathematics") return <RevisionPage />;
+    if (route === "/papers" || route === "/revision" || route === "/mathematics") return <Suspense fallback={<p className="article" role="status">Opening the handbook…</p>}><HandbookRoute path={route} /></Suspense>;
     if (route === "/research/gaps") return <GapsPage />;
     if (route === "/research/gaps2") return <Gaps2Page />;
-    if (route === "/glossary") return <GlossaryPage />;
+    if (route === "/glossary") return <Suspense fallback={<p className="article" role="status">Opening the glossary…</p>}><GlossaryPage /></Suspense>;
     if (route.startsWith("/papers/")) {
       const parts = route.split("/");
       if (parts.length === 4 && parts[3] === "lab") {
-        const paper = paperBySlug.get(parts[2]);
-        return paper ? <PaperPage paper={paper} /> : <NotFoundPage />;
+        const entry = paperCatalog.find(paper => paper.slug === parts[2] && paper.labSlug);
+        return entry ? <Suspense fallback={<p className="article" role="status">Opening the CPU exercise…</p>}><NewLabRoute slug={entry.labSlug!} /></Suspense> : <NotFoundPage />;
       }
-      const entry = handbookEntries.find(e => e.slug === parts[2]);
-      return entry && parts.length === 3 ? <HandbookStudy entry={entry} /> : <NotFoundPage />;
+      const entry = paperCatalog.find(e => e.slug === parts[2]);
+      return entry && parts.length === 3 ? <Suspense fallback={<p className="article" role="status">Opening the study…</p>}><HandbookRoute path={route} /></Suspense> : <NotFoundPage />;
     }
     return <NotFoundPage />;
   }, [route]);
 
   useEffect(() => {
     setMenuOpen(false);
-    document.title = route === "/" ? "Latent Watermarking 101" : `${route.split("/").filter(Boolean).at(-1)?.replaceAll("-", " ")} | Latent Watermarking 101`;
+    applyMetadata(route);
   }, [route]);
 
   useEffect(() => {
-    const sections = Array.from(main.current?.querySelectorAll('section[id]') ?? []);
-    setContents(sections.map(s => ({ id: s.id, title: s.querySelector('h2')?.textContent?.replace(/ #$/, '') ?? '' })).filter(s => s.title));
+    const updateContents = () => {
+      const sections = Array.from(main.current?.querySelectorAll('section[id]') ?? []);
+      setContents(sections.map(s => ({ id: s.id, title: s.querySelector('h2')?.textContent?.replace(/ #$/, '') ?? '' })).filter(s => s.title));
+    };
+    setContents([]);
+    const isLazyRoute = route === '/papers' || route === '/revision' || route === '/mathematics' || route === '/glossary' || route.startsWith('/papers/');
+    if (!isLazyRoute) updateContents();
+    window.addEventListener('handbook:route-ready', updateContents);
+    return () => window.removeEventListener('handbook:route-ready', updateContents);
   }, [route]);
   useEffect(() => {
     if (!menuOpen) return;
@@ -1121,7 +995,7 @@ function App() {
     const handle = (event: KeyboardEvent) => {
       if (event.key === 'Escape') { setMenuOpen(false); menuButton.current?.focus(); }
       if (event.key === 'Tab') {
-        const nodes = Array.from(sidebar.current?.querySelectorAll<HTMLElement>('a, button') ?? []);
+        const nodes = Array.from(sidebar.current?.querySelectorAll<HTMLElement>('a, button, summary') ?? []).filter(node => !node.closest('details:not([open])') || node.tagName === 'SUMMARY');
         const first = nodes[0], last = nodes[nodes.length - 1];
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
@@ -1134,8 +1008,8 @@ function App() {
     <div className="app-shell">
       <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); main.current?.focus(); }}>Skip to content</a>
       <header className="site-header">
-        <Link to="/" className="brand"><span>LW</span><b>Latent Watermarking 101</b></Link>
-        <p>Research handbook</p>
+        <Link to="/" className="brand"><span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /><i /></span><b>Latent Watermarking <span className="brand-number">101</span></b></Link>
+        <p className="header-context">Research handbook <span aria-hidden="true">/</span> Image provenance</p>
         <button ref={menuButton} aria-controls="chapter-navigation" className="menu-button" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>Contents</button>
         <a href="https://github.com/holsoma/latent-watermarking-101" target="_blank" rel="noreferrer" className="github-link">GitHub ↗</a>
       </header>
@@ -1149,19 +1023,16 @@ function App() {
             ))}
           </nav>
         ))}
-        <nav>
-          <p>Paper studies</p>
-          {handbookEntries.map((paper) => (
-            <Link key={paper.slug} to={`/papers/${paper.slug}`} className={route === `/papers/${paper.slug}` ? "active" : ""} onClick={() => setMenuOpen(false)}>{paper.shortTitle}</Link>
-          ))}
+        <nav className="paper-navigation" aria-label="Paper studies">
+          <p>Study collection</p>
+          {(['Foundation', 'Watermark method', 'Attack', 'Benchmark'] as const).map(kind => <details key={kind} open={route.startsWith('/papers/') && paperCatalog.some(p => p.kind === kind && route.startsWith(`/papers/${p.slug}`)) ? true : undefined}><summary>{kind === 'Foundation' ? 'Foundations' : kind === 'Watermark method' ? 'Watermark methods' : kind === 'Attack' ? 'Attacks' : 'Benchmarks'}<span>{paperCatalog.filter(p => p.kind === kind).length}</span></summary>{paperCatalog.filter(p => p.kind === kind).map(paper => <Link key={paper.slug} to={`/papers/${paper.slug}`} className={route === `/papers/${paper.slug}` ? "active" : ""} onClick={() => setMenuOpen(false)}>{paper.shortTitle}</Link>)}</details>)}
         </nav>
       </aside>
       {menuOpen && <button className="menu-scrim" aria-label="Close contents" onClick={() => {setMenuOpen(false); menuButton.current?.focus();}} />}
       <main ref={main} id="main-content" tabIndex={-1} inert={menuOpen ? true : undefined}>{page}</main>
-      {!!contents.length && <nav className="local-contents" aria-label="On this page"><p>On this page</p>{contents.map(s => <a key={s.id} href={`#${route}?section=${s.id}`}>{s.title}</a>)}</nav>}
+      {route !== "/" && !!contents.length && <nav className="local-contents" aria-label="On this page"><p>On this page</p>{contents.map(s => <a key={s.id} onClick={revisitSection} href={`#${route}?section=${s.id}`}>{s.title}</a>)}</nav>}
       <footer>
-        <p>Latent Watermarking 101 · A public, source-backed learning project</p>
-        <p><a href="https://github.com/holsoma/latent-watermarking-101">Contribute on GitHub</a></p>
+        <div className="footer-title">Latent Watermarking <span>101</span></div><div className="footer-bottom"><p>A research handbook. Read, calculate, question.</p><div><Link to="/glossary">Glossary</Link><a href="https://github.com/holsoma/latent-watermarking-101">GitHub ↗</a></div></div>
       </footer>
     </div>
   );
