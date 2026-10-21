@@ -29,32 +29,38 @@ def optimise(args):
     key = args.message or "1011001110001111"
     if len(key) != config.message_length: raise ValueError(f"message must be {config.message_length} bits")
     target = bits_to_tensor(key, device).mul(2).sub(1)
-    latent = torch.randn(1, config.latent_channels, config.latent_size, config.latent_size, device=device, requires_grad=True)
+    latent = torch.randn(1, config.latent_channels, config.latent_size, config.latent_size, device=device)
+    # A fixed sign-marked state stands in for the paper's intermediate marked state.
+    # Conditioning is an additive proxy, not a text encoder or diffusion scheduler.
+    latent.flatten()[:config.message_length] = latent.flatten()[:config.message_length].abs() * target
+    initial_latent = latent.detach().clone()
+    conditioning = torch.nn.Parameter(torch.zeros_like(latent))
+    initial_renderer = {k: v.clone() for k, v in renderer.state_dict().items()}
     with torch.no_grad():
         inversion = renderer(latent.detach())
-    optimiser = torch.optim.Adam([latent], lr=float(values.get("learning_rate", .08)))
+    optimiser = torch.optim.Adam([conditioning], lr=float(values.get("learning_rate", .08)))
     history = []
     for step in range(1, int(values.get("steps", 450)) + 1):
-        image = renderer(latent)
+        image = renderer(latent + conditioning)
         logits = detector(image)
         watermark_loss = F.mse_loss(logits.squeeze(0), target)
         image_loss = F.mse_loss(image, inversion)
-        frequency_loss = latent[:, 2:].square().mean()
+        frequency_loss = conditioning.square().mean()
         loss = float(values.get("watermark_loss_weight", 1.0))*watermark_loss + float(values.get("image_loss_weight", 3.0))*image_loss + float(values.get("frequency_penalty", .02))*frequency_loss
         optimiser.zero_grad(set_to_none=True); loss.backward(); optimiser.step()
         if step == 1 or step % max(1, int(values.get("steps", 450)) // 5) == 0:
             history.append({"step": step, "loss": float(loss.detach()), "watermark_loss": float(watermark_loss.detach()), "image_loss": float(image_loss.detach())})
     with torch.no_grad():
-        encoded = renderer(latent); recovered = logits_to_bits(detector(encoded))
+        encoded = renderer(latent + conditioning); recovered = logits_to_bits(detector(encoded))
     errors = sum(a != b for a,b in zip(key, recovered))
     save_image(inversion, output / "inversion.png"); save_image(encoded, output / "watermarked.png"); save_image((encoded-inversion)*8, output / "residual_amplified.png")
-    torch.save({"config": config.to_dict(), "latent": latent.detach().cpu(), "message": key, "history": history}, output / "checkpoint.pt")
-    manifest = {"schema_version":"1.0", "paper_slug":"robin", "method":"robin", "run_kind":"intermediate-state-conditioning-optimisation", "status":"completed", "local_adapter":True, "per_image_optimisation":True, "device":str(device), "seed":seed, "steps":int(values.get("steps",450)), "message":key, "recovered":recovered, "bit_error_rate":errors/config.message_length, "artifacts":["checkpoint.pt", "inversion.png", "watermarked.png", "residual_amplified.png", "manifest.json"], "history":history, "checkpoint":str(output/"checkpoint.pt")}
+    torch.save({"config": config.to_dict(), "latent": latent.detach().cpu(), "initial_latent": initial_latent.cpu(), "conditioning": conditioning.detach().cpu(), "renderer": renderer.state_dict(), "message": key, "history": history}, output / "checkpoint.pt")
+    manifest = {"schema_version":"1.0","lab_kind":"prerequisite-exercise","measurement_stage":"before PNG save/reload","implementation_fidelity":"prerequisite-exercise", "paper_slug":"robin", "method":"robin", "run_kind":"fixed-state-additive-conditioning-exercise", "status":"completed", "local_adapter":True, "per_image_optimisation":True, "device":str(device), "seed":seed, "steps":int(values.get("steps",450)), "message":key, "recovered":recovered, "bit_error_rate":errors/config.message_length, "artifacts":["checkpoint.pt", "inversion.png", "watermarked.png", "residual_amplified.png", "manifest.json"], "latent_unchanged":bool(torch.equal(latent,initial_latent)), "renderer_unchanged":all(torch.equal(v,initial_renderer[k]) for k,v in renderer.state_dict().items()), "conditioning_norm":float(conditioning.detach().norm()), "history":history, "checkpoint":str(output/"checkpoint.pt")}
     (output/"manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8"); print(json.dumps(manifest, indent=2))
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Optimise one diffusion latent for a target watermark.")
+    parser = argparse.ArgumentParser(description="Optimise additive conditioning while the sampled latent and renderer remain fixed.")
     parser.add_argument("--config", required=True); parser.add_argument("--output-dir"); parser.add_argument("--message"); parser.add_argument("--cpu", action="store_true")
     optimise(parser.parse_args())
 

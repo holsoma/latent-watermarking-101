@@ -3,7 +3,7 @@
 Explain the paper's generation path, official repository, local adapter, deviations and Git Bash commands here.
 
 ```bash
-cd /c/amos/research/latent-watermarking-101/implementations/<paper-slug>
+cd implementations/<paper-slug>
 python -m venv .venv
 source .venv/Scripts/activate
 python -m pip install -e .

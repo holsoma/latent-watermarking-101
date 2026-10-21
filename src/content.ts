@@ -657,7 +657,7 @@ export const papers: Paper[] = [
     contributions: [
       "States computational undetectability as a cryptographic goal.",
       "Provides robustness and payload recovery through error-correcting structure.",
-      "Reports experiments up to 512 bits under removal attacks and larger payloads without attack.",
+      "Separates binary detection from message recovery; the released implementation and its configured code determine which task is actually tested.",
     ],
     limitations: [
       "Security guarantees depend on explicit computational and oracle assumptions.",
@@ -676,23 +676,3 @@ export const papers: Paper[] = [
 ];
 
 export const paperBySlug = new Map(papers.map((paper) => [paper.slug, paper]));
-
-export const glossary = [
-  ["Attack channel", "The transformations between embedding and verification, including benign processing and deliberate removal."],
-  ["Blind detection", "Verification that does not need the original unwatermarked image."],
-  ["Capacity", "The number of payload bits that can be recovered at a stated error rate and attack setting."],
-  ["DDIM inversion", "A numerical reverse process that estimates an earlier diffusion latent from an image or final latent."],
-  ["False positive rate", "The probability that an unwatermarked sample is incorrectly accepted as watermarked."],
-  ["Fidelity", "How little embedding changes the intended image, distribution or task performance."],
-  ["Fourier domain", "A representation of an image or latent as spatial frequency components with amplitude and phase."],
-  ["iid Gaussian", "Entries sampled independently from the same normal distribution, usually N(0, 1) in the starting latent."],
-  ["In-generation watermark", "A watermark inserted as part of synthesis rather than added to finished pixels."],
-  ["Latent", "A compressed or internal numerical representation used by a generative model."],
-  ["Open-set identification", "Select a registered key or reject the sample as belonging to none of them."],
-  ["Payload", "The message represented by a watermark, such as an owner ID, user ID or signature."],
-  ["Robustness", "The ability to retain valid evidence after specified transformations."],
-  ["Semantic watermark", "A watermark tied to content or meaning, rather than only a fixed low-level signal."],
-  ["Threat model", "An explicit statement of attacker knowledge, access, query budget and allowed transformations."],
-  ["Training-free", "A method that does not learn watermark-specific parameters. This is stronger than leaving the base generator unchanged."],
-  ["Watermark key", "Secret or public information used to embed, identify or verify a mark."],
-] as const;

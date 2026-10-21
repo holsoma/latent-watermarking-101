@@ -5,7 +5,7 @@ import json
 import torch
 
 from .checkpoint import load_model
-from .io import load_image, message_tensor
+from .io import load_image, message_tensor, jpeg_roundtrip
 from .noise import channel_from_name
 
 
@@ -25,13 +25,13 @@ def main() -> None:
     target = message_tensor(message, device)
     results = []
     with torch.no_grad():
-        encoded = base.encode(image, target)
+        encoded = image
         for name in [value.strip() for value in args.attacks.split(",") if value.strip()]:
-            received = channel_from_name(name).to(device)(encoded)
+            received = jpeg_roundtrip(encoded,75) if name=="jpeg" else channel_from_name(name).to(device)(encoded)
             logits = base.decoder(received)
             predicted = (torch.sigmoid(logits) >= 0.5).float()
             bit_error = float(torch.mean(torch.abs(predicted - target)).item())
-            results.append({"attack": name, "bit_error_rate": bit_error, "exact_message": bit_error == 0.0})
+            results.append({"attack": name, "jpeg_quality": 75 if name=="jpeg" else None, "bit_error_rate": bit_error, "exact_message": bit_error == 0.0})
     print(json.dumps({"message": message, "results": results}, indent=2))
 
 

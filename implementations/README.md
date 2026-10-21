@@ -1,31 +1,19 @@
-# Implementation lab structure
+# CPU teaching laboratories
 
-Every paper implementation in this directory follows the same outer contract. The method-specific code can differ, but a reader should always know where to find the environment, configuration, generation path, detector, evaluation, tests and recorded run evidence.
+These 24 exercises teach supporting operations. Their classification is conservative: none is presented as a paper reproduction. Each lab README states which paper-specific operations are absent or replaced by a proxy.
+
+Use Python 3.11 or 3.12 with CPU PyTorch, NumPy and Pillow. Run commands from the repository root. Install a lab with `python -m pip install -e implementations/<slug>` inside an activated environment. The shared runner sets an isolated source path, disables CUDA and selects the real package, command and image filename for that lab.
 
 ```text
-implementations/<paper-slug>/
-├── README.md                 # paper boundary, Git Bash commands, deviations
-├── pyproject.toml            # isolated Python package and console entry points
-├── configs/
-│   ├── demo.toml             # meaningful local run
-│   └── smoke.toml            # fast plumbing check
-├── src/<package>_lab/
-│   ├── model.py              # paper mechanism and trainable/frozen boundary
-│   ├── io.py                 # image and tensor conversion
-│   ├── train.py              # training path, or optimise.py for per-image methods
-│   ├── detect.py|extract.py  # detector entry point
-│   └── evaluate.py           # named attacks and metrics
-├── tests/                    # shape, statistic and smoke tests
-└── outputs/                  # ignored local artefacts, never source code
+python implementations/shared/run_lab.py <slug> create
+python implementations/shared/run_lab.py <slug> detect
+python implementations/shared/run_lab.py <slug> evaluate
+python implementations/shared/run_lab.py <slug> controls
+python implementations/shared/verify_all_labs.py
 ```
 
-Each completed run should write a `manifest.json` beside its checkpoint and images. At minimum it records the paper slug, run kind, device, seed, configuration, steps, message/key, recovered message, bit error rate and named output artefacts. The shared contract is described in `shared/manifest.schema.json` and checked with:
+The bounded configuration is `configs/smoke.toml`. Generated files and exact command stdout/stderr live under each lab's ignored `outputs/handbook` directory. The versioned audit is `docs/lab-verification.json`. Passing means commands and assertions completed. It does not mean successful watermark recovery. The report preserves recovery errors.
 
-```bash
-cd /c/amos/research/latent-watermarking-101
-python implementations/shared/check_structure.py
-```
+Evaluation reads saved images and applies actual JPEG, blur and crop operations. Known keys, observed scores and extracted bits remain distinct. Tests cover applicable corruption and wrong-key controls, PRC repetition coding, T2S central preservation, and ROBIN's frozen marked state and renderer. Single fixtures cannot calibrate false-positive rates or validate robustness.
 
-Mechanism adapters should record `implementation_fidelity: mechanism-adapter`. Only a run that uses the paper's model or checkpoint and passes its end-to-end detector may record `implementation_fidelity: official-stack`, `local_adapter: false` and `verification_status: passed`. A real renderer combined with local marking code is still a mechanism adapter.
-
-The current labs use this structure while retaining their different research boundaries: HiDDeN trains an encoder and decoder, RoSteALS trains a latent offset path around a frozen autoencoder, Stable Signature fine-tunes a decoder against a fixed key, ZoDiac optimises one latent per image, Tree-Rings marks Fourier rings in initial noise, Gaussian Shading maps payload bits to a Gaussian latent, SEAL derives its key from coarse image semantics, LaWa combines coarse-to-fine latent modules, and AquaLoRA trains rank-limited weight updates.
+`shared/check_structure.py` checks file and manifest structure only. `shared/verify_semantics.py` checks executable behaviour in a separate process for each package. Optional model-download entry points have not been verified by this CPU audit and are not advertised as working paper reproductions.

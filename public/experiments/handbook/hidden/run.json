@@ -1,0 +1,84 @@
+{
+  "slug": "hidden",
+  "run_at": "2026-10-15T06:43:37.900606+00:00",
+  "python": "3.11.0",
+  "classification": "prerequisite-exercise",
+  "config": {
+    "model": {
+      "image_size": 64,
+      "message_length": 8,
+      "encoder_channels": 32,
+      "encoder_blocks": 4,
+      "decoder_channels": 32,
+      "decoder_blocks": 4,
+      "discriminator_channels": 32,
+      "discriminator_blocks": 3
+    },
+    "training": {
+      "steps": 12,
+      "batch_size": 4,
+      "learning_rate": 0.001,
+      "image_loss_weight": 1.0,
+      "adversarial_loss_weight": 0.001,
+      "message_loss_weight": 1.0,
+      "seed": 7
+    },
+    "output": {
+      "directory": "outputs/handbook"
+    }
+  },
+  "supplied_config": {
+    "model": {
+      "image_size": 64,
+      "message_length": 8,
+      "encoder_channels": 32,
+      "encoder_blocks": 4,
+      "decoder_channels": 32,
+      "decoder_blocks": 4,
+      "discriminator_channels": 32,
+      "discriminator_blocks": 3
+    },
+    "training": {
+      "steps": 12,
+      "batch_size": 4,
+      "learning_rate": 0.001,
+      "image_loss_weight": 1.0,
+      "adversarial_loss_weight": 0.001,
+      "message_loss_weight": 1.0,
+      "seed": 7
+    },
+    "output": {
+      "directory": "outputs/smoke"
+    }
+  },
+  "effective_run": {
+    "steps": 12,
+    "device": "cpu",
+    "output_dir": "outputs/handbook",
+    "message": "10101010",
+    "cli_overrides": {
+      "output_dir": "outputs/handbook"
+    }
+  },
+  "commands": [
+    "python implementations/shared/run_lab.py hidden create",
+    "python implementations/shared/run_lab.py hidden detect",
+    "python implementations/shared/run_lab.py hidden evaluate",
+    "python implementations/shared/run_lab.py hidden controls"
+  ],
+  "saved_image_detection": {
+    "recovered": "01101101"
+  },
+  "bit_error_rate": 0.625,
+  "artifacts": [
+    {
+      "file": "cover.png",
+      "sha256": "2f6cff01bac1d8c332834c0464d7b5e78215f18eb85d7c17618b4249ac4b6a0e"
+    },
+    {
+      "file": "encoded.png",
+      "sha256": "73da012c54f237cb05a3da070d4c572745665c078dc46904c93419cffdbebecd"
+    }
+  ],
+  "limitations": "Single bounded CPU fixture. Command success is not message recovery, paper reproduction or calibrated detection."
+}

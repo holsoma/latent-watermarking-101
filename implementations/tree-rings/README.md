@@ -1,19 +1,23 @@
-# Tree-Rings implementation lab
+# tree-rings CPU teaching exercise
 
-This lab follows the paper's initial-noise Fourier path: a key-dependent pattern is inserted into selected Fourier rings, a frozen diffusion renderer produces the image, and inversion tests the recovered spectrum. The default run is a deterministic reversible adapter for CPU tests. The module also exposes an optional Diffusers loader for an actual Stable Diffusion pipeline when model weights and the `diffusers` package are available.
+Classification: **prerequisite exercise**. A compact CPU teaching implementation. Frozen proxy components and small synthetic examples do not establish paper-level performance.
 
-Official implementation: https://github.com/YuxinWenRick/tree-ring-watermark
+Reference: [tree-rings](https://github.com/YuxinWenRick/tree-ring-watermark). A reference collection is not an official implementation claim.
 
-```bash
-cd /c/amos/research/latent-watermarking-101/implementations/tree-rings
-python -m venv .venv && source .venv/Scripts/activate
-python -m pip install -e .
-export PYTHONPATH=src
-python -m paper_lab.train --config configs/demo.toml
-python -m paper_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png
-python -m paper_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/watermarked.png
+Use Python 3.11 or 3.12 with CPU PyTorch, NumPy and Pillow. From the repository root, install this package into an activated environment, then use the portable runner:
+
+```text
+python -m pip install -e implementations/tree-rings
+python implementations/shared/run_lab.py tree-rings create
+python implementations/shared/run_lab.py tree-rings detect
+python implementations/shared/run_lab.py tree-rings evaluate
+python implementations/shared/run_lab.py tree-rings controls
 ```
 
-To render the adapter latent with a real Diffusers model, install `pip install -e .[official]` and run `python -m paper_lab.official --model-id <diffusers-model> --prompt "a mountain lake" --message registered-key`. This remains a mechanism-adapter run because it does not load the paper's pinned inversion pipeline or run its detector.
+The runner uses `configs/smoke.toml`, disables CUDA and isolates `src/paper_lab` in its own subprocess. No pretrained model is downloaded. Creation saves a checkpoint and PNG images under `outputs/handbook`. Detection reloads the saved image. Evaluation transforms that saved evidence without embedding another message. JPEG is actual compression and decompression; its quality is recorded in each result.
 
-No embedder or detector is trained. The local adapter reports a continuous Fourier score, named attacks and a manifest with `steps: 0`; it does not establish the paper's Stable Diffusion, scheduler, inversion or false-positive results.
+Commands write their exact stdout and stderr to the same output directory. `manifest.json` lists generated artefacts. A command completing successfully does not mean that extraction succeeded. Small training runs often have substantial bit error, including on clean images.
+
+`../../docs/lab-verification.json` records the checked commands, runtime, outputs and assertions. Run `python implementations/shared/verify_all_labs.py tree-rings` from the root to regenerate this lab's report. The controls include applicable unit assertions, codec checks and method-specific checks; they do not estimate false-positive rates.
+
+A known key is detector input. A score is measured evidence. Extracted bits are computed from the received image. These quantities must not be conflated. No claim of paper reproduction, cryptographic security or dataset robustness follows from this exercise.

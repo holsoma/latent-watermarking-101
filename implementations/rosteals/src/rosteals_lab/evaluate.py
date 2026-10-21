@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .io import jpeg_roundtrip
 
 import argparse
 import json
@@ -20,9 +21,7 @@ def attack(image: torch.Tensor, name: str) -> torch.Tensor:
         cropped = image[..., height // 10:-height // 10, width // 10:-width // 10]
         return F.interpolate(cropped, size=(height, width), mode="bilinear", align_corners=False)
     if name == "jpeg":
-        step = 0.08
-        quantised = torch.round(image / step) * step
-        return image + (quantised - image).detach()
+        return jpeg_roundtrip(image, quality=75)
     raise ValueError(f"Unknown attack {name!r}")
 
 
@@ -38,13 +37,13 @@ def main() -> None:
     image = load_image(args.image, model.config.image_size, device)
     target = message_tensor(args.message, device)
     with torch.no_grad():
-        encoded, _, _ = model.encode(image, target)
+        encoded = image
         results = []
         for name in [item.strip() for item in args.attacks.split(",") if item.strip()]:
             logits = model.decode_message(attack(encoded, name))
             predicted = (torch.sigmoid(logits) >= 0.5).float()
             ber = float(torch.mean(torch.abs(predicted - target)).item())
-            results.append({"attack": name, "bit_error_rate": ber, "exact_message": ber == 0.0})
+            results.append({"attack": name, "jpeg_quality": 75 if name=="jpeg" else None, "bit_error_rate": ber, "exact_message": ber == 0.0})
     print(json.dumps({"message": args.message, "results": results}, indent=2))
 
 

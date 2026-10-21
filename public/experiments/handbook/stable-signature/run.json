@@ -1,0 +1,72 @@
+{
+  "slug": "stable-signature",
+  "run_at": "2026-10-15T06:46:39.305388+00:00",
+  "python": "3.11.0",
+  "classification": "prerequisite-exercise",
+  "config": {
+    "image": 64,
+    "latent_channels": 8,
+    "latent_size": 8,
+    "message_length": 48,
+    "hidden_channels": 32,
+    "steps": 3,
+    "batch_size": 2,
+    "learning_rate": 0.001,
+    "image_loss_weight": 0.35,
+    "watermark_loss_weight": 1.0,
+    "seed": 23,
+    "output_dir": "outputs/handbook"
+  },
+  "supplied_config": {
+    "image": 64,
+    "latent_channels": 8,
+    "latent_size": 8,
+    "message_length": 48,
+    "hidden_channels": 32,
+    "steps": 3,
+    "batch_size": 2,
+    "learning_rate": 0.001,
+    "image_loss_weight": 0.35,
+    "watermark_loss_weight": 1.0,
+    "seed": 23,
+    "output_dir": "outputs/smoke"
+  },
+  "effective_run": {
+    "steps": 3,
+    "device": "cpu",
+    "output_dir": "outputs/handbook",
+    "message": "100100110110110110101110010110011111101101101100",
+    "cli_overrides": {
+      "output_dir": "outputs/handbook"
+    }
+  },
+  "commands": [
+    "python implementations/shared/run_lab.py stable-signature create",
+    "python implementations/shared/run_lab.py stable-signature detect",
+    "python implementations/shared/run_lab.py stable-signature evaluate",
+    "python implementations/shared/run_lab.py stable-signature controls"
+  ],
+  "saved_image_detection": {
+    "key": "100100110110110110101110010110011111101101101100",
+    "recovered": "001001001001001001001001101001001111000101001000",
+    "agreements": 17,
+    "bits": 48,
+    "null_tail_probability": 0.9853475266397353
+  },
+  "bit_error_rate": 0.6458333333333334,
+  "artifacts": [
+    {
+      "file": "base_decoder.png",
+      "sha256": "3694f61cf5463305ef1a58c9030829cb1b6684831afed547dc9b1a4670ae899f"
+    },
+    {
+      "file": "marked_decoder.png",
+      "sha256": "64134ad560d2ba93152aa69dbbc3c2d04232034bffca9f5f39b9d57ed925007a"
+    },
+    {
+      "file": "residual_amplified.png",
+      "sha256": "9446fe6cbd7800d1ca4c7b71fa6eb6af29082f5ae0ccefbda795fff7676b8c86"
+    }
+  ],
+  "limitations": "Single bounded CPU fixture. Command success is not message recovery, paper reproduction or calibrated detection."
+}

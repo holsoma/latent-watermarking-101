@@ -3,7 +3,7 @@ import type { Paper } from "./content";
 export type StudySection = {
   title: string;
   paragraphs: string[];
-  equation?: { expression: string; note: string };
+  equation?: { expression: string; note: string; format?: 'latex' | 'plain' };
   bullets?: string[];
   takeaway?: string;
 };
@@ -382,7 +382,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "JPEG illustrates the difficulty. Exact JPEG quantisation is not differentiable at rounding points, so the training graph uses an approximation. This teaches robustness to a proxy channel, which must later be validated against the real codec.",
         ],
         equation: {
-          expression: "min E,D  Lmsg(D(N(E(x, w))), w) + λimg Limg(E(x, w), x)",
+          expression: String.raw`\min_{E,D}\;L_{\mathrm{msg}}(D(N(E(x,w))),w)+\lambda_{\mathrm{img}}L_{\mathrm{img}}(E(x,w),x)`, format: 'latex',
           note: "N is a sampled distortion layer; the objective couples message recovery and image fidelity.",
         },
       },
@@ -414,7 +414,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "Because the message offset is produced without re-encoding the whole image distribution, the trainable module is small. The cost is dependence on the frozen autoencoder: its bottleneck determines which changes survive decoding and which image details are already lost.",
         ],
         equation: {
-          expression: "zw = EncAE(x) + Es(w),   xw = DecAE(zw)",
+          expression: String.raw`z_w=\operatorname{Enc}_{\mathrm{AE}}(x)+E_s(w),\qquad x_w=\operatorname{Dec}_{\mathrm{AE}}(z_w)`, format: 'latex',
           note: "The payload changes the latent additively while the image autoencoder stays frozen.",
         },
       },
@@ -442,12 +442,12 @@ export const studyContent: Record<string, PaperStudy> = {
       {
         title: "Distillation reverses the ordinary watermark pipeline",
         paragraphs: [
-          "Ordinary learned watermarking trains an encoder to serve a decoder. Stable Signature begins with the extractor and changes the image generator instead. Random diffusion latents are decoded, the fixed extractor reads the outputs, and gradients update the VAE decoder until its outputs consistently produce the target bits.",
+          "Ordinary learned watermarking trains an encoder to serve a decoder. Stable Signature begins with the extractor and changes the image generator instead. Training images are encoded into clean latents, decoded by the modified VAE, and read by the fixed extractor. Gradients update the VAE decoder towards one fixed target signature while an image loss limits reconstruction changes. This fine-tuning stage does not require running the diffusion denoiser.",
           "This makes embedding automatic for text-to-image, image-to-image and other tasks that share the decoder. It also localises the modification: the denoising trajectory remains untouched, but every final latent passes through the marked decoder.",
         ],
         equation: {
-          expression: "min θDec  Ew,z [Lbits(Extractor(Decθ(z)), w) + λ Lperceptual(Decθ(z), Dec0(z))]",
-          note: "The new decoder must satisfy a fixed extractor while remaining close to the original decoder.",
+          expression: String.raw`\begin{aligned}\min_{\theta_{\mathrm{Dec}}}\;\mathbb E_x\big[&L_{\mathrm{bits}}(\operatorname{Extractor}(\operatorname{Dec}_{\theta}(\operatorname{Enc}(x))),w)\\&+\lambda L_{\mathrm{image}}(\operatorname{Dec}_{\theta}(\operatorname{Enc}(x)),\operatorname{Dec}_0(\operatorname{Enc}(x)))\big]\end{aligned}`, format: 'latex',
+          note: "Here x is a training image, Enc is the frozen image encoder, w is one fixed signature for this decoder, Dec0 is the original decoder, and Ex averages over training images. This schematic loss omits paper-specific reductions.",
         },
       },
       {
@@ -484,7 +484,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "This changes capacity. The practical unit is the number of reliably distinguishable users, not just the number of decoder bits. Closed-set attribution can look strong while an unknown or unmarked model is still forced into one registered identity.",
         ],
         equation: {
-          expression: "θu = Modulate(θ0, H(fu)),   xu = Gθu(prompt, zT)",
+          expression: String.raw`\theta_u=\operatorname{Modulate}(\theta_0,H(f_u)),\qquad x_u=G_{\theta_u}(\mathrm{prompt},z_T)`, format: 'latex',
           note: "A user fingerprint fu controls a hypernetwork H that changes model weights.",
         },
       },
@@ -516,7 +516,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "Low-rank adaptation constrains the parameter change. Instead of updating a full matrix W, LoRA adds a product BA with small rank. The watermark scaling matrix controls how message information modulates this update.",
         ],
         equation: {
-          expression: "Wmarked = W0 + B S(w) A",
+          expression: String.raw`W_{\mathrm{marked}}=W_0+B\,S(w)\,A`, format: 'latex',
           note: "The message-dependent scaling matrix S(w) changes a compact low-rank update.",
         },
       },
@@ -576,7 +576,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "The diffusion prior regularises the edited result towards plausible images. That can improve robustness against reconstruction attacks, but it can also change small semantic details even when global perceptual metrics remain favourable.",
         ],
         equation: {
-          expression: "z* = argminz  Lwm(F(z), k) + λp Lperceptual(Dec(z), x) + λ2 ||Dec(z)-x||²",
+          expression: String.raw`\begin{aligned}z^*=\operatorname*{arg\,min}_z\big[&L_{\mathrm{wm}}(F(z),k)\\&+\lambda_p L_{\mathrm{perceptual}}(\operatorname{Dec}(z),x)\\&+\lambda_2\|\operatorname{Dec}(z)-x\|_2^2\big]\end{aligned}`, format: 'latex',
           note: "The latent is optimised per image; fidelity is measured against the original cover.",
         },
       },
@@ -669,7 +669,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "Majority voting addresses repeated observations, while error-correcting codes address patterns within the word. Their gains should be reported against the effective application payload after overhead.",
         ],
         equation: {
-          expression: "P(word error) = 1 - P(all application bits correct)",
+          expression: String.raw`P(\text{word error})=1-P(\text{all application bits correct})`, format: 'latex',
           note: "High marginal bit accuracy can still yield poor exact-message recovery as payload grows.",
         },
       },
@@ -809,8 +809,8 @@ export const studyContent: Record<string, PaperStudy> = {
           "A closed-set top-one experiment always returns a user. Deployment requires open-set rejection for real images, unregistered users and outputs from other models.",
         ],
         equation: {
-          expression: "accept key i only if si > τ and si - maxj≠i sj > margin",
-          note: "Identification needs both absolute evidence and separation from competing keys.",
+          expression: String.raw`\text{accept key }i\text{ only if }\quad s_i>\tau\quad\text{and}\quad s_i-\max_{j\ne i}s_j>\mathrm{margin}`, format: 'latex',
+          note: "An illustrative rejection rule, not a transcription of RingID’s detector: si is a similarity score for key i, τ is an acceptance threshold, and margin is a chosen separation threshold. Distance-based scores require reversing the comparison. Calibrate the complete search rule on unregistered images.",
         },
       },
       {
@@ -894,7 +894,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "The tolerance boundary is also an attack surface. An adversary can search for an edit that changes meaning while remaining in the same hash region, or causes a benign crop to cross the boundary.",
         ],
         equation: {
-          expression: "k(x) = LSH(φsemantic(x))",
+          expression: String.raw`k(x)=\operatorname{LSH}(\phi_{\mathrm{semantic}}(x))`, format: 'latex',
           note: "The watermark key becomes a function of content representation rather than only owner identity.",
         },
       },
@@ -925,7 +925,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "A symmetric watermark uses both locations coherently. This can improve fidelity and make the mechanism easier to reason about, but it does not make the pattern immune to reconstruction.",
         ],
         equation: {
-          expression: "F(-u, -v) = conjugate(F(u, v))",
+          expression: String.raw`F(-u,-v)=\overline{F(u,v)}`, format: 'latex',
           note: "The constraint links opposite Fourier coordinates.",
         },
       },
@@ -984,7 +984,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "Gaussian Shading diffuses and randomises the payload before distribution-preserving sampling. The quality claim concerns the distribution of starting latents, not equality between a marked image and a hypothetical unmarked image for the same semantic outcome.",
         ],
         equation: {
-          expression: "zj ~ N(0,1) conditioned on encrypted bit region bj",
+          expression: String.raw`z_j\sim\mathcal N(0,1)\;\text{conditioned on encrypted bit region }b_j`, format: 'latex',
           note: "A balanced mixture of the conditional regions reconstructs the target Gaussian marginal.",
         },
       },
@@ -1016,7 +1016,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "T2SMark reserves the centre for unconstrained random sampling and uses the tails for robust evidence. The tail threshold becomes an operating parameter controlling both properties.",
         ],
         equation: {
-          expression: "sample centre for diversity; sample bit-selected tail for margin",
+          expression: String.raw`\begin{gathered}\text{sample centre for diversity;}\\\text{sample bit-selected tail for margin}\end{gathered}`, format: 'latex',
           note: "Moving the threshold changes evidence strength and the amount of free randomness.",
         },
       },
@@ -1053,7 +1053,7 @@ export const studyContent: Record<string, PaperStudy> = {
           "Treating generation plus inversion as additive white Gaussian noise gives tractable likelihoods. Real residuals can be correlated, heavy-tailed and attack-dependent. A soft decoder can still help, but its confidence may be miscalibrated under model mismatch.",
         ],
         equation: {
-          expression: "zHat = z + n,   n ~ N(0, σ²I)",
+          expression: String.raw`\hat z=z+n,\qquad n\sim\mathcal N(0,\sigma^2I)`, format: 'latex',
           note: "The assumed channel enables soft likelihoods; empirical residuals should test independence and Gaussianity.",
         },
       },
@@ -1077,6 +1077,15 @@ export const studyContent: Record<string, PaperStudy> = {
     fixedPoint: "The generator is not trained or architecturally changed.",
     verificationAssumption: "The pseudorandomness and oracle assumptions hold in implementation, and inversion leaves a decodable error pattern.",
     sections: [
+      {
+        title: "From a codeword to latent evidence",
+        paragraphs: [
+          "Section 3.2 samples a keyed pseudorandom codeword c with entries −1 or +1, and an independent standard Gaussian vector y of the same length. Set each initial-noise coordinate zi = ci |yi|: the code controls signs while Gaussian magnitudes supply variation. The generator weights remain fixed.",
+          "Verification estimates the initial noise from received pixels. Its signs give corrupted code evidence; the actual detector also uses magnitudes to weight reliability. Presence detection and message decoding are separate operations. The latter uses belief propagation, an iterative exchange of reliability estimates between code constraints, and can fail while detection succeeds.",
+          "The paper explicitly warns that its experimental parameters do not satisfy every proof bound and should not be used for applications requiring undetectability. The theorem is conditional on the underlying code and parameter assumptions, not a guarantee for the small CPU teaching code.",
+        ],
+        equation: { expression: String.raw`z_i=c_i|y_i|`, format: 'latex', note: "i indexes a latent coordinate; ci is its codeword sign, yi its Gaussian draw, and zi the marked coordinate. Absolute value retains magnitude." },
+      },
       {
         title: "Imperceptibility is weaker than undetectability",
         paragraphs: [

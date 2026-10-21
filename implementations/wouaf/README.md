@@ -1,20 +1,23 @@
-# WOUAF implementation lab
+# wouaf CPU teaching exercise
 
-This compact lab follows WOUAF's attribution boundary: condition weight modulation on a user fingerprint and decode the fingerprint from outputs. The local adapter uses rank-limited updates rather than a full diffusion U-Net.
+Classification: **prerequisite exercise**. Rank-limited latent update prerequisite. Generator weight modulation is not implemented.
 
-## Git Bash
+Reference: [wouaf](https://github.com/kylemin/WOUAF). A reference collection is not an official implementation claim.
 
-```bash
-cd /c/amos/research/latent-watermarking-101/implementations/wouaf
-python -m venv .venv
-source .venv/Scripts/activate
-python -m pip install -e .
-export PYTHONPATH=src
-python -m stable_signature_lab.train --config configs/demo.toml
-python -m stable_signature_lab.detect --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/marked_decoder.png
-python -m stable_signature_lab.evaluate --checkpoint outputs/demo/checkpoint.pt --image outputs/demo/marked_decoder.png --attacks identity,blur,crop,jpeg
+Use Python 3.11 or 3.12 with CPU PyTorch, NumPy and Pillow. From the repository root, install this package into an activated environment, then use the portable runner:
+
+```text
+python -m pip install -e implementations/wouaf
+python implementations/shared/run_lab.py wouaf create
+python implementations/shared/run_lab.py wouaf detect
+python implementations/shared/run_lab.py wouaf evaluate
+python implementations/shared/run_lab.py wouaf controls
 ```
 
-The official [AquaLoRA repository](https://github.com/Georgefwt/AquaLoRA) merges watermark LoRA updates into a customised Stable Diffusion U-Net. Use that repository for paper-faithful runs. This local lab is for understanding the fixed-key, rank-limited optimisation boundary.
+The runner uses `configs/smoke.toml`, disables CUDA and isolates `src/stable_signature_lab` in its own subprocess. No pretrained model is downloaded. Creation saves a checkpoint and PNG images under `outputs/handbook`. Detection reloads the saved image. Evaluation transforms that saved evidence without embedding another message. JPEG is actual compression and decompression; its quality is recorded in each result.
 
-`outputs/demo/manifest.json` records the key, recovered bits, training loss history and clean bit error rate. Compare `base_decoder.png`, `marked_decoder.png` and `residual_amplified.png` before making any quality claim.
+Commands write their exact stdout and stderr to the same output directory. `manifest.json` lists generated artefacts. A command completing successfully does not mean that extraction succeeded. Small training runs often have substantial bit error, including on clean images.
+
+`../../docs/lab-verification.json` records the checked commands, runtime, outputs and assertions. Run `python implementations/shared/verify_all_labs.py wouaf` from the root to regenerate this lab's report. The controls include applicable unit assertions, codec checks and method-specific checks; they do not estimate false-positive rates.
+
+A known key is detector input. A score is measured evidence. Extracted bits are computed from the received image. These quantities must not be conflated. No claim of paper reproduction, cryptographic security or dataset robustness follows from this exercise.

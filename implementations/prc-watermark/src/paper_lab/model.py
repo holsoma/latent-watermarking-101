@@ -1,4 +1,4 @@
-"""Gaussian Shading payload mapping with an invertible local diffusion adapter."""
+"""Seeded repetition-code teaching exercise, not cryptographically secure PRC."""
 from dataclasses import asdict,dataclass
 import torch
 import torch.nn.functional as F
@@ -17,14 +17,19 @@ def _groups(config):
 
 def shade_noise(noise,config,message):
     if len(message)!=config.payload_bits: raise ValueError(f"message must be {config.payload_bits} bits")
-    flat=noise.flatten(); groups=_groups(config); target=bits_tensor(message,noise.device); result=flat.abs()
-    for index,group in enumerate(groups): result[group]=result[group]*target[index]
-    return result.reshape_as(noise)
+    code = prc_encode(message, seed=config.seed)
+    flat = noise.flatten().clone()
+    if flat.numel() < len(code): raise ValueError("latent must hold three chips per message bit")
+    signs = torch.tensor(code, device=noise.device).mul(2).sub(1)
+    flat[:len(code)] = flat[:len(code)].abs() * signs
+    return flat.reshape_as(noise)
 
 def decode_noise(noise,config):
-    groups=_groups(config); flat=noise.flatten(); return (flat[groups].mean(dim=1)>=0).to(torch.int64)
+    count = config.payload_bits * 3
+    return (noise.flatten()[:count] >= 0).to(torch.int64)
 
-def decode_message(noise,config): return "".join(str(int(v)) for v in decode_noise(noise,config).tolist())
+def decode_message(noise,config):
+    return prc_decode(decode_noise(noise,config).tolist(), config.payload_bits, seed=config.seed)
 
 def bit_error(a,b): return sum(x!=y for x,y in zip(a,b))/len(a)
 
